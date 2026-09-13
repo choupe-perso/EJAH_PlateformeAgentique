@@ -177,6 +177,34 @@ explicite de l'utilisateur permet de basculer sur un autre moteur.
 Node.js (v24.19.0 LTS) a ete installe le 2026-09-13 via winget, a
 l'initiative de l'utilisateur.
 
+## Architecture en couches (decidee le 2026-09-13)
+
+Pour eviter que `src/` ne devienne un fourre-tout, le code applicatif suit
+une architecture en couches avec une responsabilite et une exclusion
+explicites par dossier (detail et regles de dependance dans
+`docs/ARCHITECTURE.md`, section 4bis ; chaque dossier porte aussi son
+propre README) :
+
+| Dossier            | Responsabilite cible                                    | Exclusion essentielle |
+|---------------------|----------------------------------------------------------|------------------------|
+| `src/app/`          | Routeur Next.js (impose par le framework) - web          | Orchestration metier (voir `core/`) |
+| `src/components/`   | Composants UI partages - web                              | Acces direct a PostgreSQL ou aux fournisseurs IA |
+| `src/core/`         | Cas d'usage, orchestration, controle des politiques       | Dependance metier aux adaptateurs concrets |
+| `src/data/`         | Adaptateurs de persistance                                 | Donnees PostgreSQL reelles et logique metier |
+| `src/integrations/` | Adaptateurs vers moteurs et systemes externes              | Choix autonome du moteur et logique metier |
+| `src/agents/`       | Definitions et comportements d'agents, via contrats        | Acces direct aux fournisseurs, au stockage ou aux sessions |
+| `src/shared/`       | Contrats, types et utilitaires reellement communs          | Orchestration et dependance vers les autres couches |
+| `config/`           | Modeles declaratifs et validation future                  | Secrets reels et logique metier |
+| `tests/`            | Verifications futures des comportements et frontieres      | Fixtures contenant des donnees reelles |
+| `docs/`             | References techniques et decisions                         | Seconde racine applicative |
+| `guide/`            | Parcours pedagogique et reproduction                        | Procedures presentees comme disponibles avant realisation |
+| `deployment/`       | Assemblage, installation et restauration futurs             | Service distant obligatoire au demarrage local |
+
+Note : `app/` designe ici exclusivement le routeur Next.js (contrainte du
+framework, nom non modifiable). La couche d'orchestration/cas d'usage porte
+le nom `core/`, precisement pour ne pas entrer en collision avec cette
+contrainte.
+
 ## Maquettes UI (reference future)
 
 Des maquettes HTML autonomes existent deja, une par environnement, dans

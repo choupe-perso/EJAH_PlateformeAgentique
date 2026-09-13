@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
-import { prisma } from "@/lib/db";
-import { appEnvironment } from "@/lib/env";
+import { prisma } from "@/data/db";
+import { appEnvironment } from "@/shared/env";
 
 export async function GET() {
   const environment = appEnvironment();

@@ -62,20 +62,46 @@ Le schema applicatif (tables `action_history`, `deployment_history`,
 `npx prisma migrate dev` (DEV) ou `npx prisma migrate deploy` (TEST/PROD),
 une fois `DATABASE_URL` renseigne dans le `.env.local` du worktree concerne.
 
-## 4. Prerequis manquant : Node.js
+## 4. Node.js
 
-Node.js/npm ne sont pas installes sur ce poste. Installation a realiser par
-l'utilisateur (choix explicite du mode d'installation) :
-
-```bash
-winget install OpenJS.NodeJS.LTS
-```
-
-Apres installation, dans **chaque** worktree :
+Installe le 2026-09-13 via `winget install OpenJS.NodeJS.LTS` (v24.19.0
+LTS), a l'initiative de l'utilisateur. A refaire dans **chaque** worktree
+apres un `git worktree add`, ou apres tout changement de dependances :
 
 ```bash
 npm install
 ```
+
+## 4bis. Couches applicatives (`src/`)
+
+Le code applicatif suit une architecture en couches, avec une exclusion
+explicite par dossier (voir aussi le README present dans chacun) :
+
+```
+src/
+  app/            <- routeur Next.js (impose par le framework) - web/presentation
+  components/     <- composants UI partages - web/presentation
+  core/           <- cas d'usage, orchestration, politiques
+  data/           <- adaptateurs de persistance (Prisma)
+  integrations/   <- adaptateurs vers moteurs IA / systemes externes
+  agents/         <- definitions et comportements d'agents (via contrats)
+  shared/         <- contrats, types, utilitaires reellement communs
+  styles/         <- feuilles de style globales
+```
+
+Regle de dependance : `app/` et `components/` (web) appellent `core/` ;
+`core/` orchestre `data/`, `integrations/` et `agents/` via des contrats
+definis dans `shared/` ; `agents/` n'accede jamais directement a
+`integrations/` ou `data/` sans passer par `core/`. `shared/` ne depend
+d'aucune autre couche.
+
+Exception assumee : `app/` designe ici le routeur Next.js (contrainte du
+framework, non renommable) et non la couche d'orchestration - celle-ci
+porte le nom `core/` precisement pour eviter la confusion.
+
+D'autres dossiers a la racine du depot suivent le meme principe
+(responsabilite + exclusion documentees dans leur propre README) :
+`tests/`, `guide/`, `deployment/`, `config/`.
 
 ## 5. Secrets et configuration
 
