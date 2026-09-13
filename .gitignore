@@ -35,3 +35,6 @@ Thumbs.db
 # Divers
 *.tsbuildinfo
 .eslintcache
+
+# Raccourcis bureau (.lnk) - specifiques a la machine, jamais commit
+deployment/raccourcis-bureau/
