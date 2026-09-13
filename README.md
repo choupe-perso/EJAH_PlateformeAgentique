@@ -16,9 +16,10 @@ cp config/.env.dev.example .env.local   # puis completer les valeurs reelles
 npm run dev
 ```
 
-Ce worktree (`PlateformeIA_EJAH/`) est l'environnement **DEV** (port 3000).
-Les environnements TEST et PROD vivent dans des worktrees freres :
-`PlateformeIA_EJAH-test/` et `PlateformeIA_EJAH-prod/`.
+Ce dossier (`PlateformeIA_EJAH/`, sans suffixe) est l'environnement
+**PROD** (port 3002) - c'est le worktree racine historique du projet. Les
+environnements DEV et TEST vivent dans des worktrees freres :
+`PlateformeIA_EJAH-dev/` et `PlateformeIA_EJAH-test/`.
 
 ## Statut
 

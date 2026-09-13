@@ -70,9 +70,12 @@ validee avant creation.
 
 ### Modele physique : 3 worktrees git distincts
 
-- `PlateformeIA_EJAH/` (ce dossier) - worktree principal, branche `dev`.
-- `PlateformeIA_EJAH-test/` (dossier frere) - worktree, branche `test`.
-- `PlateformeIA_EJAH-prod/` (dossier frere) - worktree, branche `main`.
+- `PlateformeIA_EJAH/` - worktree **PROD**, branche `main`. C'est le dossier
+  racine historique du projet ; il designe desormais la production, pas le
+  developpement (corrige le 2026-09-13 - au depart cree comme worktree
+  DEV par defaut, ce qui ne correspondait pas a l'intention reelle).
+- `PlateformeIA_EJAH-test/` - worktree **TEST**, branche `test`.
+- `PlateformeIA_EJAH-dev/` - worktree **DEV**, branche `dev`.
 
 Chaque worktree possede son propre `node_modules`, son propre fichier
 `.env.local` (jamais commit) et tourne independamment sur son port. Voir

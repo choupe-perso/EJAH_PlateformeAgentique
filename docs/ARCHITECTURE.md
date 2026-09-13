@@ -4,10 +4,14 @@
 
 ```
 LocalClaudeProjects/
-  PlateformeIA_EJAH/         <- worktree DEV (branche `dev`)  - port 3000
+  PlateformeIA_EJAH-dev/     <- worktree DEV (branche `dev`)  - port 3000
   PlateformeIA_EJAH-test/    <- worktree TEST (branche `test`) - port 3001
-  PlateformeIA_EJAH-prod/    <- worktree PROD (branche `main`) - port 3002
+  PlateformeIA_EJAH/         <- worktree PROD (branche `main`) - port 3002
 ```
+
+`PlateformeIA_EJAH/` (sans suffixe) est le dossier racine historique du
+projet : il designe la production, pas le developpement. Corrige le
+2026-09-13 (initialement cree comme worktree DEV par defaut).
 
 Les trois dossiers partagent le meme historique git (`.git` commun au
 worktree principal) mais sont physiquement independants : dependances
@@ -19,9 +23,12 @@ Creation des worktrees TEST et PROD (deja effectuee lors de la mise en place
 du socle) :
 
 ```bash
+git worktree add ../PlateformeIA_EJAH-dev dev
 git worktree add ../PlateformeIA_EJAH-test test
-git worktree add ../PlateformeIA_EJAH-prod main
 ```
+
+(le worktree PROD est le dossier racine `PlateformeIA_EJAH/` lui-meme, sur
+la branche `main`.)
 
 ## 2. Cycle de vie d'une evolution
 
