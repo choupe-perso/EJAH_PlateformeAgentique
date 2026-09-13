@@ -1,0 +1,11 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "ejah-dev",
+      "runtimeExecutable": "scripts\\dev-with-node-path.cmd",
+      "runtimeArgs": [],
+      "port": 3000
+    }
+  ]
+}
