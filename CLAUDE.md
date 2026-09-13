@@ -1,0 +1,182 @@
+# EJAH - Plateforme agentique personnelle
+
+Ce document est la reference de gouvernance du projet. Il s'applique a tout
+travail effectue dans ce depot, quel que soit le worktree (DEV, TEST ou PROD)
+ou la session qui intervient. En cas de doute entre une demande ponctuelle et
+une regle ci-dessous, la regle prevaut sauf accord explicite et exprime de
+l'utilisateur pour y deroger ponctuellement.
+
+## Identite
+
+- Nom produit : **EJAH** - Ecosysteme de Jonction et d'Assistance Humaine.
+- Nom technique du projet / du repository / de la racine : **PlateformeIA_EJAH**
+  (ecart assume avec le nom initialement envisage `EJAH_PlateformeAgentique` -
+  tranche explicitement par l'utilisateur le 2026-09-13 : le dossier existant
+  fait foi). Ne pas renommer cette racine. Ne pas creer de copie imbriquee
+  (documentaire ou applicative) du projet.
+
+## Finalite
+
+EJAH est une plateforme agentique personnelle, concue pour fonctionner d'abord
+localement, destinee initialement a un utilisateur unique. L'architecture
+reste generique et reutilisable : aucun composant ne doit figer cette
+restriction initiale en dur.
+
+L'ambition est de relier les besoins, habitudes, donnees et outils de
+l'utilisateur a des agents specialises. Une demande doit etre traitee dans le
+bon contexte, avec les donnees autorisees et un moteur explicitement choisi.
+L'utilisateur garde la maitrise des transmissions, des changements de moteur
+et des depenses.
+
+"Agentique" designe des comportements specialises orchestres par
+l'application. Cela n'implique ni autonomie generale, ni planification
+multi-agent, ni memoire permanente, ni execution libre d'actions tant que ces
+capacites n'ont pas ete explicitement definies et livrees.
+
+### Socle commun
+
+La plateforme evite de reconstruire, pour chaque besoin, les memes contrats
+d'acces aux moteurs et les memes regles de confidentialite. La reutilisation
+ne concerne que les comportements reellement communs et n'autorise aucun
+partage implicite de donnees, modeles ou permissions entre contextes. La
+coherence recherchee porte sur : la selection des moteurs, les controles de
+transmission, la separation des workspaces, la maintenabilite.
+
+## Univers
+
+Deux grands univers structurent la plateforme :
+
+- **Cockpit** : indicateurs de pilotage de l'utilisateur.
+- **Agents** : outils et agents specialises.
+
+Aucun indicateur ni agent metier n'est defini a ce stade (socle uniquement,
+2026-09-13). Les besoins detailles seront definis lors d'etapes ulterieures
+explicitement autorisees.
+
+## Environnements
+
+Trois environnements, chacun avec son URL/port propre - ce qui equivaut a 3
+plateformes distinctes et donc 3 lanceurs :
+
+| Environnement | Role                                  | Port | Base de donnees   |
+|----------------|---------------------------------------|------|--------------------|
+| DEV            | Developpement avec l'IA               | 3000 | `pf_ejah_db_dev`   |
+| TEST           | L'IA a termine, l'utilisateur teste    | 3001 | `pf_ejah_db_test`  |
+| PROD           | Verifie OK, utilisation nominale       | 3002 | `pf_ejah_db`       |
+
+**Aucun autre port ni URL ne doit etre introduit sans accord explicite de
+l'utilisateur.** Toute proposition de nouveau port/URL doit etre soumise et
+validee avant creation.
+
+### Modele physique : 3 worktrees git distincts
+
+- `PlateformeIA_EJAH/` (ce dossier) - worktree principal, branche `dev`.
+- `PlateformeIA_EJAH-test/` (dossier frere) - worktree, branche `test`.
+- `PlateformeIA_EJAH-prod/` (dossier frere) - worktree, branche `main`.
+
+Chaque worktree possede son propre `node_modules`, son propre fichier
+`.env.local` (jamais commit) et tourne independamment sur son port. Voir
+`config/.env.dev.example`, `config/.env.test.example`, `config/.env.prod.example`
+pour la liste des cles attendues (sans valeurs).
+
+## Git
+
+- Branche `dev` : travail de developpement avec l'IA.
+- Branche `test` : version que l'utilisateur teste.
+- Branche `main` : production.
+- A chaque validation **explicite** d'une version par l'utilisateur sur un
+  environnement donne, creer une version majeure `X.0` et un tag git
+  correspondant, pour permettre un rollback a tout moment. Ne jamais tagger
+  automatiquement sans validation explicite de l'utilisateur.
+- Les fichiers de configuration contenant des comptes d'authentification sont
+  suivis sous git **sans valeurs** (uniquement les cles). Les fichiers reels
+  contenant des valeurs sont dans `.gitignore` et ne doivent jamais etre
+  commit.
+
+## Base de donnees
+
+PostgreSQL 18 local, une base par environnement (voir tableau ci-dessus).
+Usages prevus au socle :
+- Historique des actions (`action_history`)
+- Historique des deploiements (`deployment_history`)
+- Menus (`menu_item`)
+
+Schema Prisma : `prisma/schema.prisma`. Toute evolution de schema passe par
+une migration versionnee (pas de modification manuelle de la base en prod).
+
+## Regles de base (imperatives)
+
+1. **Suppression interdite sans accord explicite.** La plateforme n'a le
+   droit de supprimer quoi que ce soit (donnees, fichiers, enregistrements)
+   qu'apres accord explicite de l'utilisateur. Aucune derogation, meme pour
+   du nettoyage juge anodin.
+2. **Aucune commande a cout sans double confirmation.** Aucune commande
+   susceptible d'entrainer un cout n'est autorisee pour le socle
+   documentaire. Pour toute depense future :
+   - 1re confirmation : objet, fournisseur, montant ou plafond.
+   - 2e confirmation : accord explicite avant engagement.
+   - Le paiement final est toujours realise manuellement par l'utilisateur,
+     jamais par la plateforme ou par Claude.
+3. **Pas de nouveaux ports/URLs sans accord explicite** (voir Environnements).
+4. **Pas de changement implicite de moteur IA/donnees.** Si un moteur choisi
+   est indisponible, l'operation s'arrete. L'utilisateur peut choisir
+   explicitement un autre moteur, avec un nouveau controle des donnees et de
+   la destination.
+
+## Fonctionnement local et serveur (cible a 6 mois)
+
+Actuellement : travail sur portable uniquement.
+
+Cible : un serveur dedie externe, accessible depuis l'exterieur, devient la
+tete de la plateforme ; portable/tablette/telephone deviennent des
+consommateurs.
+
+Contraintes imperatives pour le portable :
+- Doit demarrer et fournir ses capacites locales **sans Internet et sans
+  serveur distant**, avec les ressources locales necessaires deja preparees.
+- Le demarrage ne doit exiger **ni authentification distante, ni
+  telechargement indispensable a la volee, ni appel IA externe**.
+- Cela ne promet pas l'usage d'un fournisseur externe hors ligne, ni un
+  traitement local si le modele necessaire manque.
+
+```text
+Portable autonome
+  |- future application locale
+  |- future instance PostgreSQL locale
+  `- ressources locales prealablement disponibles
+         |
+         | synchronisation applicative autorisee
+         | uniquement pour les donnees compatibles
+         v
+Futur serveur
+  `- instance PostgreSQL prevue
+```
+
+Le serveur ne doit jamais devenir une dependance du fonctionnement local. Son
+hebergement et ses mecanismes d'acces restent a concevoir - ce schema decrit
+une cible, aucun service demarre ni protocole retenu a ce jour.
+
+Si un moteur choisi est indisponible, l'operation s'arrete ; seul un choix
+explicite de l'utilisateur permet de basculer sur un autre moteur.
+
+## Stack technique (decidee le 2026-09-13)
+
+- **Next.js (App Router) + TypeScript** : API et frontend dans un seul
+  langage, adapte aux besoins exprimes (API, graphiques, appels systeme,
+  reactivite, responsive design).
+- **Tailwind CSS** pour le responsive design.
+- **Recharts** pour les graphiques.
+- **Prisma** pour l'acces PostgreSQL et la discipline de migrations.
+- Les appels systeme (side Agents) s'executent cote serveur (route handlers
+  Next.js / Node.js), jamais cote navigateur.
+
+Node.js n'est pas installe sur ce poste au moment de la creation du socle.
+L'installation du runtime est a l'initiative explicite de l'utilisateur (voir
+`docs/ARCHITECTURE.md` pour la commande proposee).
+
+## Etat d'avancement
+
+- 2026-09-13 : creation du socle (arborescence, gouvernance, configuration,
+  squelette Cockpit/Agents vide, worktrees dev/test/prod). Aucune
+  fonctionnalite metier livree. Aucun tag de version cree (aucune validation
+  explicite d'environnement n'a encore eu lieu).

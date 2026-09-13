@@ -1,0 +1,61 @@
+// Schema Prisma - EJAH (Ecosysteme de Jonction et d'Assistance Humaine)
+// Une base PostgreSQL 18 dediee par environnement (voir config/.env.*.example).
+// Regle de base : aucune suppression sans accord explicite de l'utilisateur.
+// -> les modeles ci-dessous ne doivent pas etre exposes derriere un DELETE
+//    sans confirmation explicite au niveau applicatif.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Historique des actions realisees sur la plateforme (Cockpit + Agents)
+model ActionHistory {
+  id          String   @id @default(cuid())
+  occurredAt  DateTime @default(now())
+  universe    String   // "cockpit" | "agents"
+  actionType  String
+  description String
+  payload     Json?
+  createdBy   String?  // identifiant utilisateur, ex: adresse email
+
+  @@index([occurredAt])
+  @@index([universe])
+  @@map("action_history")
+}
+
+// Historique des deploiements par environnement (dev / test / prod)
+model DeploymentHistory {
+  id          String   @id @default(cuid())
+  occurredAt  DateTime @default(now())
+  environment String   // "dev" | "test" | "prod"
+  version     String   // ex: "1.0" - correspond au tag git
+  gitTag      String?
+  gitBranch   String
+  validatedBy String?  // identifiant utilisateur ayant valide explicitement
+  notes       String?
+
+  @@index([occurredAt])
+  @@index([environment])
+  @@map("deployment_history")
+}
+
+// Menus de la plateforme (Cockpit / Agents)
+model MenuItem {
+  id        String     @id @default(cuid())
+  universe  String     // "cockpit" | "agents"
+  label     String
+  path      String
+  icon      String?
+  order     Int        @default(0)
+  parentId  String?
+  parent    MenuItem?  @relation("MenuItemChildren", fields: [parentId], references: [id])
+  children  MenuItem[] @relation("MenuItemChildren")
+
+  @@index([universe])
+  @@map("menu_item")
+}
