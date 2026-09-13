@@ -238,3 +238,9 @@ zero sans consulter ces fichiers.
 - 2026-09-13 : depot pousse sur `origin` (GitHub, 3 branches). Les 3 bases
   PostgreSQL (`pf_ejah_db_dev`, `pf_ejah_db_test`, `pf_ejah_db`) ont ete
   creees par l'utilisateur. Le portage des maquettes UI reste a faire.
+- 2026-09-13 : premiere validation explicite de l'utilisateur sur les 3
+  environnements. Version majeure **1.0** creee et taguee (points de
+  rollback) : `dev-v1.0` (`a5a9ebf`), `test-v1.0` (`d194778`),
+  `prod-v1.0` (`767ede1`) - pousses sur `origin`. Perimetre valide : socle
+  applicatif complet (voir sections precedentes), aucune fonctionnalite
+  Cockpit/Agents.
