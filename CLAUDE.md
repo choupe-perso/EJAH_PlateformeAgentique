@@ -81,6 +81,10 @@ pour la liste des cles attendues (sans valeurs).
 
 ## Git
 
+- Depot distant (sauvegarde) : `origin` ->
+  https://github.com/choupe-perso/EJAH_PlateformeAgentique.git - un seul
+  depot GitHub, les 3 branches y sont poussees (pas de depot separe par
+  environnement).
 - Branche `dev` : travail de developpement avec l'IA.
 - Branche `test` : version que l'utilisateur teste.
 - Branche `main` : production.
@@ -170,13 +174,29 @@ explicite de l'utilisateur permet de basculer sur un autre moteur.
 - Les appels systeme (side Agents) s'executent cote serveur (route handlers
   Next.js / Node.js), jamais cote navigateur.
 
-Node.js n'est pas installe sur ce poste au moment de la creation du socle.
-L'installation du runtime est a l'initiative explicite de l'utilisateur (voir
-`docs/ARCHITECTURE.md` pour la commande proposee).
+Node.js (v24.19.0 LTS) a ete installe le 2026-09-13 via winget, a
+l'initiative de l'utilisateur.
+
+## Maquettes UI (reference future)
+
+Des maquettes HTML autonomes existent deja, une par environnement, dans
+`LocalClaudeProjects/UIDesigner/` (`ejah-template-dev.html`,
+`ejah-template-test.html`, `ejah-template-prod.html`, plus
+`ejah-template-prod.md` qui decrit la structure). Elles definissent un
+systeme de design complet (typographies, header sticky, onglets
+Cockpit/Agents, galerie de composants de formulaire, footer a frises
+chronologiques) qui doit servir de reference fidele lors du portage de
+l'interface reelle (etape non demarree). Ne pas redessiner l'UI a partir de
+zero sans consulter ces fichiers.
 
 ## Etat d'avancement
 
 - 2026-09-13 : creation du socle (arborescence, gouvernance, configuration,
-  squelette Cockpit/Agents vide, worktrees dev/test/prod). Aucune
-  fonctionnalite metier livree. Aucun tag de version cree (aucune validation
-  explicite d'environnement n'a encore eu lieu).
+  squelette Cockpit/Agents vide, worktrees dev/test/prod). npm install
+  verifie (client Prisma genere), typecheck OK, serveur de dev demarre et
+  rend les pages placeholder. Aucune fonctionnalite metier livree. Aucun tag
+  de version cree (aucune validation explicite d'environnement n'a encore eu
+  lieu).
+- 2026-09-13 : depot pousse sur `origin` (GitHub, 3 branches). Les 3 bases
+  PostgreSQL (`pf_ejah_db_dev`, `pf_ejah_db_test`, `pf_ejah_db`) ont ete
+  creees par l'utilisateur. Le portage des maquettes UI reste a faire.
