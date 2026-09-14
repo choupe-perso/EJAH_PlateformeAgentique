@@ -2,7 +2,9 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Jetons de couleur repris fidelement de UIDesigner/ejah-template-*.html */
+/* Jetons de couleur - palette DEV, reprise de ejah-template-dev.html.
+   Ce fichier differe intentionnellement par branche (meme principe que
+   deployment/*.bat) : TEST et PROD ont leur propre palette d'accent. */
 :root {
   --ink: #241a16;
   --ink-soft: #8a7a72;
