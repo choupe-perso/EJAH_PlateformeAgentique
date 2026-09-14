@@ -32,7 +32,7 @@ export function FooterSignature({
         src="/logo.png"
         alt="EJAH"
         width={110}
-        height={90}
+        height={110}
         className="mx-auto mb-2.5 block h-auto w-[110px] opacity-90"
       />
       <p className="m-0 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft2)]">
