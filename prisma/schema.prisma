@@ -59,3 +59,48 @@ model MenuItem {
   @@index([universe])
   @@map("menu_item")
 }
+
+enum TodoTransportType {
+  rdv
+  email
+  prompt
+}
+
+enum TodoTransportStatut {
+  active
+  archivee
+}
+
+// Agent "Taches" (univers Agents > Perso > Taches) - migre depuis l'ancienne
+// plateforme Flask (agents/todos_transport). Une table unique avec des
+// colonnes prefixees par type (rdv_*, email_*, prompt_*), laissees NULL pour
+// les types non concernes - meme choix assume que l'original : usage
+// strictement personnel, volume de donnees faible.
+model TodoTransport {
+  id       String              @id @default(cuid())
+  type     TodoTransportType
+  titre    String
+  statut   TodoTransportStatut @default(active)
+  creeLe   DateTime            @default(now()) @map("cree_le")
+  traiteLe DateTime?           @map("traite_le")
+
+  // rdv_date_debut : TIMESTAMP sans fuseau (heure "mur" flottante) - voir
+  // src/shared/ics.ts, meme convention que l'agent Voyages a venir.
+  rdvDateDebut     DateTime? @map("rdv_date_debut") @db.Timestamp(6)
+  rdvDureeMinutes  Int?      @map("rdv_duree_minutes")
+  rdvAlerteMinutes Int?      @map("rdv_alerte_minutes")
+  rdvDescription   String?   @map("rdv_description")
+
+  emailDestinataire String? @map("email_destinataire")
+  emailNotesBrutes  String? @map("email_notes_brutes")
+  emailTexte        String? @map("email_texte")
+
+  promptIa          String? @map("prompt_ia")
+  promptProjet      String? @map("prompt_projet")
+  promptNotesBrutes String? @map("prompt_notes_brutes")
+  promptTexte       String? @map("prompt_texte")
+
+  @@index([statut])
+  @@index([type])
+  @@map("todos_transport")
+}
