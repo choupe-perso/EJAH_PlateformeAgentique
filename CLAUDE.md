@@ -107,13 +107,16 @@ pour la liste des cles attendues (sans valeurs).
   environnement donne, creer une version majeure `X.0` et un tag git
   correspondant, pour permettre un rollback a tout moment. Ne jamais tagger
   automatiquement sans validation explicite de l'utilisateur.
-- **Exception assumee** : `deployment/restart.bat`, `deployment/stop.bat` et
-  `deployment/_run.bat` different intentionnellement de contenu entre les 3
-  branches (port et commande propres a chaque environnement - voir leur
-  propre `deployment/README.md`). Un futur merge `dev` -> `test` -> `main`
-  produira normalement un conflit sur ces 3 fichiers : c'est attendu,
-  toujours garder la version de la branche cible, ne jamais ecraser avec
-  celle de la branche source.
+- **Exception assumee** : `deployment/restart.bat`, `deployment/stop.bat`,
+  `deployment/_run.bat` et `src/styles/globals.css` (jetons de couleur
+  `:root`) different intentionnellement de contenu entre les 3 branches
+  (port/commande, et palette d'accent propres a chaque environnement -
+  voir `UIDesigner/ejah-template-{dev,test,prod}.html`, qui ont chacun
+  leur propre palette : DEV cyan/jaune, TEST vert/citron, PROD
+  orange/rose/violet). Un futur merge `dev` -> `test` -> `main` produira
+  normalement un conflit sur ces fichiers : c'est attendu, toujours garder
+  la version de la branche cible, ne jamais ecraser avec celle de la
+  branche source.
 - Les fichiers de configuration contenant des comptes d'authentification sont
   suivis sous git **sans valeurs** (uniquement les cles). Les fichiers reels
   contenant des valeurs sont dans `.gitignore` et ne doivent jamais etre
