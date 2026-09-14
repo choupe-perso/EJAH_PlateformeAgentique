@@ -224,8 +224,22 @@ Des maquettes HTML autonomes existent deja, une par environnement, dans
 systeme de design complet (typographies, header sticky, onglets
 Cockpit/Agents, galerie de composants de formulaire, footer a frises
 chronologiques) qui doit servir de reference fidele lors du portage de
-l'interface reelle (etape non demarree). Ne pas redessiner l'UI a partir de
-zero sans consulter ces fichiers.
+l'interface reelle. Ne pas redessiner l'UI a partir de zero sans consulter
+ces fichiers.
+
+**Etat du portage (2026-09-14)** : l'integralite de `ejah-template-dev.html`
+a ete portee et validee sur la page cachee `/gabarit` (non reliee a la
+navigation, non indexee) - header, KPI, mini-graphiques par agent,
+repartition des statuts, liste d'agents (4 etats de bouton), galerie
+complete de formulaire (12 types de champs), footer (dates, 2 frises
+chronologiques, signature). Composants reutilisables dans `src/components/`
+(racine, `form/`, `footer/`). `/gabarit` sert desormais de source pour
+construire les vraies pages `/cockpit` et `/agents` (etape non demarree).
+
+**Omission assumee** : la maquette HTML contient aussi une barre laterale
+de navigation (`aside.sidebar`, categories repliables) qui n'est pas
+decrite dans `ejah-template-prod.md` et n'a pas ete portee. A statuer
+explicitement avec l'utilisateur avant de la construire.
 
 ## Etat d'avancement
 
@@ -244,3 +258,10 @@ zero sans consulter ces fichiers.
   `prod-v1.0` (`767ede1`) - pousses sur `origin`. Perimetre valide : socle
   applicatif complet (voir sections precedentes), aucune fonctionnalite
   Cockpit/Agents.
+- 2026-09-14 : portage complet de `ejah-template-dev.html` sur la page
+  cachee `/gabarit` (6 tranches : header, KPI, mini-graphiques,
+  statuts/liste d'agents, galerie de formulaire, footer). Header egalement
+  integre au layout global (visible sur toutes les pages reelles). Les
+  vraies pages `/cockpit` et `/agents` restent des placeholders - le
+  portage vers ces pages reelles n'a pas commence. Aucun tag de version
+  cree (pas de validation explicite d'environnement pour ce travail).
