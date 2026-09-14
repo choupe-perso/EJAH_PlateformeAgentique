@@ -276,7 +276,20 @@ explicitement avec l'utilisateur avant de la construire.
 - 2026-09-14 : portage complet de `ejah-template-dev.html` sur la page
   cachee `/gabarit` (6 tranches : header, KPI, mini-graphiques,
   statuts/liste d'agents, galerie de formulaire, footer). Header egalement
-  integre au layout global (visible sur toutes les pages reelles). Les
-  vraies pages `/cockpit` et `/agents` restent des placeholders - le
-  portage vers ces pages reelles n'a pas commence. Aucun tag de version
-  cree (pas de validation explicite d'environnement pour ce travail).
+  integre au layout global (visible sur toutes les pages reelles).
+- 2026-09-15 : construction des vraies pages `/cockpit` et `/agents` avec
+  les composants valides sur `/gabarit` (etat vide, sans donnees de
+  demonstration). Menu `/agents` reel (Toolkit/Perso). Fix `/api/health`.
+- 2026-09-15 : validation explicite de l'utilisateur sur TEST, merge
+  `test` -> `main`. Version majeure **2.0** creee et taguee : `test-v2.0`,
+  `prod-v2.0`.
+- 2026-09-15 : correctif de fidelite couleur (3 valeurs codees en dur
+  ratees lors du portage initial, decouvertes en diffant integralement
+  les 3 fichiers `ejah-template-*.html` plutot que seulement leurs jetons
+  `:root`) : `--topbar-mid` (couleur intermediaire du degrade du
+  bandeau), `--tint-active-bg` (fond actif clair), `--btn-action-bg`
+  (bouton d'action principal - fixe en orange sur TEST meme si le theme
+  est vert, particularite assumee de la maquette). Applique et verifie
+  sur les 3 environnements. Validation explicite de l'utilisateur,
+  version majeure **3.0** creee et taguee : `dev-v3.0`, `test-v3.0`,
+  `prod-v3.0` - pousses sur `origin`.
