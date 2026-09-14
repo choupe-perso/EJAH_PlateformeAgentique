@@ -25,7 +25,7 @@ export function Header({ environment }: { environment: AppEnvironment | null }) 
         <span className="max-[720px]:hidden">Donnees non chargees</span>
       </div>
 
-      <div className="relative flex items-center justify-between gap-3 bg-[linear-gradient(100deg,var(--orange)_0%,#59C6E2_45%,var(--rose)_100%)] px-4 py-3.5 sm:px-7">
+      <div className="relative flex items-center justify-between gap-3 bg-[linear-gradient(100deg,var(--orange)_0%,var(--topbar-mid)_45%,var(--rose)_100%)] px-4 py-3.5 sm:px-7">
         <Link href="/" className="flex flex-none items-center gap-2.5">
           <img
             src="/favicon.png"
@@ -96,7 +96,7 @@ export function Header({ environment }: { environment: AppEnvironment | null }) 
                 className={
                   "rounded-[9px] px-3.5 py-3 text-left text-[14.5px] font-semibold " +
                   (isActive(item.href)
-                    ? "bg-[#E1F5EC] text-[var(--orange-deep)]"
+                    ? "bg-[var(--tint-active-bg)] text-[var(--orange-deep)]"
                     : "text-[var(--ink)]")
                 }
               >

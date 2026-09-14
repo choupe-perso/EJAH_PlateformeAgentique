@@ -22,7 +22,7 @@ export function Dropzone({ fileName }: { fileName?: string }) {
         ou cliquez pour parcourir · CSV, XLSX
       </span>
       {fileName && (
-        <span className="mt-[9px] inline-flex items-center gap-1.5 rounded-full bg-[#E1F5EC] px-2.5 py-1 font-[var(--font-ibm-plex-mono)] text-[10.5px] text-[var(--orange-deep)]">
+        <span className="mt-[9px] inline-flex items-center gap-1.5 rounded-full bg-[var(--tint-active-bg)] px-2.5 py-1 font-[var(--font-ibm-plex-mono)] text-[10.5px] text-[var(--orange-deep)]">
           {fileName}
         </span>
       )}

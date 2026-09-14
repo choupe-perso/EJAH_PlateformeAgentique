@@ -1,8 +1,8 @@
 import type { ReactNode } from "react";
 
 const VARIANT_CLASSES = {
-  primary: "bg-[var(--orange)] text-white",
-  loading: "bg-[var(--orange)] text-white opacity-55 cursor-not-allowed",
+  primary: "bg-[var(--btn-action-bg)] text-white",
+  loading: "bg-[var(--btn-action-bg)] text-white opacity-55 cursor-not-allowed",
   success: "bg-[var(--good)] text-white",
   error: "bg-[var(--critical)] text-white",
 } as const;

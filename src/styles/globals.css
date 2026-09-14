@@ -23,6 +23,9 @@
   --util-bg: #e4e7f0;
   --util-cell: #c7cde2;
   --util-ink: #223a6e;
+  --topbar-mid: #5a9d5d;
+  --tint-active-bg: #e1f5ec;
+  --btn-action-bg: #ff6a00;
 }
 
 .spin {
