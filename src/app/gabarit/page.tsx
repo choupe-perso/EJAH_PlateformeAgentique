@@ -1,4 +1,7 @@
 import type { Metadata } from "next";
+import { SectionHead } from "@/components/SectionHead";
+import { ActionButton } from "@/components/ActionButton";
+import { KpiTile } from "@/components/KpiTile";
 
 export const metadata: Metadata = {
   title: "Gabarit — reference UI (EJAH)",
@@ -16,12 +19,40 @@ export default function GabaritPage() {
       </p>
 
       <section>
-        <h1 className="font-[var(--font-sora)] text-xl font-bold">
-          Cockpit
-        </h1>
+        <SectionHead
+          eyebrow="Vue d'ensemble"
+          title="Cockpit de pilotage"
+          action={
+            <ActionButton
+              icon={
+                <svg
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth={2.2}
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  width={15}
+                  height={15}
+                >
+                  <path d="M9 6l6 6-6 6" />
+                </svg>
+              }
+            >
+              Lancer un agent
+            </ActionButton>
+          }
+        />
+
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <KpiTile label="Agents actifs" value="12" trend="+3 aujourd'hui" trendUp />
+          <KpiTile label="Tâches en file" value="47" trend="stable" />
+          <KpiTile label="Taux de succès" value="94%" trend="+2 pts" trendUp />
+        </div>
+
         <p className="mt-2 text-sm text-[var(--ink-soft)]">
-          (a venir : tuiles KPI, mini-graphiques par agent, repartition des
-          statuts, liste d&apos;agents)
+          (a venir : mini-graphiques par agent, repartition des statuts,
+          liste d&apos;agents)
         </p>
       </section>
 
