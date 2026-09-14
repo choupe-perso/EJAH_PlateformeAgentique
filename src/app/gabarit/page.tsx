@@ -3,6 +3,17 @@ import { SectionHead } from "@/components/SectionHead";
 import { ActionButton } from "@/components/ActionButton";
 import { KpiTile } from "@/components/KpiTile";
 import { MiniTrendChart } from "@/components/MiniTrendChart";
+import { StatusBreakdown } from "@/components/StatusBreakdown";
+import { AgentList, AgentRow } from "@/components/AgentList";
+import { UtilityIconButton } from "@/components/UtilityIconButton";
+import {
+  ArrowRightIcon,
+  SpinnerIcon,
+  CheckIcon,
+  ErrorIcon,
+  CopyIcon,
+  DownloadIcon,
+} from "@/components/icons";
 
 export const metadata: Metadata = {
   title: "Gabarit — reference UI (EJAH)",
@@ -24,24 +35,7 @@ export default function GabaritPage() {
           eyebrow="Vue d'ensemble"
           title="Cockpit de pilotage"
           action={
-            <ActionButton
-              icon={
-                <svg
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth={2.2}
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  width={15}
-                  height={15}
-                >
-                  <path d="M9 6l6 6-6 6" />
-                </svg>
-              }
-            >
-              Lancer un agent
-            </ActionButton>
+            <ActionButton icon={<ArrowRightIcon />}>Lancer un agent</ActionButton>
           }
         />
 
@@ -93,9 +87,54 @@ export default function GabaritPage() {
           />
         </div>
 
-        <p className="mt-2 text-sm text-[var(--ink-soft)]">
-          (a venir : repartition des statuts, liste d&apos;agents)
-        </p>
+        <StatusBreakdown
+          title="Statuts d'exécution (7 jours)"
+          segments={[
+            { label: "Succès", value: 402, color: "var(--good)" },
+            { label: "En cours", value: 62, color: "var(--warn)" },
+            { label: "Erreur", value: 51, color: "var(--critical)" },
+          ]}
+        />
+
+        <div className="mb-2.5 text-xs font-semibold text-[var(--ink-soft)]">
+          Agents
+        </div>
+        <AgentList>
+          <AgentRow name="Agent Facturation" dotColor="#8A7A72" meta="prêt">
+            <ActionButton icon={<ArrowRightIcon />}>Lancer l&apos;agent</ActionButton>
+            <UtilityIconButton title="Copier" icon={<CopyIcon />} />
+          </AgentRow>
+          <AgentRow name="Agent Support" dotColor="var(--warn)" meta="en cours">
+            <ActionButton variant="loading" icon={<SpinnerIcon />}>
+              Traitement…
+            </ActionButton>
+            <UtilityIconButton title="Copier" icon={<CopyIcon />} />
+          </AgentRow>
+          <AgentRow
+            name="Agent Import"
+            dotColor="var(--good)"
+            meta="terminé il y a 2 min"
+          >
+            <ActionButton variant="success" icon={<CheckIcon />}>
+              Terminé
+            </ActionButton>
+            <UtilityIconButton
+              title="Télécharger le résultat"
+              icon={<DownloadIcon />}
+            />
+          </AgentRow>
+          <AgentRow
+            name="Agent Onboarding"
+            dotColor="var(--critical)"
+            meta="échec il y a 12 min"
+          >
+            <ActionButton variant="error" icon={<ErrorIcon />}>
+              Échec
+            </ActionButton>
+            <UtilityIconButton title="Copier le journal d'erreur" icon={<CopyIcon />} />
+            <UtilityIconButton title="Télécharger le journal" icon={<DownloadIcon />} />
+          </AgentRow>
+        </AgentList>
       </section>
 
       <section className="mt-12">
