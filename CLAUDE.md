@@ -281,3 +281,9 @@ explicitement avec l'utilisateur avant de la construire.
   les composants valides sur `/gabarit` (etat vide, sans donnees de
   demonstration). Menu `/agents` reel (Toolkit/Perso). Fix `/api/health`
   (voir plus haut). Merge `dev` -> `test` le 2026-09-15.
+- 2026-09-15 : validation explicite de l'utilisateur sur TEST, merge
+  `test` -> `main`. Version majeure **2.0** creee et taguee : `test-v2.0`,
+  `prod-v2.0` - pousses sur `origin`. Verifie sur PROD : build + demarrage
+  reussis (port 3002), palette de couleurs PROD (orange/rose/violet)
+  correcte a l'ecran. Perimetre valide : interface complete (header,
+  `/gabarit`, vraies pages `/cockpit`/`/agents` avec menu Toolkit/Perso).
