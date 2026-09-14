@@ -15,26 +15,11 @@ export default function AgentsPage() {
     <div className="flex items-start">
       <Sidebar>
         <SidebarCategory label="Toolkit" color="var(--orange)" icon={<GearIcon size={14} />}>
-          <SidebarLeaf
-            icon={<PuzzleIcon size={13} />}
-            bg="#D8C9BE"
-            fg="#5C4F49"
-            label="Génériques"
-          />
+          <SidebarLeaf icon={<PuzzleIcon size={13} />} label="Génériques" />
         </SidebarCategory>
         <SidebarCategory label="Perso" color="var(--violet)" icon={<PersonIcon />}>
-          <SidebarLeaf
-            icon={<TrainIcon size={13} />}
-            bg="#D8C9BE"
-            fg="#5C4F49"
-            label="Voyages"
-          />
-          <SidebarLeaf
-            icon={<ChecklistIcon size={13} />}
-            bg="#D8C9BE"
-            fg="#5C4F49"
-            label="Tâches"
-          />
+          <SidebarLeaf icon={<TrainIcon size={13} />} label="Voyages" />
+          <SidebarLeaf icon={<ChecklistIcon size={13} />} label="Tâches" />
         </SidebarCategory>
       </Sidebar>
 
