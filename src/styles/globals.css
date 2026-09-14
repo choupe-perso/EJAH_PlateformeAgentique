@@ -1,3 +1,40 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+/* Jetons de couleur - palette PROD, reprise de ejah-template-prod.html.
+   Ce fichier differe intentionnellement par branche (meme principe que
+   deployment/*.bat) : DEV et TEST ont leur propre palette d'accent. */
+:root {
+  --ink: #241a16;
+  --ink-soft: #8a7a72;
+  --ink-soft2: #a6968d;
+  --line: #ece1d9;
+  --canvas: #faf5f1;
+  --card: #ffffff;
+  --orange: #ff6a00;
+  --orange-deep: #c9430a;
+  --rose: #ff3d8a;
+  --violet: #6c3ce9;
+  --violet-deep: #5227b8;
+  --good: #1e8e5a;
+  --warn: #e2a400;
+  --critical: #d8443c;
+  --util-bg: #e2e6fc;
+  --util-cell: #c7cef7;
+  --util-ink: #3244b8;
+}
+
+.spin {
+  animation: spin 0.8s linear infinite;
+}
+@media (prefers-reduced-motion: reduce) {
+  .spin {
+    animation: none;
+  }
+}
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
