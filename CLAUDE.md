@@ -49,9 +49,21 @@ Deux grands univers structurent la plateforme :
 - **Cockpit** : indicateurs de pilotage de l'utilisateur.
 - **Agents** : outils et agents specialises.
 
-Aucun indicateur ni agent metier n'est defini a ce stade (socle uniquement,
-2026-09-13). Les besoins detailles seront definis lors d'etapes ulterieures
-explicitement autorisees.
+Aucun indicateur n'est encore defini pour Cockpit (2026-09-13).
+
+Le menu de navigation d'Agents (`/agents`, barre laterale) a ete defini le
+2026-09-15 :
+
+```text
+Toolkit
+  |_ Generiques
+Perso
+  |_ Voyages
+  |_ Taches
+```
+
+Ce sont des categories de menu, pas encore des agents reels - aucun agent
+n'est encore defini a l'interieur.
 
 ## Environnements
 
@@ -227,8 +239,22 @@ Des maquettes HTML autonomes existent deja, une par environnement, dans
 systeme de design complet (typographies, header sticky, onglets
 Cockpit/Agents, galerie de composants de formulaire, footer a frises
 chronologiques) qui doit servir de reference fidele lors du portage de
-l'interface reelle (etape non demarree). Ne pas redessiner l'UI a partir de
-zero sans consulter ces fichiers.
+l'interface reelle. Ne pas redessiner l'UI a partir de zero sans consulter
+ces fichiers.
+
+**Etat du portage (2026-09-14)** : l'integralite de `ejah-template-dev.html`
+a ete portee et validee sur la page cachee `/gabarit` (non reliee a la
+navigation, non indexee) - header, KPI, mini-graphiques par agent,
+repartition des statuts, liste d'agents (4 etats de bouton), galerie
+complete de formulaire (12 types de champs), footer (dates, 2 frises
+chronologiques, signature). Composants reutilisables dans `src/components/`
+(racine, `form/`, `footer/`). `/gabarit` sert desormais de source pour
+construire les vraies pages `/cockpit` et `/agents` (etape non demarree).
+
+**Omission assumee** : la maquette HTML contient aussi une barre laterale
+de navigation (`aside.sidebar`, categories repliables) qui n'est pas
+decrite dans `ejah-template-prod.md` et n'a pas ete portee. A statuer
+explicitement avec l'utilisateur avant de la construire.
 
 ## Etat d'avancement
 
@@ -247,3 +273,11 @@ zero sans consulter ces fichiers.
   `prod-v1.0` (`767ede1`) - pousses sur `origin`. Perimetre valide : socle
   applicatif complet (voir sections precedentes), aucune fonctionnalite
   Cockpit/Agents.
+- 2026-09-14 : portage complet de `ejah-template-dev.html` sur la page
+  cachee `/gabarit` (6 tranches : header, KPI, mini-graphiques,
+  statuts/liste d'agents, galerie de formulaire, footer). Header egalement
+  integre au layout global (visible sur toutes les pages reelles).
+- 2026-09-15 : construction des vraies pages `/cockpit` et `/agents` avec
+  les composants valides sur `/gabarit` (etat vide, sans donnees de
+  demonstration). Menu `/agents` reel (Toolkit/Perso). Fix `/api/health`
+  (voir plus haut). Merge `dev` -> `test` le 2026-09-15.
