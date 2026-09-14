@@ -2,6 +2,8 @@ import { NextResponse } from "next/server";
 import { prisma } from "@/data/db";
 import { appEnvironment } from "@/shared/env";
 
+export const dynamic = "force-dynamic";
+
 export async function GET() {
   const environment = appEnvironment();
 
