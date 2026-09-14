@@ -287,3 +287,13 @@ explicitement avec l'utilisateur avant de la construire.
   reussis (port 3002), palette de couleurs PROD (orange/rose/violet)
   correcte a l'ecran. Perimetre valide : interface complete (header,
   `/gabarit`, vraies pages `/cockpit`/`/agents` avec menu Toolkit/Perso).
+- 2026-09-15 : correctif de fidelite couleur (3 valeurs codees en dur
+  ratees lors du portage initial, decouvertes en diffant integralement
+  les 3 fichiers `ejah-template-*.html` plutot que seulement leurs jetons
+  `:root`) : `--topbar-mid` (couleur intermediaire du degrade du
+  bandeau), `--tint-active-bg` (fond actif clair), `--btn-action-bg`
+  (bouton d'action principal - fixe en orange sur TEST meme si le theme
+  est vert, particularite assumee de la maquette). Applique et verifie
+  sur les 3 environnements. Validation explicite de l'utilisateur,
+  version majeure **3.0** creee et taguee : `dev-v3.0`, `test-v3.0`,
+  `prod-v3.0` - pousses sur `origin`.
