@@ -22,6 +22,19 @@ import { CardOption } from "@/components/form/CardSelectField";
 import { Dropzone } from "@/components/form/Dropzone";
 import { StarRating } from "@/components/form/StarRating";
 import { MoodRating } from "@/components/form/MoodRating";
+import { DateChip } from "@/components/footer/DateChip";
+import {
+  Timeline,
+  DeploymentTimelineItem,
+  ActionTimelineItem,
+} from "@/components/footer/Timeline";
+import { HistPanel } from "@/components/footer/HistPanel";
+import {
+  Footer,
+  FooterDates,
+  FooterHistCols,
+  FooterSignature,
+} from "@/components/footer/Footer";
 
 export const metadata: Metadata = {
   title: "Gabarit — reference UI (EJAH)",
@@ -30,6 +43,7 @@ export const metadata: Metadata = {
 
 export default function GabaritPage() {
   return (
+    <>
     <main className="mx-auto max-w-5xl px-4 py-10 sm:px-7">
       <p className="mb-8 rounded-lg border border-[var(--line)] bg-white px-4 py-3 text-sm text-[var(--ink-soft)]">
         Page de reference interne, non reliee a la navigation. Chaque
@@ -267,5 +281,68 @@ export default function GabaritPage() {
         </div>
       </section>
     </main>
+
+      <Footer>
+        <FooterDates>
+          <DateChip
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <rect x={3} y={5} width={18} height={16} rx={2} />
+                <path d="M16 3v4M8 3v4M3 10h18" />
+              </svg>
+            }
+          >
+            Site mis à jour le <b className="text-[var(--ink)]">12/09/2026</b>
+          </DateChip>
+          <DateChip
+            icon={
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}>
+                <path d="M21 12a9 9 0 11-3-6.7" />
+                <path d="M21 3v6h-6" />
+              </svg>
+            }
+          >
+            Données rechargées <b className="text-[var(--ink)]">il y a 4 min</b>
+          </DateChip>
+        </FooterDates>
+
+        <FooterHistCols>
+          <HistPanel title="Historique des mises à jour">
+            <Timeline>
+              <DeploymentTimelineItem dotColor="#FF6A00" env="prod" version="v2.4.1" date="12/09/2026" />
+              <DeploymentTimelineItem dotColor="#16A672" env="test" version="v2.4.0" date="08/09/2026" />
+              <DeploymentTimelineItem dotColor="var(--orange)" env="dev" version="v2.4.0-rc1" date="05/09/2026" />
+              <DeploymentTimelineItem dotColor="#FF6A00" env="prod" version="v2.3.0" date="29/08/2026" />
+            </Timeline>
+          </HistPanel>
+          <HistPanel title="Historique des actions">
+            <Timeline>
+              <ActionTimelineItem
+                dotColor="var(--orange)"
+                text="Lancement de l'agent Facturation"
+                meta="Vous · 13/09 09:14"
+              />
+              <ActionTimelineItem
+                dotColor="var(--orange)"
+                text="Import de clients_q3.csv"
+                meta="Vous · 12/09 16:42"
+              />
+              <ActionTimelineItem
+                dotColor="var(--orange)"
+                text="Modification du modèle (Agent Support)"
+                meta="Vous · 12/09 11:05"
+              />
+              <ActionTimelineItem
+                dotColor="var(--orange)"
+                text="Export du rapport mensuel"
+                meta="Vous · 11/09 17:20"
+              />
+            </Timeline>
+          </HistPanel>
+        </FooterHistCols>
+
+        <FooterSignature environment="DEV" />
+      </Footer>
+    </>
   );
 }
