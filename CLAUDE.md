@@ -49,9 +49,21 @@ Deux grands univers structurent la plateforme :
 - **Cockpit** : indicateurs de pilotage de l'utilisateur.
 - **Agents** : outils et agents specialises.
 
-Aucun indicateur ni agent metier n'est defini a ce stade (socle uniquement,
-2026-09-13). Les besoins detailles seront definis lors d'etapes ulterieures
-explicitement autorisees.
+Aucun indicateur n'est encore defini pour Cockpit (2026-09-13).
+
+Le menu de navigation d'Agents (`/agents`, barre laterale) a ete defini le
+2026-09-15 :
+
+```text
+Toolkit
+  |_ Generiques
+Perso
+  |_ Voyages
+  |_ Taches
+```
+
+Ce sont des categories de menu, pas encore des agents reels - aucun agent
+n'est encore defini a l'interieur.
 
 ## Environnements
 
