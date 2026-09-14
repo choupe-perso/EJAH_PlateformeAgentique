@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { SectionHead } from "@/components/SectionHead";
 import { ActionButton } from "@/components/ActionButton";
 import { KpiTile } from "@/components/KpiTile";
+import { MiniTrendChart } from "@/components/MiniTrendChart";
 
 export const metadata: Metadata = {
   title: "Gabarit — reference UI (EJAH)",
@@ -50,9 +51,50 @@ export default function GabaritPage() {
           <KpiTile label="Taux de succès" value="94%" trend="+2 pts" trendUp />
         </div>
 
+        <div className="mb-4 grid grid-cols-1 gap-3 sm:grid-cols-3">
+          <MiniTrendChart
+            label="Support"
+            value={51}
+            points={[
+              [4, 32],
+              [24, 28],
+              [44, 34],
+              [64, 22],
+              [84, 26],
+              [104, 14],
+              [124, 18],
+            ]}
+          />
+          <MiniTrendChart
+            label="Facturation"
+            value={34}
+            points={[
+              [4, 42],
+              [24, 40],
+              [44, 44],
+              [64, 36],
+              [84, 38],
+              [104, 30],
+              [124, 32],
+            ]}
+          />
+          <MiniTrendChart
+            label="Import"
+            value={19}
+            points={[
+              [4, 50],
+              [24, 48],
+              [44, 52],
+              [64, 46],
+              [84, 47],
+              [104, 42],
+              [124, 44],
+            ]}
+          />
+        </div>
+
         <p className="mt-2 text-sm text-[var(--ink-soft)]">
-          (a venir : mini-graphiques par agent, repartition des statuts,
-          liste d&apos;agents)
+          (a venir : repartition des statuts, liste d&apos;agents)
         </p>
       </section>
 
