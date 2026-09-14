@@ -1,11 +1,35 @@
+import { Sidebar } from "@/components/sidebar/Sidebar";
+import { SidebarCategory } from "@/components/sidebar/SidebarCategory";
+import { SidebarLeaf } from "@/components/sidebar/SidebarLeaf";
+import { SectionHead } from "@/components/SectionHead";
+import {
+  GearIcon,
+  PersonIcon,
+  PuzzleIcon,
+  TrainIcon,
+  ChecklistIcon,
+} from "@/components/icons";
+
 export default function AgentsPage() {
   return (
-    <main className="mx-auto max-w-4xl px-4 py-16">
-      <h1 className="text-2xl font-semibold">Agents</h1>
-      <p className="mt-2 text-sm text-slate-500">
-        Univers des outils et agents specialises. Aucun agent defini pour le
-        moment - ce module sera construit lors d&apos;une prochaine etape.
-      </p>
-    </main>
+    <div className="flex items-start">
+      <Sidebar>
+        <SidebarCategory label="Toolkit" color="var(--orange)" icon={<GearIcon size={14} />}>
+          <SidebarLeaf icon={<PuzzleIcon size={13} />} label="Génériques" />
+        </SidebarCategory>
+        <SidebarCategory label="Perso" color="var(--violet)" icon={<PersonIcon />}>
+          <SidebarLeaf icon={<TrainIcon size={13} />} label="Voyages" />
+          <SidebarLeaf icon={<ChecklistIcon size={13} />} label="Tâches" />
+        </SidebarCategory>
+      </Sidebar>
+
+      <main className="min-w-0 flex-1 px-4 py-6 sm:px-7">
+        <SectionHead eyebrow="Configuration" title="Mes Agents" />
+        <p className="text-sm text-[var(--ink-soft)]">
+          Aucun agent pour le moment - selectionnez une categorie dans le
+          menu pour commencer.
+        </p>
+      </main>
+    </div>
   );
 }
