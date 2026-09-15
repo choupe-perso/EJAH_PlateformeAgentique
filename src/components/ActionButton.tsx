@@ -5,6 +5,7 @@ const VARIANT_CLASSES = {
   loading: "bg-[var(--btn-action-bg)] text-white opacity-55 cursor-not-allowed",
   success: "bg-[var(--good)] text-white",
   error: "bg-[var(--critical)] text-white",
+  ghost: "border border-[var(--line)] bg-transparent text-[var(--ink-soft)] hover:bg-[var(--util-bg)]",
 } as const;
 
 export function ActionButton({

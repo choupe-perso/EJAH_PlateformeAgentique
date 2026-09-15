@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { ActionButton } from "@/components/ActionButton";
 import type { SpanAnonymisation } from "@/shared/anonymisationSpan";
 
@@ -27,6 +27,7 @@ function telechargerReponse(blob: Blob, nomParDefaut: string, entete: Headers) {
 }
 
 export function AnonymisationManager() {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [fichier, setFichier] = useState<File | null>(null);
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [spans, setSpans] = useState<SpanAnonymisation[] | null>(null);
@@ -35,10 +36,20 @@ export function AnonymisationManager() {
   const [anonymisation, setAnonymisation] = useState(false);
   const [restauration, setRestauration] = useState(false);
 
+  const enCours = inspection || anonymisation || restauration;
+  const rienAReinitialiser = !fichier && erreurs.length === 0 && spans === null;
+
   function choisirFichier(e: React.ChangeEvent<HTMLInputElement>) {
     setFichier(e.target.files?.[0] ?? null);
     setErreurs([]);
     setSpans(null);
+  }
+
+  function reinitialiser() {
+    setFichier(null);
+    setErreurs([]);
+    setSpans(null);
+    if (inputRef.current) inputRef.current.value = "";
   }
 
   async function inspecter() {
@@ -119,6 +130,7 @@ export function AnonymisationManager() {
         </p>
 
         <input
+          ref={inputRef}
           type="file"
           accept={FORMATS_ACCEPTES}
           onChange={choisirFichier}
@@ -146,6 +158,9 @@ export function AnonymisationManager() {
             onClick={restaurer}
           >
             Restaurer
+          </ActionButton>
+          <ActionButton variant="ghost" disabled={enCours || rienAReinitialiser} onClick={reinitialiser}>
+            Réinitialiser
           </ActionButton>
         </div>
         {fichier && !estRestaurable(fichier.name) && (
