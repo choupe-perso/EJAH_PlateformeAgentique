@@ -26,7 +26,7 @@ export function Field({
   return (
     <div
       className={
-        "flex flex-col gap-[7px] border-l-[3px] pl-[11px] " +
+        "flex flex-col gap-[7px] border-l-[3px] pl-[6px] " +
         (span2 ? "sm:col-span-2" : "")
       }
       style={{ borderColor }}
