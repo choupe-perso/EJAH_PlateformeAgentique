@@ -1,12 +1,13 @@
 import type { ReactNode } from "react";
 
-// "platform" utilise --util-ink plutot qu'une couleur fixe : --orange
-// change de teinte par environnement (cyan en DEV, vert en TEST, orange
-// en PROD) et coincidait exactement avec un cyan fixe en DEV, rendant
-// les deux liserets indiscernables. --util-ink est deja environnement-
-// specifique et toujours visuellement distinct de --orange.
+// Couleurs fixes (non liees au theme d'environnement) et volontairement
+// tres contrastees : --orange change de teinte par environnement (cyan
+// en DEV, vert en TEST, orange en PROD), donc rendait la distinction
+// Utilisateur/Plateforme peu ou pas visible selon l'environnement.
+// "Utilisateur" est toujours orange, "Plateforme" toujours bleu fonce,
+// quel que soit l'environnement.
 export const FIELD_FAMILY_COLOR = {
-  user: "var(--orange)",
+  user: "#FF6A00",
   platform: "var(--util-ink)",
 } as const;
 
@@ -24,7 +25,7 @@ export function Field({
   const borderColor = FIELD_FAMILY_COLOR[family];
   const tagClass =
     family === "user"
-      ? "bg-[#FFE4CF] text-[var(--orange-deep)]"
+      ? "bg-[#FFE4CF] text-[#C9430A]"
       : "bg-[var(--util-bg)] text-[var(--util-ink)]";
   const tagText = family === "user" ? "Utilisateur" : "Plateforme";
 
