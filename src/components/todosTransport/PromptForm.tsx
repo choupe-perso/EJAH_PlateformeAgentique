@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { ActionButton } from "@/components/ActionButton";
+import { Field } from "@/components/form/Field";
 import { TextInput, TextArea } from "@/components/form/TextInput";
 import { SelectChips } from "./SelectChips";
+import { useMinuteur } from "./useMinuteur";
 import type { NiveauPrompt } from "@/integrations/ollama/redactionTransport";
 
 const IAS = ["chatgpt", "copilot", "gemini", "claude"] as const;
@@ -15,9 +17,13 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
   const [notes, setNotes] = useState("");
   const [niveau, setNiveau] = useState<NiveauPrompt>("structure");
   const [texte, setTexte] = useState("");
+  const [champsGeneresModifiables, setChampsGeneresModifiables] = useState(false);
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [redaction, setRedaction] = useState(false);
   const [envoi, setEnvoi] = useState(false);
+
+  const enCours = redaction || envoi;
+  const dureeGeneration = useMinuteur(redaction);
 
   async function genererBrouillon() {
     setRedaction(true);
@@ -34,6 +40,7 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
         return;
       }
       setTexte(donnees.texte);
+      setChampsGeneresModifiables(false);
     } finally {
       setRedaction(false);
     }
@@ -57,11 +64,15 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
       setTitre("");
       setNotes("");
       setTexte("");
+      setChampsGeneresModifiables(false);
       onCree();
     } finally {
       setEnvoi(false);
     }
   }
+
+  const champsGeneres = texte.trim() !== "";
+  const familleGeneree = champsGeneresModifiables ? "user" : "platform";
 
   return (
     <div className="flex flex-col gap-3.5">
@@ -73,28 +84,23 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
         </ul>
       )}
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">IA cible</label>
+      <Field label="IA cible" family="user">
         <SelectChips value={ia} onChange={setIa} options={IAS.map((v) => ({ value: v, label: v }))} />
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Projet</label>
+      <Field label="Projet" family="user">
         <TextInput value={projet} onChange={(e) => setProjet(e.target.value)} />
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Titre</label>
+      <Field label="Titre" family="user" texteACopier={titre.trim() !== "" ? titre : undefined}>
         <TextInput value={titre} onChange={(e) => setTitre(e.target.value)} />
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Notes (ce que tu veux dire)</label>
+      <Field label="Notes (ce que tu veux dire)" family="user">
         <TextArea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Niveau</label>
+      <Field label="Niveau" family="user">
         <SelectChips
           value={niveau}
           onChange={setNiveau}
@@ -105,18 +111,32 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
             { value: "expert", label: "Expert" },
           ]}
         />
-      </div>
+      </Field>
 
-      <ActionButton variant={redaction ? "loading" : "primary"} disabled={redaction} onClick={genererBrouillon}>
-        Générer un brouillon
+      <ActionButton variant={redaction ? "loading" : "primary"} disabled={enCours} onClick={genererBrouillon}>
+        {redaction ? `Génération en cours… (${dureeGeneration})` : "Générer un brouillon"}
       </ActionButton>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Texte du prompt</label>
-        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} />
-      </div>
+      <Field
+        label="Texte du prompt"
+        family={familleGeneree}
+        texteACopier={champsGeneres ? texte : undefined}
+      >
+        <TextArea
+          rows={5}
+          value={texte}
+          onChange={(e) => setTexte(e.target.value)}
+          readOnly={!champsGeneresModifiables}
+        />
+      </Field>
 
-      <ActionButton variant={envoi ? "loading" : "success"} disabled={envoi} onClick={soumettre}>
+      {champsGeneres && !champsGeneresModifiables && (
+        <ActionButton variant="ghost" disabled={enCours} onClick={() => setChampsGeneresModifiables(true)}>
+          Recopier les champs dans espace utilisateur
+        </ActionButton>
+      )}
+
+      <ActionButton variant={envoi ? "loading" : "success"} disabled={enCours} onClick={soumettre}>
         Enregistrer le prompt
       </ActionButton>
     </div>

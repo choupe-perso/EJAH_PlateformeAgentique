@@ -15,6 +15,7 @@ export type Tache = {
   titre: string;
   statut: "active" | "archivee";
   creeLe: string;
+  traiteLe?: string | null;
   rdvDateDebut?: string | null;
   rdvDureeMinutes?: number | null;
   rdvAlerteMinutes?: number | null;
@@ -34,8 +35,33 @@ const ONGLET_CLASSES = (actif: boolean) =>
 
 const LIBELLE_TYPE: Record<TypeTache, string> = { rdv: "RDV", email: "Email", prompt: "Prompt" };
 
+function formaterDate(iso: string): string {
+  return new Date(iso).toLocaleString("fr-FR");
+}
+
+function DetailTache({ tache }: { tache: Tache }) {
+  return (
+    <>
+      {tache.type === "rdv" && tache.rdvDateDebut && (
+        <div className="mt-1 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft)]">
+          {formaterDate(tache.rdvDateDebut)}
+        </div>
+      )}
+      {tache.type === "email" && (
+        <div className="mt-1 text-xs text-[var(--ink-soft)]">À : {tache.emailDestinataire}</div>
+      )}
+      {tache.type === "prompt" && (
+        <div className="mt-1 text-xs text-[var(--ink-soft)]">
+          {tache.promptIa} · {tache.promptProjet}
+        </div>
+      )}
+    </>
+  );
+}
+
 export function TachesManager() {
   const [taches, setTaches] = useState<Tache[]>([]);
+  const [tachesTraitees, setTachesTraitees] = useState<Tache[]>([]);
   const [chargement, setChargement] = useState(true);
   const [erreur, setErreur] = useState<string | null>(null);
   const [type, setType] = useState<TypeTache>("rdv");
@@ -44,12 +70,26 @@ export function TachesManager() {
     setChargement(true);
     setErreur(null);
     try {
-      const reponse = await fetch("/api/agents/todos-transport/taches?statut=active");
-      const donnees = await reponse.json();
-      if (donnees.ok) {
-        setTaches(donnees.taches);
+      const [reponseActives, reponseTraitees] = await Promise.all([
+        fetch("/api/agents/todos-transport/taches?statut=active"),
+        fetch("/api/agents/todos-transport/taches?statut=archivee"),
+      ]);
+      const [donneesActives, donneesTraitees] = await Promise.all([
+        reponseActives.json(),
+        reponseTraitees.json(),
+      ]);
+      if (donneesActives.ok) {
+        setTaches(donneesActives.taches);
       } else {
-        setErreur(donnees.erreurs?.[0] ?? "Erreur inconnue.");
+        setErreur(donneesActives.erreurs?.[0] ?? "Erreur inconnue.");
+      }
+      if (donneesTraitees.ok) {
+        const triees = [...donneesTraitees.taches].sort((a: Tache, b: Tache) => {
+          const dateA = a.traiteLe ? new Date(a.traiteLe).getTime() : 0;
+          const dateB = b.traiteLe ? new Date(b.traiteLe).getTime() : 0;
+          return dateB - dateA;
+        });
+        setTachesTraitees(triees);
       }
     } catch {
       setErreur("Impossible de contacter le serveur.");
@@ -112,19 +152,10 @@ export function TachesManager() {
                     {LIBELLE_TYPE[tache.type]}
                   </span>
                   <span className="text-sm font-semibold text-[var(--ink)]">{tache.titre}</span>
-                  {tache.type === "rdv" && tache.rdvDateDebut && (
-                    <div className="mt-1 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft)]">
-                      {new Date(tache.rdvDateDebut).toLocaleString("fr-FR")}
-                    </div>
-                  )}
-                  {tache.type === "email" && (
-                    <div className="mt-1 text-xs text-[var(--ink-soft)]">À : {tache.emailDestinataire}</div>
-                  )}
-                  {tache.type === "prompt" && (
-                    <div className="mt-1 text-xs text-[var(--ink-soft)]">
-                      {tache.promptIa} · {tache.promptProjet}
-                    </div>
-                  )}
+                  <div className="mt-1 font-[var(--font-ibm-plex-mono)] text-[10px] text-[var(--ink-soft)]">
+                    Créée le {formaterDate(tache.creeLe)}
+                  </div>
+                  <DetailTache tache={tache} />
                 </div>
                 <div className="flex flex-none gap-1.5">
                   {tache.type === "rdv" && (
@@ -158,6 +189,36 @@ export function TachesManager() {
             </li>
           ))}
         </ul>
+
+        <details className="mt-5">
+          <summary className="cursor-pointer text-xs font-semibold text-[var(--ink-soft)]">
+            Tâches traitées {!chargement && `(${tachesTraitees.length})`}
+          </summary>
+
+          {!chargement && tachesTraitees.length === 0 && (
+            <p className="mt-3 text-sm text-[var(--ink-soft)]">Aucune tâche traitée pour le moment.</p>
+          )}
+
+          <ul className="mt-3 flex flex-col gap-2.5">
+            {tachesTraitees.map((tache) => (
+              <li
+                key={tache.id}
+                className="rounded-xl border border-[var(--line)] bg-[var(--card)] px-4 py-3 opacity-80"
+              >
+                <span className="mr-2 rounded-full bg-[var(--util-bg)] px-2 py-0.5 font-[var(--font-ibm-plex-mono)] text-[10px] font-semibold uppercase text-[var(--util-ink)]">
+                  {LIBELLE_TYPE[tache.type]}
+                </span>
+                <span className="text-sm font-semibold text-[var(--ink)]">{tache.titre}</span>
+                {tache.traiteLe && (
+                  <div className="mt-1 font-[var(--font-ibm-plex-mono)] text-[10px] text-[var(--ink-soft)]">
+                    Traitée le {formaterDate(tache.traiteLe)}
+                  </div>
+                )}
+                <DetailTache tache={tache} />
+              </li>
+            ))}
+          </ul>
+        </details>
       </div>
     </div>
   );

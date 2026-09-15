@@ -161,21 +161,21 @@ export function AnonymisationManager() {
         <div className="flex flex-wrap gap-2">
           <ActionButton
             variant={inspection ? "loading" : "primary"}
-            disabled={inspection || !fichier}
+            disabled={enCours || !fichier}
             onClick={inspecter}
           >
             Inspecter
           </ActionButton>
           <ActionButton
             variant={anonymisation ? "loading" : "success"}
-            disabled={anonymisation || !fichier}
+            disabled={enCours || !fichier}
             onClick={anonymiser}
           >
             Anonymiser
           </ActionButton>
           <ActionButton
             variant={restauration ? "loading" : "primary"}
-            disabled={restauration || !fichier || !estRestaurable(fichier.name)}
+            disabled={enCours || !fichier || !estRestaurable(fichier.name)}
             onClick={restaurer}
           >
             Restaurer
