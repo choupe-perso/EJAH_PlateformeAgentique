@@ -24,13 +24,7 @@ export function Field({
   const tagText = family === "user" ? "Utilisateur" : "Plateforme";
 
   return (
-    <div
-      className={
-        "flex flex-col gap-[7px] border-l-[3px] pl-[6px] " +
-        (span2 ? "sm:col-span-2" : "")
-      }
-      style={{ borderColor }}
-    >
+    <div className={"flex flex-col gap-[7px] " + (span2 ? "sm:col-span-2" : "")}>
       <span className="flex items-center gap-1.5 text-xs font-semibold text-[var(--ink-soft)]">
         {label}
         <span
@@ -42,7 +36,9 @@ export function Field({
           {tagText}
         </span>
       </span>
-      {children}
+      <div className="border-l-[3px] pl-[6px]" style={{ borderColor }}>
+        {children}
+      </div>
     </div>
   );
 }
