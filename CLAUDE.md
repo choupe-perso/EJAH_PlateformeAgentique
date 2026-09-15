@@ -304,13 +304,20 @@ explicitement avec l'utilisateur avant de la construire.
   l'utilisateur sur DEV, version majeure **4.0** creee et taguee :
   `dev-v4.0` - pousse sur `origin`. Pas encore fusionne vers
   `test`/`main`.
-- 2026-09-15 : agent Voyages - la plateforme n'accepte plus jamais
+- 2026-09-15 : agent Voyages (generateur_ics_sncf) migre depuis l'ancienne
+  plateforme Flask - recuperation des voyages SNCF Connect (Playwright sur
+  Chrome installe, authentification geree dans la fenetre ouverte) et
+  generation d'un calendrier .ics (2 VEVENT par voyage : trajet 1h avant +
+  train, alerte -1h sur chacun). La plateforme n'accepte plus jamais
   d'identifiants SNCF Connect via HTTP, a la demande explicite de
-  l'utilisateur. Ajout de `deployment/enregistrer-identifiants-sncf.mjs`
-  (script CLI autonome, a executer hors de la plateforme, qui ecrit
-  directement dans le Gestionnaire d'identifiants Windows). Suppression du
-  POST de `/api/agents/voyages/identifiants` (GET seul subsiste) et du
-  formulaire email/mot de passe de `VoyagesManager` : affichage d'un etat
-  "Valide" (sans formulaire) une fois configure, sinon instructions et
-  commande externe a executer, avec un bouton "Verifier a nouveau".
-  Committe sur `dev`, pas encore pousse ni valide par l'utilisateur.
+  l'utilisateur : nouveau script `deployment/enregistrer-identifiants-sncf.mjs`
+  (CLI autonome, a executer hors de la plateforme, ecrit directement dans le
+  Gestionnaire d'identifiants Windows) ; suppression du POST de
+  `/api/agents/voyages/identifiants` (GET seul subsiste) et du formulaire
+  email/mot de passe de `VoyagesManager`, remplaces par un etat "Valide"
+  (sans formulaire) une fois configure, sinon par les deux commandes a
+  executer (`cd "<racine>"` puis `node deployment/enregistrer-...mjs`),
+  chacune avec son propre bouton copier. Voyages trouves tries et
+  regroupes par mois. Validation explicite de l'utilisateur sur DEV,
+  version majeure **5.0** creee et taguee : `dev-v5.0` - pousse sur
+  `origin`. Pas encore fusionne vers `test`/`main`.
