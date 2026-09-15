@@ -18,7 +18,7 @@ export default function AgentsLayout({ children }: { children: ReactNode }) {
           <SidebarLeaf icon={<PuzzleIcon size={13} />} label="Génériques" />
         </SidebarCategory>
         <SidebarCategory label="Perso" color="var(--violet)" icon={<PersonIcon />}>
-          <SidebarLeaf icon={<TrainIcon size={13} />} label="Voyages" />
+          <SidebarLeaf icon={<TrainIcon size={13} />} label="Voyages" href="/agents/voyages" />
           <SidebarLeaf icon={<ChecklistIcon size={13} />} label="Tâches" href="/agents/taches" />
         </SidebarCategory>
       </Sidebar>
