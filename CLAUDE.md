@@ -98,6 +98,20 @@ Chaque worktree possede son propre `node_modules`, son propre fichier
 `config/.env.dev.example`, `config/.env.test.example`, `config/.env.prod.example`
 pour la liste des cles attendues (sans valeurs).
 
+**Piege connu (outillage IA)** : les 3 worktrees ont chacun un
+`.claude/launch.json` avec une configuration nommee `"ejah"` sur le port
+3000 (meme nom partout - seul le port differe pour test/prod). Un outil de
+preview qui resout cette config par nom sans repertoire explicite peut donc
+demarrer le **mauvais** worktree (ex. PROD au lieu de DEV) sans erreur
+visible - la page se charge, juste avec l'ancien code/l'ancienne palette
+d'un autre environnement, ce qui peut se faire passer pour des symptomes
+totalement differents (fonctionnalite absente, bouton inerte, etc.). Demarrer
+le serveur du bon worktree explicitement (`cd` dans le bon dossier avant
+`npm run dev`/`npm run start`) plutot que de se fier a une resolution par
+nom seul ; en cas de comportement inexplicable dans le navigateur de
+previsualisation, verifier en premier lieu quel repertoire (`cwd`) sert
+reellement la page.
+
 ## Git
 
 - Depot distant (sauvegarde) : `origin` ->
