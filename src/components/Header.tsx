@@ -32,7 +32,7 @@ export function Header({ environment }: { environment: AppEnvironment | null }) 
             alt="EJAH"
             width={30}
             height={30}
-            className="block rounded-lg"
+            className="block rounded-lg bg-white p-0.5"
           />
           <span className="font-[var(--font-sora)] text-lg font-bold tracking-tight text-white">
             EJAH
