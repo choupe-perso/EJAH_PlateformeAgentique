@@ -37,25 +37,25 @@ export function Header({
 
   return (
     <header className="sticky top-0 z-20">
-      <div className="flex items-center justify-between gap-3 border-b border-[var(--line)] bg-[var(--canvas)] px-4 py-1.5 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft)] max-[720px]:px-4 sm:px-7">
-        <span className="flex-none">
-          Site v1.0 <span className="text-[var(--violet)]">· socle</span>
-        </span>
-        <div className="flex min-w-0 items-center gap-3 max-[720px]:hidden">
-          <div className="flex min-w-0 items-center gap-1.5">
-            <span className="truncate" title={racineProjet}>
-              {racineProjet}
-            </span>
-            <button
-              type="button"
-              onClick={copierRacine}
-              aria-label="Copier le chemin racine"
-              className="flex flex-none items-center justify-center rounded p-1 text-[var(--ink-soft)] hover:bg-[var(--util-bg)] hover:text-[var(--ink)]"
-            >
-              {copie ? <CheckIcon /> : <CopyIcon />}
-            </button>
-          </div>
-          <span className="flex-none">Donnees non chargees</span>
+      <div className="border-b border-[var(--line)] bg-[var(--canvas)] px-4 py-1.5 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft)] max-[720px]:px-4 sm:px-7">
+        <div className="flex items-center justify-between gap-3">
+          <span className="flex-none">
+            Site v1.0 <span className="text-[var(--violet)]">· socle</span>
+          </span>
+          <span className="flex-none max-[720px]:hidden">Donnees non chargees</span>
+        </div>
+        <div className="mt-1 flex min-w-0 items-center gap-1.5">
+          <span className="min-w-0 flex-1 truncate" title={racineProjet}>
+            {racineProjet}
+          </span>
+          <button
+            type="button"
+            onClick={copierRacine}
+            aria-label="Copier le chemin racine"
+            className="flex flex-none items-center justify-center rounded p-1 text-[var(--ink-soft)] hover:bg-[var(--util-bg)] hover:text-[var(--ink)]"
+          >
+            {copie ? <CheckIcon /> : <CopyIcon />}
+          </button>
         </div>
       </div>
 
