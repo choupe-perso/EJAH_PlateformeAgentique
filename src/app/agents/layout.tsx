@@ -8,6 +8,7 @@ import {
   TrainIcon,
   ChecklistIcon,
   MaskIcon,
+  RadarIcon,
 } from "@/components/icons";
 
 export default function AgentsLayout({ children }: { children: ReactNode }) {
@@ -16,6 +17,7 @@ export default function AgentsLayout({ children }: { children: ReactNode }) {
       <Sidebar>
         <SidebarCategory label="Toolkit" color="var(--orange)" icon={<GearIcon size={14} />}>
           <SidebarLeaf icon={<MaskIcon size={13} />} label="Anonymisation" href="/agents/anonymisation" />
+          <SidebarLeaf icon={<RadarIcon size={13} />} label="Veille" href="/agents/veille" />
         </SidebarCategory>
         <SidebarCategory label="Perso" color="var(--violet)" icon={<PersonIcon />}>
           <SidebarLeaf icon={<TrainIcon size={13} />} label="Trajets SNCF" href="/agents/voyages" />

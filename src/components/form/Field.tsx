@@ -2,17 +2,7 @@
 
 import { useState, type ReactNode } from "react";
 import { CheckIcon, CopyIcon } from "@/components/icons";
-
-// Couleurs fixes (non liees au theme d'environnement) et volontairement
-// tres contrastees : --orange change de teinte par environnement (cyan
-// en DEV, vert en TEST, orange en PROD), donc rendait la distinction
-// Utilisateur/Plateforme peu ou pas visible selon l'environnement.
-// "Utilisateur" est toujours orange, "Plateforme" toujours bleu fonce,
-// quel que soit l'environnement.
-export const FIELD_FAMILY_COLOR = {
-  user: "#FF6A00",
-  platform: "var(--util-ink)",
-} as const;
+import { FIELD_FAMILY_COLOR } from "./fieldFamilyColor";
 
 export function Field({
   label,

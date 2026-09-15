@@ -150,3 +150,11 @@ export function MaskIcon({ size = 12 }: { size?: number }) {
     </span>
   );
 }
+
+export function RadarIcon({ size = 12 }: { size?: number }) {
+  return (
+    <span style={{ fontSize: size, lineHeight: 1 }} aria-hidden>
+      📡
+    </span>
+  );
+}

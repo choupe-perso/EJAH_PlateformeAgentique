@@ -31,3 +31,8 @@ export const racineProjet = (): string => process.cwd();
 // .env.local (APP_DISPLAY_NAME), jamais codee en dur : "EJAH" reste le nom
 // par defaut si la cle est absente (TEST/PROD notamment).
 export const nomAffiche = (): string => process.env.APP_DISPLAY_NAME?.trim() || "EJAH";
+
+// Jeton du declenchement externe de la veille (POST /api/veille/run/externe)
+// - null si non configure, auquel cas la route doit refuser toute requete
+// plutot que d'accepter un jeton vide.
+export const veilleRunToken = (): string | null => process.env.VEILLE_RUN_TOKEN?.trim() || null;
