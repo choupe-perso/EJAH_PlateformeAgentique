@@ -10,7 +10,13 @@ const NAV_ITEMS = [
   { href: "/agents", label: "Mes Agents" },
 ] as const;
 
-export function Header({ environment }: { environment: AppEnvironment | null }) {
+export function Header({
+  environment,
+  nomAffiche,
+}: {
+  environment: AppEnvironment | null;
+  nomAffiche: string;
+}) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
 
@@ -29,13 +35,13 @@ export function Header({ environment }: { environment: AppEnvironment | null }) 
         <Link href="/" className="flex flex-none items-center gap-2.5">
           <img
             src="/favicon.png"
-            alt="EJAH"
+            alt={nomAffiche}
             width={30}
             height={30}
             className="block rounded-lg bg-white p-0.5"
           />
           <span className="font-[var(--font-sora)] text-lg font-bold tracking-tight text-white">
-            EJAH
+            {nomAffiche}
           </span>
         </Link>
 

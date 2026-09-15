@@ -1,0 +1,50 @@
+"""Plain-text (.txt) handler - the original Phase 1 format, unchanged
+behavior, just relocated out of cli.py so the CLI can dispatch by format."""
+from __future__ import annotations
+
+from pathlib import Path
+
+from anonymizer.engine import AnonymizationEngine, detect_only
+from anonymizer.span import Span
+from anonymizer.vault import Vault
+
+
+def _read_text(path: Path) -> str:
+    # newline="" disables Python's universal-newline translation, so
+    # whatever line endings the file actually uses (\n, \r\n, mixed...)
+    # come through byte-for-byte instead of always becoming "\n".
+    with open(path, encoding="utf-8", newline="") as f:
+        return f.read()
+
+
+def _write_text(path: Path, text: str) -> None:
+    # newline="" likewise stops Windows from translating every "\n" in
+    # `text` into "\r\n" on write, which would silently corrupt an exact
+    # round trip on a file that used plain LF endings to start with.
+    with open(path, "w", encoding="utf-8", newline="") as f:
+        f.write(text)
+
+
+def inspect(path: Path, avec_images: bool = True) -> list[Span]:
+    # avec_images ignore : un fichier .txt ne contient jamais d'image -
+    # parametre accepte uniquement pour uniformiser la signature avec les
+    # autres handlers (voir dispatch.py).
+    return detect_only(_read_text(path))
+
+
+def anonymize(
+    path: Path, vault: Vault, out_path: Path | None = None, avec_images: bool = True
+) -> tuple[Path, list[Span]]:
+    engine = AnonymizationEngine(vault)
+    anonymized, spans = engine.anonymize(_read_text(path))
+    out_path = out_path if out_path is not None else path.with_suffix(".anon.txt")
+    _write_text(out_path, anonymized)
+    return out_path, spans
+
+
+def deanonymize(path: Path, vault: Vault, out_path: Path | None = None) -> Path:
+    engine = AnonymizationEngine(vault)
+    restored = engine.deanonymize(_read_text(path))
+    out_path = out_path if out_path is not None else path.with_suffix(".restored.txt")
+    _write_text(out_path, restored)
+    return out_path

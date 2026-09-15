@@ -53,11 +53,12 @@ Aucun indicateur n'est encore defini pour Cockpit (2026-09-13).
 
 Le menu de navigation d'Agents (`/agents`, barre laterale) a ete defini le
 2026-09-15, puis ajuste le meme jour (renommage Voyages -> Trajets SNCF,
-Taches -> TODO Offline, suppression de l'entree Generiques - Toolkit reste
-affiche vide, en attente d'un futur agent generique) :
+Taches -> TODO Offline, suppression de l'entree Generiques, puis ajout de
+l'agent Anonymisation sous Toolkit) :
 
 ```text
 Toolkit
+  |_ Anonymisation
 Perso
   |_ Trajets SNCF
   |_ TODO Offline
@@ -65,7 +66,8 @@ Perso
 
 `Trajets SNCF` (agent Voyages / generateur_ics_sncf) et `TODO Offline`
 (agent Taches / todos_transport) sont des agents reels, migres depuis
-l'ancienne plateforme Flask (voir Etat d'avancement).
+l'ancienne plateforme Flask. `Anonymisation` est un agent reel integrant un
+moteur Python vendorise (voir Etat d'avancement).
 
 ## Environnements
 
@@ -95,6 +97,20 @@ Chaque worktree possede son propre `node_modules`, son propre fichier
 `.env.local` (jamais commit) et tourne independamment sur son port. Voir
 `config/.env.dev.example`, `config/.env.test.example`, `config/.env.prod.example`
 pour la liste des cles attendues (sans valeurs).
+
+**Piege connu (outillage IA)** : les 3 worktrees ont chacun un
+`.claude/launch.json` avec une configuration nommee `"ejah"` sur le port
+3000 (meme nom partout - seul le port differe pour test/prod). Un outil de
+preview qui resout cette config par nom sans repertoire explicite peut donc
+demarrer le **mauvais** worktree (ex. PROD au lieu de DEV) sans erreur
+visible - la page se charge, juste avec l'ancien code/l'ancienne palette
+d'un autre environnement, ce qui peut se faire passer pour des symptomes
+totalement differents (fonctionnalite absente, bouton inerte, etc.). Demarrer
+le serveur du bon worktree explicitement (`cd` dans le bon dossier avant
+`npm run dev`/`npm run start`) plutot que de se fier a une resolution par
+nom seul ; en cas de comportement inexplicable dans le navigateur de
+previsualisation, verifier en premier lieu quel repertoire (`cwd`) sert
+reellement la page.
 
 ## Git
 
@@ -226,11 +242,19 @@ propre README) :
 | `docs/`             | References techniques et decisions                         | Seconde racine applicative |
 | `guide/`            | Parcours pedagogique et reproduction                        | Procedures presentees comme disponibles avant realisation |
 | `deployment/`       | Assemblage, installation et restauration futurs             | Service distant obligatoire au demarrage local |
+| `python/`           | Moteurs externes vendorises necessitant un runtime non-Node (invoques en sous-processus depuis `src/integrations/`) | Logique metier, import direct par le code TypeScript |
 
 Note : `app/` designe ici exclusivement le routeur Next.js (contrainte du
 framework, nom non modifiable). La couche d'orchestration/cas d'usage porte
 le nom `core/`, precisement pour ne pas entrer en collision avec cette
 contrainte.
+
+`python/` a ete ajoute le 2026-09-15 pour l'agent Anonymisation : un moteur
+Python (spaCy, regex, OCR local) ne peut pas etre reecrit en TypeScript sans
+perte majeure, et ne peut pas non plus etre importe par webpack - il vit
+dans son propre dossier, avec son propre environnement virtuel (jamais
+commit), et n'est atteint par la plateforme qu'en sous-processus via
+`src/integrations/<moteur>/`.
 
 ## Maquettes UI (reference future)
 
@@ -328,5 +352,54 @@ explicitement avec l'utilisateur avant de la construire.
   -> TODO Offline) et suppression de l'entree Generiques (Toolkit reste
   affiche, vide). Merge `dev` -> `test` le 2026-09-15 (deuxieme fusion,
   inclut agents Voyages et Taches, flux d'identifiants SNCF sans HTTP,
-  regroupement des voyages par mois). Pas encore valide par l'utilisateur
-  sur TEST.
+  regroupement des voyages par mois). Verifie sur TEST : migration
+  Prisma, build production et demarrage reussis (port 3001, palette verte
+  correcte). Corrige au passage : `next build`/`next start` ne doivent
+  jamais etre lances avec les variables de `.env.local` deja preinjectees
+  dans le shell (Next les charge lui-meme) - sinon `NODE_ENV` s'en trouve
+  fige a la valeur du fichier et casse le build production (erreur
+  `useContext` sur toutes les pages) ; `next start` ne lit pas non plus
+  `PORT` depuis `.env.local`, il faut le positionner explicitement avant
+  (voir `deployment/_run.bat`, deja correct). Pas encore tague/valide par
+  l'utilisateur sur TEST.
+- 2026-09-15 : agent Anonymisation ajoute sous Toolkit - moteur Python
+  vendorise (`python/anonymizer/`, voir son propre README) portant
+  detection (regex, dictionnaires, NER spaCy `fr_core_news_lg`, OCR local
+  ONNX) et pseudonymisation reversible (vault SQLite chiffre,
+  passphrase locale via `ANONYMIZER_PASSPHRASE` dans `.env.local`, jamais
+  saisie dans la plateforme) pour fichiers `.txt`/`.docx`/`.pptx`/`.xlsx` -
+  la restauration automatique n'est disponible que pour `.txt`. Invoque en
+  sous-processus par `src/integrations/anonymizer/cli.ts` (sortie `--json`
+  ajoutee au CLI Python pour un echange structure). Fonctionne
+  entierement en local, aucun appel reseau a l'execution (seul le
+  telechargement initial du modele linguistique en a necessite un, fait
+  une fois). Verifie de bout en bout sur DEV (inspection, anonymisation,
+  restauration - aller-retour exact confirme). Corrige au passage :
+  `ActionButton` n'avait aucun style visuel pour l'etat `disabled` hors
+  variant "loading" (bouton desactive identique a actif, donc semblait
+  inerte sans explication - visible surtout sur Anonymisation ou les 3
+  actions demarrent desactivees) ; ajout de `disabled:opacity-45
+  disabled:cursor-not-allowed`, applique partout. Ajout d'un bouton
+  "Reinitialiser" (variant "ghost", nouveau) sur la page Anonymisation.
+  Nom affiche du header personnalisable via `APP_DISPLAY_NAME` dans
+  `.env.local` (retombe sur "EJAH" si absent) - DEV configure avec "Mon
+  assistante Lucile" ; scope volontairement limite au header (titre de
+  page, footer, page d'accueil et gouvernance CLAUDE.md inchanges).
+  Validation explicite de l'utilisateur sur DEV, version majeure **6.0**
+  creee et taguee : `dev-v6.0` - pousse sur `origin`. Pas encore fusionne
+  vers `test`/`main`.
+- 2026-09-15 : agent Anonymisation - option pour inclure ou non les images
+  embarquees (OCR) dans la detection, de bout en bout (flag `--no-images`
+  sur le CLI Python, parametre `avecImages` sur l'adaptateur Node et les
+  routes API, case a cocher dans l'UI - cochee par defaut, desactivee
+  pour les `.txt`). Verifie avec un `.docx` contenant une image porteuse
+  de PII (nom + telephone) : detectes quand cochee, ignores sinon.
+  Validation explicite de l'utilisateur sur DEV, version majeure **7.0**
+  creee et taguee : `dev-v7.0` - pousse sur `origin`.
+- 2026-09-15 : merge `dev` -> `test` (troisieme fusion : agent
+  Anonymisation complet dont l'option images/OCR, correctif du style
+  `disabled` sur `ActionButton`, nom affiche du header personnalisable).
+  Necessite une installation du moteur Python sur TEST (venv dedie +
+  `ANONYMIZER_PASSPHRASE` dans `.env.local` - voir
+  `python/anonymizer/README.md`). Pas encore valide par l'utilisateur sur
+  TEST.
