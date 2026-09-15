@@ -293,3 +293,14 @@ explicitement avec l'utilisateur avant de la construire.
   sur les 3 environnements. Validation explicite de l'utilisateur,
   version majeure **3.0** creee et taguee : `dev-v3.0`, `test-v3.0`,
   `prod-v3.0` - pousses sur `origin`.
+- 2026-09-15 : agent Taches (todos_transport) migre depuis l'ancienne
+  plateforme Flask et valide de bout en bout (RDV, export .ics,
+  brouillons Ollama email/prompt, marquage traite). Nouveau logo et
+  favicon EJAH deployes sur les 3 environnements. Sur `/gabarit` :
+  liseret Utilisateur/Plateforme repositionne (incruste dans le champ
+  de saisie, pas a cote du libelle) et recolore en teintes fixes tres
+  contrastees (orange `#FF6A00` / bleu fonce `var(--util-ink)`),
+  independantes du theme d'environnement. Validation explicite de
+  l'utilisateur sur DEV, version majeure **4.0** creee et taguee :
+  `dev-v4.0` - pousse sur `origin`. Pas encore fusionne vers
+  `test`/`main`.
