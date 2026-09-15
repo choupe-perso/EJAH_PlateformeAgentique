@@ -32,7 +32,7 @@ def _span_to_dict(s: Span) -> dict:
 
 def cmd_inspect(args: argparse.Namespace) -> int:
     handler = get_handler(Path(args.input))
-    spans = handler.inspect(Path(args.input))
+    spans = handler.inspect(Path(args.input), avec_images=args.images)
     if args.json:
         print(json.dumps({"ok": True, "spans": [_span_to_dict(s) for s in spans]}))
         return 0
@@ -53,7 +53,9 @@ def cmd_anonymize(args: argparse.Namespace) -> int:
     out_arg = Path(args.out) if args.out else None
     try:
         with Vault(args.vault, passphrase) as vault:
-            out_path, spans = handler.anonymize(Path(args.input), vault, out_arg)
+            out_path, spans = handler.anonymize(
+                Path(args.input), vault, out_arg, avec_images=args.images
+            )
     except WrongPassphraseError as exc:
         if args.json:
             print(json.dumps({"ok": False, "erreur": str(exc)}))
@@ -112,6 +114,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_inspect = sub.add_parser("inspect", help="Détecte les entités sans toucher au vault")
     p_inspect.add_argument("input")
     p_inspect.add_argument("--json", action="store_true", help="Sortie JSON (pour intégration EJAH)")
+    p_inspect.add_argument(
+        "--no-images",
+        dest="images",
+        action="store_false",
+        default=True,
+        help="Ignore les images embarquées (pas d'OCR) - docx/pptx/xlsx uniquement",
+    )
     p_inspect.set_defaults(func=cmd_inspect)
 
     p_anon = sub.add_parser("anonymize", help="Anonymise un fichier texte")
@@ -119,6 +128,13 @@ def build_parser() -> argparse.ArgumentParser:
     p_anon.add_argument("--vault", required=True)
     p_anon.add_argument("--out")
     p_anon.add_argument("--json", action="store_true", help="Sortie JSON (pour intégration EJAH)")
+    p_anon.add_argument(
+        "--no-images",
+        dest="images",
+        action="store_false",
+        default=True,
+        help="Ignore les images embarquées (pas d'OCR) - docx/pptx/xlsx uniquement",
+    )
     p_anon.set_defaults(func=cmd_anonymize)
 
     p_deanon = sub.add_parser("deanonymize", help="Restaure un fichier texte anonymisé")

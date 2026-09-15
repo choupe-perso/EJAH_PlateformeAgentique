@@ -80,17 +80,20 @@ def _image_pii_spans(image_bytes: bytes) -> list[Span]:
     return detect_only(ocr_text)
 
 
-def inspect(path: Path) -> list[Span]:
+def inspect(path: Path, avec_images: bool = True) -> list[Span]:
     wb = openpyxl.load_workbook(str(path))
     spans: list[Span] = []
     for ws in wb.worksheets:
         spans.extend(detect_in_paragraphs(_sheet_paragraphs(ws)))
-    for image in _iter_images(wb):
-        spans.extend(_image_pii_spans(image._data()))
+    if avec_images:
+        for image in _iter_images(wb):
+            spans.extend(_image_pii_spans(image._data()))
     return spans
 
 
-def anonymize(path: Path, vault: Vault, out_path: Path | None = None) -> tuple[Path, list[Span]]:
+def anonymize(
+    path: Path, vault: Vault, out_path: Path | None = None, avec_images: bool = True
+) -> tuple[Path, list[Span]]:
     wb = openpyxl.load_workbook(str(path))
 
     spans: list[Span] = []
@@ -98,20 +101,21 @@ def anonymize(path: Path, vault: Vault, out_path: Path | None = None) -> tuple[P
         spans.extend(replace_in_paragraphs(_sheet_paragraphs(ws), vault))
 
     image_replacements: dict[str, bytes] = {}
-    for image in _iter_images(wb):
-        image_bytes = image._data()
-        # Image._data() reads (and, for png/jpeg/gif, closes) `image.ref`
-        # in place - give it a fresh stream over the same bytes so
-        # openpyxl's own save-time image writer can still read it.
-        image.ref = io.BytesIO(image_bytes)
-        img_spans = _image_pii_spans(image_bytes)
-        if not img_spans:
-            continue
-        for s in img_spans:
-            vault.tokenize(s.entity_type, s.text)
-        spans.extend(img_spans)
-        member = str(image.path).lstrip("/")
-        image_replacements[member] = placeholder_image_bytes()
+    if avec_images:
+        for image in _iter_images(wb):
+            image_bytes = image._data()
+            # Image._data() reads (and, for png/jpeg/gif, closes) `image.ref`
+            # in place - give it a fresh stream over the same bytes so
+            # openpyxl's own save-time image writer can still read it.
+            image.ref = io.BytesIO(image_bytes)
+            img_spans = _image_pii_spans(image_bytes)
+            if not img_spans:
+                continue
+            for s in img_spans:
+                vault.tokenize(s.entity_type, s.text)
+            spans.extend(img_spans)
+            member = str(image.path).lstrip("/")
+            image_replacements[member] = placeholder_image_bytes()
 
     out_path = out_path if out_path is not None else path.with_suffix(".anon.xlsx")
     wb.save(str(out_path))

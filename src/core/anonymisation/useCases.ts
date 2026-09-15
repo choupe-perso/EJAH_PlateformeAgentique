@@ -65,7 +65,8 @@ async function avecDossierTemporaire<T>(fn: (dossier: string) => Promise<T>): Pr
 
 export async function inspecterDocument(
   nomFichier: string,
-  contenu: Buffer
+  contenu: Buffer,
+  avecImages: boolean
 ): Promise<Resultat<{ spans: SpanAnonymisation[] }>> {
   if (!formatSupporte(nomFichier)) {
     return { ok: false, erreur: `Format non supporte : ${extname(nomFichier)}` };
@@ -74,7 +75,7 @@ export async function inspecterDocument(
     const spans = await avecDossierTemporaire(async (dossier) => {
       const cheminEntree = join(dossier, nomFichier);
       await writeFile(cheminEntree, contenu);
-      return inspecterCli(cheminEntree);
+      return inspecterCli(cheminEntree, avecImages);
     });
     await logHistorique(`${spans.length} entite(s) detectee(s) dans "${nomFichier}" (inspection).`);
     return { ok: true, donnees: { spans } };
@@ -87,7 +88,8 @@ export async function inspecterDocument(
 
 export async function anonymiserDocument(
   nomFichier: string,
-  contenu: Buffer
+  contenu: Buffer,
+  avecImages: boolean
 ): Promise<Resultat<{ nomFichierSortie: string; contenu: Buffer; spans: SpanAnonymisation[] }>> {
   if (!formatSupporte(nomFichier)) {
     return { ok: false, erreur: `Format non supporte : ${extname(nomFichier)}` };
@@ -98,7 +100,7 @@ export async function anonymiserDocument(
       await writeFile(cheminEntree, contenu);
       const nomSortie = `anonymise_${nomFichier}`;
       const cheminSortie = join(dossier, nomSortie);
-      const { spans } = await anonymiserCli(cheminEntree, VAULT_PATH, cheminSortie);
+      const { spans } = await anonymiserCli(cheminEntree, VAULT_PATH, cheminSortie, avecImages);
       const contenuSortie = await readFile(cheminSortie);
       return { nomFichierSortie: nomSortie, contenu: contenuSortie, spans };
     });

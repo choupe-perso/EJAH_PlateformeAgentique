@@ -70,8 +70,13 @@ function analyserJson<T>(resultat: ResultatCli): T {
   return donnees as T;
 }
 
-export async function inspecter(cheminEntree: string): Promise<SpanAnonymisation[]> {
-  const resultat = await executerCli(["inspect", cheminEntree, "--json"]);
+export async function inspecter(
+  cheminEntree: string,
+  avecImages: boolean
+): Promise<SpanAnonymisation[]> {
+  const args = ["inspect", cheminEntree, "--json"];
+  if (!avecImages) args.push("--no-images");
+  const resultat = await executerCli(args);
   const donnees = analyserJson<{ spans: SpanAnonymisation[] }>(resultat);
   return donnees.spans;
 }
@@ -79,17 +84,12 @@ export async function inspecter(cheminEntree: string): Promise<SpanAnonymisation
 export async function anonymiser(
   cheminEntree: string,
   cheminVault: string,
-  cheminSortie: string
+  cheminSortie: string,
+  avecImages: boolean
 ): Promise<{ cheminSortie: string; spans: SpanAnonymisation[] }> {
-  const resultat = await executerCli([
-    "anonymize",
-    cheminEntree,
-    "--vault",
-    cheminVault,
-    "--out",
-    cheminSortie,
-    "--json",
-  ]);
+  const args = ["anonymize", cheminEntree, "--vault", cheminVault, "--out", cheminSortie, "--json"];
+  if (!avecImages) args.push("--no-images");
+  const resultat = await executerCli(args);
   const donnees = analyserJson<{ outPath: string; spans: SpanAnonymisation[] }>(resultat);
   return { cheminSortie: donnees.outPath, spans: donnees.spans };
 }

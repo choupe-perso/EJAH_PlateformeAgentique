@@ -6,10 +6,16 @@ import type { SpanAnonymisation } from "@/shared/anonymisationSpan";
 
 const FORMATS_ACCEPTES = ".txt,.docx,.pptx,.xlsx";
 const EXTENSIONS_RESTAURABLES = [".txt"];
+const EXTENSIONS_AVEC_IMAGES_POSSIBLES = [".docx", ".pptx", ".xlsx"];
 
 function estRestaurable(nom: string): boolean {
   const nomBas = nom.toLowerCase();
   return EXTENSIONS_RESTAURABLES.some((ext) => nomBas.endsWith(ext));
+}
+
+function peutContenirImages(nom: string): boolean {
+  const nomBas = nom.toLowerCase();
+  return EXTENSIONS_AVEC_IMAGES_POSSIBLES.some((ext) => nomBas.endsWith(ext));
 }
 
 function telechargerReponse(blob: Blob, nomParDefaut: string, entete: Headers) {
@@ -29,6 +35,7 @@ function telechargerReponse(blob: Blob, nomParDefaut: string, entete: Headers) {
 export function AnonymisationManager() {
   const inputRef = useRef<HTMLInputElement>(null);
   const [fichier, setFichier] = useState<File | null>(null);
+  const [avecImages, setAvecImages] = useState(true);
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [spans, setSpans] = useState<SpanAnonymisation[] | null>(null);
 
@@ -47,6 +54,7 @@ export function AnonymisationManager() {
 
   function reinitialiser() {
     setFichier(null);
+    setAvecImages(true);
     setErreurs([]);
     setSpans(null);
     if (inputRef.current) inputRef.current.value = "";
@@ -60,6 +68,7 @@ export function AnonymisationManager() {
     try {
       const corps = new FormData();
       corps.append("fichier", fichier);
+      corps.append("avecImages", String(avecImages));
       const reponse = await fetch("/api/agents/anonymisation/inspecter", { method: "POST", body: corps });
       const donnees = await reponse.json();
       if (!donnees.ok) {
@@ -79,6 +88,7 @@ export function AnonymisationManager() {
     try {
       const corps = new FormData();
       corps.append("fichier", fichier);
+      corps.append("avecImages", String(avecImages));
       const reponse = await fetch("/api/agents/anonymisation/anonymiser", { method: "POST", body: corps });
       if (!reponse.ok || reponse.headers.get("Content-Type") === "application/json") {
         const donnees = await reponse.json().catch(() => ({}));
@@ -137,6 +147,17 @@ export function AnonymisationManager() {
           className="mb-3 block w-full text-sm text-[var(--ink)] file:mr-3 file:rounded-lg file:border-0 file:bg-[var(--util-bg)] file:px-3 file:py-2 file:text-xs file:font-semibold file:text-[var(--util-ink)]"
         />
 
+        <label className="mb-3 flex items-center gap-2 text-xs text-[var(--ink-soft)]">
+          <input
+            type="checkbox"
+            checked={avecImages}
+            onChange={(e) => setAvecImages(e.target.checked)}
+            disabled={!!fichier && !peutContenirImages(fichier.name)}
+            className="h-3.5 w-3.5 accent-[var(--orange)]"
+          />
+          Inclure les images embarquées (OCR)
+        </label>
+
         <div className="flex flex-wrap gap-2">
           <ActionButton
             variant={inspection ? "loading" : "primary"}
@@ -166,6 +187,11 @@ export function AnonymisationManager() {
         {fichier && !estRestaurable(fichier.name) && (
           <p className="mt-2 text-xs text-[var(--ink-soft)]">
             La restauration automatique n&apos;est disponible que pour les fichiers .txt.
+          </p>
+        )}
+        {fichier && !peutContenirImages(fichier.name) && (
+          <p className="mt-2 text-xs text-[var(--ink-soft)]">
+            Les fichiers .txt ne contiennent jamais d&apos;image.
           </p>
         )}
       </div>

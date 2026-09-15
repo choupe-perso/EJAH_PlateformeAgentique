@@ -14,8 +14,9 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, erreurs: ["Fichier invalide."] });
   }
 
+  const avecImages = formulaire?.get("avecImages") !== "false";
   const contenu = Buffer.from(await fichier.arrayBuffer());
-  const resultat = await anonymiserDocument(fichier.name, contenu);
+  const resultat = await anonymiserDocument(fichier.name, contenu, avecImages);
   if (!resultat.ok) {
     return NextResponse.json({ ok: false, erreurs: [resultat.erreur] });
   }

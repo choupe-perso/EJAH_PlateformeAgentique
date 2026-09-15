@@ -1,11 +1,14 @@
 """Selects the right format handler module by file extension.
 
-Each handler module exposes `inspect(path) -> list[Span]` and
-`anonymize(path, vault, out_path=None) -> tuple[Path, list[Span]]`.
-`text_handler` additionally exposes `deanonymize` - the docx/pptx/xlsx
-handlers deliberately don't (see the project plan: restoring the original
-document isn't implemented for those formats, only the vault's token ->
-value correspondence table is kept for audit)."""
+Each handler module exposes `inspect(path, avec_images=True) -> list[Span]`
+and `anonymize(path, vault, out_path=None, avec_images=True) ->
+tuple[Path, list[Span]]`. `avec_images` controls whether embedded images are
+OCR'd for PII (docx/pptx/xlsx only - text_handler accepts and ignores it,
+a .txt file never has images). `text_handler` additionally exposes
+`deanonymize` - the docx/pptx/xlsx handlers deliberately don't (see the
+project plan: restoring the original document isn't implemented for those
+formats, only the vault's token -> value correspondence table is kept for
+audit)."""
 from __future__ import annotations
 
 from pathlib import Path

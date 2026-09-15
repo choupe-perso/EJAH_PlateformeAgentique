@@ -25,11 +25,16 @@ def _write_text(path: Path, text: str) -> None:
         f.write(text)
 
 
-def inspect(path: Path) -> list[Span]:
+def inspect(path: Path, avec_images: bool = True) -> list[Span]:
+    # avec_images ignore : un fichier .txt ne contient jamais d'image -
+    # parametre accepte uniquement pour uniformiser la signature avec les
+    # autres handlers (voir dispatch.py).
     return detect_only(_read_text(path))
 
 
-def anonymize(path: Path, vault: Vault, out_path: Path | None = None) -> tuple[Path, list[Span]]:
+def anonymize(
+    path: Path, vault: Vault, out_path: Path | None = None, avec_images: bool = True
+) -> tuple[Path, list[Span]]:
     engine = AnonymizationEngine(vault)
     anonymized, spans = engine.anonymize(_read_text(path))
     out_path = out_path if out_path is not None else path.with_suffix(".anon.txt")

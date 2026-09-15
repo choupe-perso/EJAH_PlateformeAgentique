@@ -73,30 +73,34 @@ def _image_pii_spans(image_bytes: bytes) -> list[Span]:
     return detect_only(ocr_text)
 
 
-def inspect(path: Path) -> list[Span]:
+def inspect(path: Path, avec_images: bool = True) -> list[Span]:
     prs = Presentation(str(path))
     spans = detect_in_paragraphs([p.runs for p in _all_paragraphs(prs)])
-    for _part, image_part in _iter_image_parts(prs):
-        spans.extend(_image_pii_spans(image_part.blob))
+    if avec_images:
+        for _part, image_part in _iter_image_parts(prs):
+            spans.extend(_image_pii_spans(image_part.blob))
     return spans
 
 
-def anonymize(path: Path, vault: Vault, out_path: Path | None = None) -> tuple[Path, list[Span]]:
+def anonymize(
+    path: Path, vault: Vault, out_path: Path | None = None, avec_images: bool = True
+) -> tuple[Path, list[Span]]:
     prs = Presentation(str(path))
 
     paragraphs = [p.runs for p in _all_paragraphs(prs)]
     spans = replace_in_paragraphs(paragraphs, vault)
 
     image_replacements: dict[str, bytes] = {}
-    for _part, image_part in _iter_image_parts(prs):
-        img_spans = _image_pii_spans(image_part.blob)
-        if not img_spans:
-            continue
-        for s in img_spans:
-            vault.tokenize(s.entity_type, s.text)
-        spans.extend(img_spans)
-        member = str(image_part.partname).lstrip("/")
-        image_replacements[member] = placeholder_image_bytes()
+    if avec_images:
+        for _part, image_part in _iter_image_parts(prs):
+            img_spans = _image_pii_spans(image_part.blob)
+            if not img_spans:
+                continue
+            for s in img_spans:
+                vault.tokenize(s.entity_type, s.text)
+            spans.extend(img_spans)
+            member = str(image_part.partname).lstrip("/")
+            image_replacements[member] = placeholder_image_bytes()
 
     out_path = out_path if out_path is not None else path.with_suffix(".anon.pptx")
     prs.save(str(out_path))
