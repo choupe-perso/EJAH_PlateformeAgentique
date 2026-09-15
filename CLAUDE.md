@@ -53,11 +53,12 @@ Aucun indicateur n'est encore defini pour Cockpit (2026-09-13).
 
 Le menu de navigation d'Agents (`/agents`, barre laterale) a ete defini le
 2026-09-15, puis ajuste le meme jour (renommage Voyages -> Trajets SNCF,
-Taches -> TODO Offline, suppression de l'entree Generiques - Toolkit reste
-affiche vide, en attente d'un futur agent generique) :
+Taches -> TODO Offline, suppression de l'entree Generiques, puis ajout de
+l'agent Anonymisation sous Toolkit) :
 
 ```text
 Toolkit
+  |_ Anonymisation
 Perso
   |_ Trajets SNCF
   |_ TODO Offline
@@ -65,7 +66,8 @@ Perso
 
 `Trajets SNCF` (agent Voyages / generateur_ics_sncf) et `TODO Offline`
 (agent Taches / todos_transport) sont des agents reels, migres depuis
-l'ancienne plateforme Flask (voir Etat d'avancement).
+l'ancienne plateforme Flask. `Anonymisation` est un agent reel integrant un
+moteur Python vendorise (voir Etat d'avancement).
 
 ## Environnements
 
@@ -226,11 +228,19 @@ propre README) :
 | `docs/`             | References techniques et decisions                         | Seconde racine applicative |
 | `guide/`            | Parcours pedagogique et reproduction                        | Procedures presentees comme disponibles avant realisation |
 | `deployment/`       | Assemblage, installation et restauration futurs             | Service distant obligatoire au demarrage local |
+| `python/`           | Moteurs externes vendorises necessitant un runtime non-Node (invoques en sous-processus depuis `src/integrations/`) | Logique metier, import direct par le code TypeScript |
 
 Note : `app/` designe ici exclusivement le routeur Next.js (contrainte du
 framework, nom non modifiable). La couche d'orchestration/cas d'usage porte
 le nom `core/`, precisement pour ne pas entrer en collision avec cette
 contrainte.
+
+`python/` a ete ajoute le 2026-09-15 pour l'agent Anonymisation : un moteur
+Python (spaCy, regex, OCR local) ne peut pas etre reecrit en TypeScript sans
+perte majeure, et ne peut pas non plus etre importe par webpack - il vit
+dans son propre dossier, avec son propre environnement virtuel (jamais
+commit), et n'est atteint par la plateforme qu'en sous-processus via
+`src/integrations/<moteur>/`.
 
 ## Maquettes UI (reference future)
 
@@ -323,3 +333,30 @@ explicitement avec l'utilisateur avant de la construire.
   regroupes par mois. Validation explicite de l'utilisateur sur DEV,
   version majeure **5.0** creee et taguee : `dev-v5.0` - pousse sur
   `origin`. Pas encore fusionne vers `test`/`main`.
+- 2026-09-15 : validation explicite de l'utilisateur sur DEV (agent
+  Voyages), merge `dev` -> `test` (deuxieme fusion : agents Voyages et
+  Taches, flux d'identifiants SNCF sans HTTP, regroupement des voyages par
+  mois, renommage du menu Agents). Verifie sur TEST : migration Prisma,
+  build production et demarrage reussis (port 3001, palette verte
+  correcte). Corrige au passage : `next build`/`next start` ne doivent
+  jamais etre lances avec les variables de `.env.local` deja preinjectees
+  dans le shell (Next les charge lui-meme) - sinon `NODE_ENV` s'en trouve
+  fige a la valeur du fichier et casse le build production (erreur
+  `useContext` sur toutes les pages) ; `next start` ne lit pas non plus
+  `PORT` depuis `.env.local`, il faut le positionner explicitement avant
+  (voir `deployment/_run.bat`, deja correct). Pas encore tague/valide par
+  l'utilisateur sur TEST.
+- 2026-09-15 : agent Anonymisation ajoute sous Toolkit - moteur Python
+  vendorise (`python/anonymizer/`, voir son propre README) portant
+  detection (regex, dictionnaires, NER spaCy `fr_core_news_lg`, OCR local
+  ONNX) et pseudonymisation reversible (vault SQLite chiffre,
+  passphrase locale via `ANONYMIZER_PASSPHRASE` dans `.env.local`, jamais
+  saisie dans la plateforme) pour fichiers `.txt`/`.docx`/`.pptx`/`.xlsx` -
+  la restauration automatique n'est disponible que pour `.txt`. Invoque en
+  sous-processus par `src/integrations/anonymizer/cli.ts` (sortie `--json`
+  ajoutee au CLI Python pour un echange structure). Fonctionne
+  entierement en local, aucun appel reseau a l'execution (seul le
+  telechargement initial du modele linguistique en a necessite un, fait
+  une fois). Verifie de bout en bout sur DEV (inspection, anonymisation,
+  restauration - aller-retour exact confirme). Pas encore valide par
+  l'utilisateur.
