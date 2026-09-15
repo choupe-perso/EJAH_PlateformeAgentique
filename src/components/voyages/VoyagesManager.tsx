@@ -162,11 +162,11 @@ export function VoyagesManager({ racineProjet }: { racineProjet: string }) {
           <>
             <p className="mb-2 text-xs text-[var(--ink-soft)]">
               Non configurés. La plateforme n&apos;accepte jamais d&apos;identifiants saisis ici :
-              ouvre un terminal à la racine de ce dossier et exécute cette commande, pour les
-              enregistrer directement dans le Gestionnaire d&apos;identifiants Windows.
+              ouvre un terminal et exécute ces deux commandes, pour les enregistrer directement
+              dans le Gestionnaire d&apos;identifiants Windows.
             </p>
 
-            <LigneCopiable texte={racineProjet} />
+            <LigneCopiable texte={`cd "${racineProjet}"`} />
             <LigneCopiable texte="node deployment/enregistrer-identifiants-sncf.mjs" />
           </>
         )}
