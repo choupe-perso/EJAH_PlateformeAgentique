@@ -372,5 +372,17 @@ explicitement avec l'utilisateur avant de la construire.
   entierement en local, aucun appel reseau a l'execution (seul le
   telechargement initial du modele linguistique en a necessite un, fait
   une fois). Verifie de bout en bout sur DEV (inspection, anonymisation,
-  restauration - aller-retour exact confirme). Pas encore valide par
-  l'utilisateur.
+  restauration - aller-retour exact confirme). Corrige au passage :
+  `ActionButton` n'avait aucun style visuel pour l'etat `disabled` hors
+  variant "loading" (bouton desactive identique a actif, donc semblait
+  inerte sans explication - visible surtout sur Anonymisation ou les 3
+  actions demarrent desactivees) ; ajout de `disabled:opacity-45
+  disabled:cursor-not-allowed`, applique partout. Ajout d'un bouton
+  "Reinitialiser" (variant "ghost", nouveau) sur la page Anonymisation.
+  Nom affiche du header personnalisable via `APP_DISPLAY_NAME` dans
+  `.env.local` (retombe sur "EJAH" si absent) - DEV configure avec "Mon
+  assistante Lucile" ; scope volontairement limite au header (titre de
+  page, footer, page d'accueil et gouvernance CLAUDE.md inchanges).
+  Validation explicite de l'utilisateur sur DEV, version majeure **6.0**
+  creee et taguee : `dev-v6.0` - pousse sur `origin`. Pas encore fusionne
+  vers `test`/`main`.
