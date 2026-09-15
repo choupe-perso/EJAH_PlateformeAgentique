@@ -22,6 +22,46 @@ function formaterHeure([h, m]: [number, number]) {
   return `${String(h).padStart(2, "0")}h${String(m).padStart(2, "0")}`;
 }
 
+const LIBELLES_MOIS = [
+  "Janvier",
+  "Février",
+  "Mars",
+  "Avril",
+  "Mai",
+  "Juin",
+  "Juillet",
+  "Août",
+  "Septembre",
+  "Octobre",
+  "Novembre",
+  "Décembre",
+];
+
+function regrouperParMois(voyages: Voyage[]): { cle: string; libelle: string; voyages: Voyage[] }[] {
+  const tries = [...voyages].sort((a, b) => {
+    if (a.annee !== b.annee) return a.annee - b.annee;
+    if (a.mois !== b.mois) return a.mois - b.mois;
+    if (a.jour !== b.jour) return a.jour - b.jour;
+    return a.heureDepart[0] - b.heureDepart[0] || a.heureDepart[1] - b.heureDepart[1];
+  });
+
+  const groupes: { cle: string; libelle: string; voyages: Voyage[] }[] = [];
+  for (const voyage of tries) {
+    const cle = `${voyage.annee}-${voyage.mois}`;
+    const dernierGroupe = groupes[groupes.length - 1];
+    if (dernierGroupe?.cle === cle) {
+      dernierGroupe.voyages.push(voyage);
+    } else {
+      groupes.push({
+        cle,
+        libelle: `${LIBELLES_MOIS[voyage.mois - 1]} ${voyage.annee}`,
+        voyages: [voyage],
+      });
+    }
+  }
+  return groupes;
+}
+
 function LigneCopiable({ texte }: { texte: string }) {
   const [copie, setCopie] = useState(false);
 
@@ -202,30 +242,37 @@ export function VoyagesManager({ racineProjet }: { racineProjet: string }) {
           <div className="mb-2.5 text-xs font-semibold text-[var(--ink-soft)]">
             Voyages trouvés ({voyages.length})
           </div>
-          <ul className="mb-4 flex flex-col gap-2">
-            {voyages.map((v) => (
-              <li
-                key={v.id}
-                className="flex items-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--card)] px-4 py-3"
-              >
-                <input
-                  type="checkbox"
-                  checked={selection.has(v.id)}
-                  onChange={() => basculerSelection(v.id)}
-                  className="h-4 w-4 flex-none accent-[var(--orange)]"
-                />
-                <div className="min-w-0 text-sm">
-                  <span className="font-semibold text-[var(--ink)]">
-                    {v.gareDepart} → {v.gareArrivee}
-                  </span>
-                  <span className="ml-2 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft)]">
-                    {String(v.jour).padStart(2, "0")}/{String(v.mois).padStart(2, "0")}/{v.annee} ·{" "}
-                    {formaterHeure(v.heureDepart)} → {formaterHeure(v.heureArrivee)} · {v.trainNumero}
-                  </span>
-                </div>
-              </li>
-            ))}
-          </ul>
+          {regrouperParMois(voyages).map((groupe) => (
+            <div key={groupe.cle} className="mb-4">
+              <div className="mb-2 font-[var(--font-ibm-plex-mono)] text-[11px] font-semibold uppercase tracking-wide text-[var(--ink-soft)]">
+                {groupe.libelle}
+              </div>
+              <ul className="flex flex-col gap-2">
+                {groupe.voyages.map((v) => (
+                  <li
+                    key={v.id}
+                    className="flex items-center gap-3 rounded-xl border border-[var(--line)] bg-[var(--card)] px-4 py-3"
+                  >
+                    <input
+                      type="checkbox"
+                      checked={selection.has(v.id)}
+                      onChange={() => basculerSelection(v.id)}
+                      className="h-4 w-4 flex-none accent-[var(--orange)]"
+                    />
+                    <div className="min-w-0 text-sm">
+                      <span className="font-semibold text-[var(--ink)]">
+                        {v.gareDepart} → {v.gareArrivee}
+                      </span>
+                      <span className="ml-2 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft)]">
+                        {String(v.jour).padStart(2, "0")}/{String(v.mois).padStart(2, "0")}/{v.annee} ·{" "}
+                        {formaterHeure(v.heureDepart)} → {formaterHeure(v.heureArrivee)} · {v.trainNumero}
+                      </span>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ))}
           <ActionButton
             variant={generation ? "loading" : "success"}
             disabled={generation || selection.size === 0}
