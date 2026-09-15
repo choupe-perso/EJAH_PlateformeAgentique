@@ -1,0 +1,7 @@
+NIVEAU : RAPIDE
+
+Créer un prompt simple, direct et immédiatement exploitable.
+
+Conserver uniquement l'objectif et les instructions essentielles.
+
+Eviter toute structure inutile.

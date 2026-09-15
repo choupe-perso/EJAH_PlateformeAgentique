@@ -1,0 +1,13 @@
+NIVEAU : EXPERT
+
+Construire un prompt précis et techniquement exigeant.
+
+Utiliser le vocabulaire métier ou technique approprié.
+
+Identifier les contraintes importantes, ambiguïtés et risques d'interprétation susceptibles d'influencer le résultat.
+
+Préciser les points de vigilance et critères de qualité utiles.
+
+Anticiper les cas limites pertinents.
+
+Ne jamais complexifier artificiellement une demande simple.

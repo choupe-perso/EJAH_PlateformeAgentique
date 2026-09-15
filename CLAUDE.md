@@ -52,18 +52,20 @@ Deux grands univers structurent la plateforme :
 Aucun indicateur n'est encore defini pour Cockpit (2026-09-13).
 
 Le menu de navigation d'Agents (`/agents`, barre laterale) a ete defini le
-2026-09-15 :
+2026-09-15, puis ajuste le meme jour (renommage Voyages -> Trajets SNCF,
+Taches -> TODO Offline, suppression de l'entree Generiques - Toolkit reste
+affiche vide, en attente d'un futur agent generique) :
 
 ```text
 Toolkit
-  |_ Generiques
 Perso
-  |_ Voyages
-  |_ Taches
+  |_ Trajets SNCF
+  |_ TODO Offline
 ```
 
-Ce sont des categories de menu, pas encore des agents reels - aucun agent
-n'est encore defini a l'interieur.
+`Trajets SNCF` (agent Voyages / generateur_ics_sncf) et `TODO Offline`
+(agent Taches / todos_transport) sont des agents reels, migres depuis
+l'ancienne plateforme Flask (voir Etat d'avancement).
 
 ## Environnements
 
@@ -294,3 +296,37 @@ explicitement avec l'utilisateur avant de la construire.
   sur les 3 environnements. Validation explicite de l'utilisateur,
   version majeure **3.0** creee et taguee : `dev-v3.0`, `test-v3.0`,
   `prod-v3.0` - pousses sur `origin`.
+- 2026-09-15 : agent Taches (todos_transport) migre depuis l'ancienne
+  plateforme Flask et valide de bout en bout (RDV, export .ics,
+  brouillons Ollama email/prompt, marquage traite). Nouveau logo et
+  favicon EJAH deployes sur les 3 environnements. Sur `/gabarit` :
+  liseret Utilisateur/Plateforme repositionne (incruste dans le champ
+  de saisie, pas a cote du libelle) et recolore en teintes fixes tres
+  contrastees (orange `#FF6A00` / bleu fonce `var(--util-ink)`),
+  independantes du theme d'environnement. Validation explicite de
+  l'utilisateur sur DEV, version majeure **4.0** creee et taguee :
+  `dev-v4.0` - pousse sur `origin`. Pas encore fusionne vers
+  `test`/`main`.
+- 2026-09-15 : agent Voyages (generateur_ics_sncf) migre depuis l'ancienne
+  plateforme Flask - recuperation des voyages SNCF Connect (Playwright sur
+  Chrome installe, authentification geree dans la fenetre ouverte) et
+  generation d'un calendrier .ics (2 VEVENT par voyage : trajet 1h avant +
+  train, alerte -1h sur chacun). La plateforme n'accepte plus jamais
+  d'identifiants SNCF Connect via HTTP, a la demande explicite de
+  l'utilisateur : nouveau script `deployment/enregistrer-identifiants-sncf.mjs`
+  (CLI autonome, a executer hors de la plateforme, ecrit directement dans le
+  Gestionnaire d'identifiants Windows) ; suppression du POST de
+  `/api/agents/voyages/identifiants` (GET seul subsiste) et du formulaire
+  email/mot de passe de `VoyagesManager`, remplaces par un etat "Valide"
+  (sans formulaire) une fois configure, sinon par les deux commandes a
+  executer (`cd "<racine>"` puis `node deployment/enregistrer-...mjs`),
+  chacune avec son propre bouton copier. Voyages trouves tries et
+  regroupes par mois. Validation explicite de l'utilisateur sur DEV,
+  version majeure **5.0** creee et taguee : `dev-v5.0` - pousse sur
+  `origin`.
+- 2026-09-15 : renommage du menu Agents (Voyages -> Trajets SNCF, Taches
+  -> TODO Offline) et suppression de l'entree Generiques (Toolkit reste
+  affiche, vide). Merge `dev` -> `test` le 2026-09-15 (deuxieme fusion,
+  inclut agents Voyages et Taches, flux d'identifiants SNCF sans HTTP,
+  regroupement des voyages par mois). Pas encore valide par l'utilisateur
+  sur TEST.

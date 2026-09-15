@@ -1,5 +1,16 @@
 import type { ReactNode } from "react";
 
+// Couleurs fixes (non liees au theme d'environnement) et volontairement
+// tres contrastees : --orange change de teinte par environnement (cyan
+// en DEV, vert en TEST, orange en PROD), donc rendait la distinction
+// Utilisateur/Plateforme peu ou pas visible selon l'environnement.
+// "Utilisateur" est toujours orange, "Plateforme" toujours bleu fonce,
+// quel que soit l'environnement.
+export const FIELD_FAMILY_COLOR = {
+  user: "#FF6A00",
+  platform: "var(--util-ink)",
+} as const;
+
 export function Field({
   label,
   family,
@@ -11,21 +22,15 @@ export function Field({
   span2?: boolean;
   children: ReactNode;
 }) {
-  const borderColor = family === "user" ? "var(--orange)" : "#00B4D8";
+  const borderColor = FIELD_FAMILY_COLOR[family];
   const tagClass =
     family === "user"
-      ? "bg-[#FFE4CF] text-[var(--orange-deep)]"
-      : "bg-[#DFF6FB] text-[#0086A3]";
+      ? "bg-[#FFE4CF] text-[#C9430A]"
+      : "bg-[var(--util-bg)] text-[var(--util-ink)]";
   const tagText = family === "user" ? "Utilisateur" : "Plateforme";
 
   return (
-    <div
-      className={
-        "flex flex-col gap-[7px] border-l-[3px] pl-[11px] " +
-        (span2 ? "sm:col-span-2" : "")
-      }
-      style={{ borderColor }}
-    >
+    <div className={"flex flex-col gap-[7px] " + (span2 ? "sm:col-span-2" : "")}>
       <span className="flex items-center gap-1.5 text-xs font-semibold text-[var(--ink-soft)]">
         {label}
         <span
@@ -37,7 +42,9 @@ export function Field({
           {tagText}
         </span>
       </span>
-      {children}
+      <div className="border-l-[3px] pl-[6px]" style={{ borderColor }}>
+        {children}
+      </div>
     </div>
   );
 }
