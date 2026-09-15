@@ -304,3 +304,13 @@ explicitement avec l'utilisateur avant de la construire.
   l'utilisateur sur DEV, version majeure **4.0** creee et taguee :
   `dev-v4.0` - pousse sur `origin`. Pas encore fusionne vers
   `test`/`main`.
+- 2026-09-15 : agent Voyages - la plateforme n'accepte plus jamais
+  d'identifiants SNCF Connect via HTTP, a la demande explicite de
+  l'utilisateur. Ajout de `deployment/enregistrer-identifiants-sncf.mjs`
+  (script CLI autonome, a executer hors de la plateforme, qui ecrit
+  directement dans le Gestionnaire d'identifiants Windows). Suppression du
+  POST de `/api/agents/voyages/identifiants` (GET seul subsiste) et du
+  formulaire email/mot de passe de `VoyagesManager` : affichage d'un etat
+  "Valide" (sans formulaire) une fois configure, sinon instructions et
+  commande externe a executer, avec un bouton "Verifier a nouveau".
+  Committe sur `dev`, pas encore pousse ni valide par l'utilisateur.
