@@ -386,3 +386,11 @@ explicitement avec l'utilisateur avant de la construire.
   Validation explicite de l'utilisateur sur DEV, version majeure **6.0**
   creee et taguee : `dev-v6.0` - pousse sur `origin`. Pas encore fusionne
   vers `test`/`main`.
+- 2026-09-15 : agent Anonymisation - option pour inclure ou non les images
+  embarquees (OCR) dans la detection, de bout en bout (flag `--no-images`
+  sur le CLI Python, parametre `avecImages` sur l'adaptateur Node et les
+  routes API, case a cocher dans l'UI - cochee par defaut, desactivee
+  pour les `.txt`). Verifie avec un `.docx` contenant une image porteuse
+  de PII (nom + telephone) : detectes quand cochee, ignores sinon.
+  Validation explicite de l'utilisateur sur DEV, version majeure **7.0**
+  creee et taguee : `dev-v7.0` - pousse sur `origin`.
