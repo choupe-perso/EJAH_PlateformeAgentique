@@ -1,5 +1,10 @@
 import type { ReactNode } from "react";
 
+export const FIELD_FAMILY_COLOR = {
+  user: "var(--orange)",
+  platform: "#00B4D8",
+} as const;
+
 export function Field({
   label,
   family,
@@ -11,7 +16,7 @@ export function Field({
   span2?: boolean;
   children: ReactNode;
 }) {
-  const borderColor = family === "user" ? "var(--orange)" : "#00B4D8";
+  const borderColor = FIELD_FAMILY_COLOR[family];
   const tagClass =
     family === "user"
       ? "bg-[#FFE4CF] text-[var(--orange-deep)]"
