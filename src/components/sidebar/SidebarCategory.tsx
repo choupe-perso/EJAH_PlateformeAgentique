@@ -14,7 +14,7 @@ export function SidebarCategory({
   color: string;
   icon: ReactNode;
   defaultOpen?: boolean;
-  children: ReactNode;
+  children?: ReactNode;
 }) {
   const collapsed = useSidebarCollapsed();
 

@@ -52,18 +52,20 @@ Deux grands univers structurent la plateforme :
 Aucun indicateur n'est encore defini pour Cockpit (2026-09-13).
 
 Le menu de navigation d'Agents (`/agents`, barre laterale) a ete defini le
-2026-09-15 :
+2026-09-15, puis ajuste le meme jour (renommage Voyages -> Trajets SNCF,
+Taches -> TODO Offline, suppression de l'entree Generiques - Toolkit reste
+affiche vide, en attente d'un futur agent generique) :
 
 ```text
 Toolkit
-  |_ Generiques
 Perso
-  |_ Voyages
-  |_ Taches
+  |_ Trajets SNCF
+  |_ TODO Offline
 ```
 
-Ce sont des categories de menu, pas encore des agents reels - aucun agent
-n'est encore defini a l'interieur.
+`Trajets SNCF` (agent Voyages / generateur_ics_sncf) et `TODO Offline`
+(agent Taches / todos_transport) sont des agents reels, migres depuis
+l'ancienne plateforme Flask (voir Etat d'avancement).
 
 ## Environnements
 
