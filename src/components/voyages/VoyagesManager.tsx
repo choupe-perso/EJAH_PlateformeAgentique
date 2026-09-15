@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import { ActionButton } from "@/components/ActionButton";
-import { TextInput } from "@/components/form/TextInput";
 
 type Voyage = {
   id: string;
@@ -24,9 +23,7 @@ function formaterHeure([h, m]: [number, number]) {
 
 export function VoyagesManager() {
   const [configures, setConfigures] = useState<boolean | null>(null);
-  const [email, setEmail] = useState("");
-  const [motDePasse, setMotDePasse] = useState("");
-  const [enregistrement, setEnregistrement] = useState(false);
+  const [verification, setVerification] = useState(false);
   const [erreurs, setErreurs] = useState<string[]>([]);
 
   const [recuperation, setRecuperation] = useState(false);
@@ -34,34 +31,18 @@ export function VoyagesManager() {
   const [selection, setSelection] = useState<Set<string>>(new Set());
   const [generation, setGeneration] = useState(false);
 
-  useEffect(() => {
-    fetch("/api/agents/voyages/identifiants")
+  function verifierIdentifiants() {
+    setVerification(true);
+    return fetch("/api/agents/voyages/identifiants")
       .then((r) => r.json())
       .then((d) => setConfigures(Boolean(d.configures)))
-      .catch(() => setConfigures(false));
-  }, []);
-
-  async function enregistrerIdentifiants() {
-    setEnregistrement(true);
-    setErreurs([]);
-    try {
-      const reponse = await fetch("/api/agents/voyages/identifiants", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ email, motDePasse }),
-      });
-      const donnees = await reponse.json();
-      if (!donnees.ok) {
-        setErreurs(donnees.erreurs ?? ["Erreur inconnue."]);
-        return;
-      }
-      setConfigures(true);
-      setEmail("");
-      setMotDePasse("");
-    } finally {
-      setEnregistrement(false);
-    }
+      .catch(() => setConfigures(false))
+      .finally(() => setVerification(false));
   }
+
+  useEffect(() => {
+    verifierIdentifiants();
+  }, []);
 
   async function recupererVoyages() {
     setRecuperation(true);
@@ -130,42 +111,45 @@ export function VoyagesManager() {
       )}
 
       <div className="mb-6 rounded-xl border border-[var(--line)] bg-[var(--card)] p-4">
-        <div className="mb-3 text-xs font-semibold text-[var(--ink-soft)]">
-          Identifiants SNCF Connect{" "}
-          {configures && <span className="text-[var(--good)]">· déjà enregistrés</span>}
-        </div>
-        <p className="mb-3 text-xs text-[var(--ink-soft)]">
-          Stockés dans le Gestionnaire d&apos;identifiants Windows, jamais en clair ailleurs.
-          {configures ? " Renseigne ces champs uniquement pour les remplacer." : ""}
-        </p>
-        <div className="flex flex-col gap-3 sm:flex-row">
-          <TextInput
-            type="email"
-            placeholder="Email SNCF Connect"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-          />
-          <TextInput
-            type="password"
-            placeholder="Mot de passe"
-            value={motDePasse}
-            onChange={(e) => setMotDePasse(e.target.value)}
-          />
-        </div>
+        <div className="mb-3 text-xs font-semibold text-[var(--ink-soft)]">Identifiants SNCF Connect</div>
+
+        {configures ? (
+          <div className="flex items-center gap-2 text-sm font-semibold text-[var(--good)]">
+            <span
+              className="flex h-5 w-5 flex-none items-center justify-center rounded-full bg-[var(--good)] text-xs text-white"
+              aria-hidden
+            >
+              ✓
+            </span>
+            Validé — identifiants enregistrés dans le Gestionnaire d&apos;identifiants Windows
+          </div>
+        ) : (
+          <>
+            <p className="mb-2 text-xs text-[var(--ink-soft)]">
+              Non configurés. La plateforme n&apos;accepte jamais d&apos;identifiants saisis ici :
+              exécute cette commande dans un terminal, à la racine de ce dossier, pour les
+              enregistrer directement dans le Gestionnaire d&apos;identifiants Windows.
+            </p>
+            <code className="mb-3 block overflow-x-auto rounded-lg bg-[var(--util-bg)] px-3 py-2 font-[var(--font-ibm-plex-mono)] text-xs text-[var(--util-ink)]">
+              node deployment/enregistrer-identifiants-sncf.mjs
+            </code>
+          </>
+        )}
+
         <div className="mt-3">
           <ActionButton
-            variant={enregistrement ? "loading" : "primary"}
-            disabled={enregistrement || !email || !motDePasse}
-            onClick={enregistrerIdentifiants}
+            variant={verification ? "loading" : "primary"}
+            disabled={verification}
+            onClick={verifierIdentifiants}
           >
-            Enregistrer les identifiants
+            Vérifier à nouveau
           </ActionButton>
         </div>
       </div>
 
       <ActionButton
         variant={recuperation ? "loading" : "primary"}
-        disabled={recuperation}
+        disabled={recuperation || !configures}
         onClick={recupererVoyages}
       >
         {recuperation ? "Connexion à SNCF Connect…" : "Récupérer mes voyages"}

@@ -2,10 +2,7 @@
 // shared/ics, appele par les routes API. Porte depuis l'ancienne
 // plateforme Flask (agents/generateur_ics_sncf/routes.py).
 
-import {
-  enregistrerIdentifiants as enregistrerIdentifiantsSncf,
-  identifiantsConfigures as identifiantsConfiguresSncf,
-} from "@/integrations/sncf/credentials";
+import { identifiantsConfigures as identifiantsConfiguresSncf } from "@/integrations/sncf/credentials";
 import { recupererVoyages as recupererVoyagesSncf, type Voyage } from "@/integrations/sncf/scraping";
 import { validerVoyage } from "@/agents/voyages/validation";
 import { construireCalendrier, echapperTexteIcs, formaterDateTimeLocale, lignesValarm } from "@/shared/ics";
@@ -23,11 +20,6 @@ function logHistorique(message: string, statut: "succes" | "erreur" = "succes") 
 
 export function identifiantsConfigures(): boolean {
   return identifiantsConfiguresSncf();
-}
-
-export async function enregistrerIdentifiants(email: string, motDePasse: string): Promise<void> {
-  enregistrerIdentifiantsSncf(email, motDePasse);
-  await logHistorique("Identifiants SNCF Connect enregistres.");
 }
 
 export async function recupererVoyages(): Promise<
