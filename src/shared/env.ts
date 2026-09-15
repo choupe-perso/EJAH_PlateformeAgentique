@@ -19,3 +19,10 @@ export const appEnvironment = (): AppEnvironment => {
 
 export const appEnvironmentOrNull = (): AppEnvironment | null =>
   parseAppEnvironment(process.env.APP_ENV);
+
+// Dossier racine du worktree en cours d'execution - derive de process.cwd()
+// (jamais code en dur : chaque environnement tourne depuis son propre
+// worktree, donc cette valeur reflete toujours le bon dossier sans le
+// nommer explicitement, y compris si la plateforme est un jour deplacee
+// ou installee sur un autre poste).
+export const racineProjet = (): string => process.cwd();
