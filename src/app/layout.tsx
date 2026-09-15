@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Sora, Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font/google";
 import { Header } from "@/components/Header";
-import { appEnvironmentOrNull, racineProjet } from "@/shared/env";
+import { appEnvironmentOrNull } from "@/shared/env";
 import "@/styles/globals.css";
 
 const sora = Sora({
@@ -43,7 +43,7 @@ export default function RootLayout({
       className={`${sora.variable} ${plusJakartaSans.variable} ${ibmPlexMono.variable}`}
     >
       <body className="min-h-screen bg-[var(--canvas)] font-[var(--font-plus-jakarta-sans)] text-[var(--ink)] antialiased">
-        <Header environment={environment} racineProjet={racineProjet()} />
+        <Header environment={environment} />
         {children}
       </body>
     </html>

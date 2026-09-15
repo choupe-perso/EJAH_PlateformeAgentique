@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import { ActionButton } from "@/components/ActionButton";
+import { CheckIcon, CopyIcon } from "@/components/icons";
 
 type Voyage = {
   id: string;
@@ -21,10 +22,11 @@ function formaterHeure([h, m]: [number, number]) {
   return `${String(h).padStart(2, "0")}h${String(m).padStart(2, "0")}`;
 }
 
-export function VoyagesManager() {
+export function VoyagesManager({ racineProjet }: { racineProjet: string }) {
   const [configures, setConfigures] = useState<boolean | null>(null);
   const [verification, setVerification] = useState(false);
   const [erreurs, setErreurs] = useState<string[]>([]);
+  const [copie, setCopie] = useState(false);
 
   const [recuperation, setRecuperation] = useState(false);
   const [voyages, setVoyages] = useState<Voyage[]>([]);
@@ -43,6 +45,17 @@ export function VoyagesManager() {
   useEffect(() => {
     verifierIdentifiants();
   }, []);
+
+  async function copierRacine() {
+    try {
+      await navigator.clipboard.writeText(racineProjet);
+      setCopie(true);
+      setTimeout(() => setCopie(false), 1500);
+    } catch {
+      // Presse-papiers indisponible (contexte non securise, permission
+      // refusee) - ignore silencieusement, le chemin reste lisible a l'ecran.
+    }
+  }
 
   async function recupererVoyages() {
     setRecuperation(true);
@@ -127,9 +140,27 @@ export function VoyagesManager() {
           <>
             <p className="mb-2 text-xs text-[var(--ink-soft)]">
               Non configurés. La plateforme n&apos;accepte jamais d&apos;identifiants saisis ici :
-              exécute cette commande dans un terminal, à la racine de ce dossier, pour les
+              ouvre un terminal à la racine de ce dossier et exécute cette commande, pour les
               enregistrer directement dans le Gestionnaire d&apos;identifiants Windows.
             </p>
+
+            <div className="mb-1.5 flex items-center gap-1.5 rounded-lg bg-[var(--util-bg)] px-3 py-2">
+              <span
+                className="min-w-0 flex-1 truncate font-[var(--font-ibm-plex-mono)] text-xs text-[var(--util-ink)]"
+                title={racineProjet}
+              >
+                {racineProjet}
+              </span>
+              <button
+                type="button"
+                onClick={copierRacine}
+                aria-label="Copier le chemin racine"
+                className="flex flex-none items-center justify-center rounded p-1 text-[var(--util-ink)] hover:bg-white/60"
+              >
+                {copie ? <CheckIcon /> : <CopyIcon />}
+              </button>
+            </div>
+
             <code className="mb-3 block overflow-x-auto rounded-lg bg-[var(--util-bg)] px-3 py-2 font-[var(--font-ibm-plex-mono)] text-xs text-[var(--util-ink)]">
               node deployment/enregistrer-identifiants-sncf.mjs
             </code>

@@ -4,59 +4,25 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import type { AppEnvironment } from "@/shared/env";
-import { CheckIcon, CopyIcon } from "@/components/icons";
 
 const NAV_ITEMS = [
   { href: "/cockpit", label: "Cockpit" },
   { href: "/agents", label: "Mes Agents" },
 ] as const;
 
-export function Header({
-  environment,
-  racineProjet,
-}: {
-  environment: AppEnvironment | null;
-  racineProjet: string;
-}) {
+export function Header({ environment }: { environment: AppEnvironment | null }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
-  const [copie, setCopie] = useState(false);
 
   const isActive = (href: string) => pathname?.startsWith(href) ?? false;
 
-  async function copierRacine() {
-    try {
-      await navigator.clipboard.writeText(racineProjet);
-      setCopie(true);
-      setTimeout(() => setCopie(false), 1500);
-    } catch {
-      // Presse-papiers indisponible (contexte non securise, permission
-      // refusee) - ignore silencieusement, le chemin reste lisible a l'ecran.
-    }
-  }
-
   return (
     <header className="sticky top-0 z-20">
-      <div className="border-b border-[var(--line)] bg-[var(--canvas)] px-4 py-1.5 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft)] max-[720px]:px-4 sm:px-7">
-        <div className="flex items-center justify-between gap-3">
-          <span className="flex-none">
-            Site v1.0 <span className="text-[var(--violet)]">· socle</span>
-          </span>
-          <span className="flex-none max-[720px]:hidden">Donnees non chargees</span>
-        </div>
-        <div className="mt-1 flex min-w-0 items-center gap-1.5">
-          <span className="min-w-0 flex-1 truncate" title={racineProjet}>
-            {racineProjet}
-          </span>
-          <button
-            type="button"
-            onClick={copierRacine}
-            aria-label="Copier le chemin racine"
-            className="flex flex-none items-center justify-center rounded p-1 text-[var(--ink-soft)] hover:bg-[var(--util-bg)] hover:text-[var(--ink)]"
-          >
-            {copie ? <CheckIcon /> : <CopyIcon />}
-          </button>
-        </div>
+      <div className="flex items-center justify-between border-b border-[var(--line)] bg-[var(--canvas)] px-4 py-1.5 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft)] max-[720px]:px-4 sm:px-7">
+        <span>
+          Site v1.0 <span className="text-[var(--violet)]">· socle</span>
+        </span>
+        <span className="max-[720px]:hidden">Donnees non chargees</span>
       </div>
 
       <div className="relative flex items-center justify-between gap-3 bg-[linear-gradient(100deg,var(--orange)_0%,var(--topbar-mid)_45%,var(--rose)_100%)] px-4 py-3.5 sm:px-7">
