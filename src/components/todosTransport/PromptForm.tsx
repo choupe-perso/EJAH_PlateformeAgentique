@@ -17,7 +17,6 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
   const [notes, setNotes] = useState("");
   const [niveau, setNiveau] = useState<NiveauPrompt>("structure");
   const [texte, setTexte] = useState("");
-  const [champsGeneresModifiables, setChampsGeneresModifiables] = useState(false);
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [redaction, setRedaction] = useState(false);
   const [envoi, setEnvoi] = useState(false);
@@ -40,7 +39,6 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
         return;
       }
       setTexte(donnees.texte);
-      setChampsGeneresModifiables(false);
     } finally {
       setRedaction(false);
     }
@@ -64,7 +62,6 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
       setTitre("");
       setNotes("");
       setTexte("");
-      setChampsGeneresModifiables(false);
       onCree();
     } finally {
       setEnvoi(false);
@@ -72,7 +69,6 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
   }
 
   const champsGeneres = texte.trim() !== "";
-  const familleGeneree = champsGeneresModifiables ? "user" : "platform";
 
   return (
     <div className="flex flex-col gap-3.5">
@@ -117,21 +113,12 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
         {redaction ? `Génération en cours… (${dureeGeneration})` : "Générer un brouillon"}
       </ActionButton>
 
-      <Field
-        label="Texte du prompt"
-        family={familleGeneree}
-        texteACopier={champsGeneres ? texte : undefined}
-      >
-        <TextArea
-          rows={5}
-          value={texte}
-          onChange={(e) => setTexte(e.target.value)}
-          readOnly={!champsGeneresModifiables}
-        />
+      <Field label="Texte du prompt" family="platform" texteACopier={champsGeneres ? texte : undefined}>
+        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} readOnly />
       </Field>
 
-      {champsGeneres && !champsGeneresModifiables && (
-        <ActionButton variant="ghost" disabled={enCours} onClick={() => setChampsGeneresModifiables(true)}>
+      {champsGeneres && (
+        <ActionButton variant="ghost" disabled={enCours} onClick={() => setNotes(texte)}>
           Recopier les champs dans espace utilisateur
         </ActionButton>
       )}

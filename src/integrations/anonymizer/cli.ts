@@ -2,6 +2,14 @@
 // invoque en sous-processus - jamais importe directement, Next.js/webpack ne
 // sait pas executer du Python. Le moteur tourne entierement en local (spaCy,
 // regex, OCR ONNX) : aucun appel reseau a l'execution.
+//
+// v2.0.0 du moteur (2026-09-16) : l'OCR des images embarquees est toujours
+// actif (l'ancien --no-images/avecImages a disparu du moteur), docx/pptx/
+// xlsx sont desormais entierement restaurables (avant : .txt uniquement),
+// le PDF est supporte en entree (converti en .docx). `--json` n'existe plus
+// que sur `inspect` - patch EJAH documente dans python/anonymizer/src/
+// anonymizer/cli.py, car anonymize/deanonymize n'en ont pas besoin (chemin
+// de sortie impose via --out, decompte lu sur la ligne humaine).
 
 import { spawn } from "child_process";
 import { join } from "path";
@@ -53,8 +61,17 @@ function executerCli(args: string[]): Promise<ResultatCli> {
   });
 }
 
-function analyserJson<T>(resultat: ResultatCli): T {
-  let donnees: { ok: boolean; erreur?: string } & Record<string, unknown>;
+function erreurDepuisStderr(resultat: ResultatCli): Error {
+  const message = resultat.stderr.trim() || resultat.stdout.trim() || "Erreur inconnue du moteur d'anonymisation.";
+  if (message.includes("Passphrase incorrecte")) {
+    return new PassphraseIncorrecteError(message);
+  }
+  return new Error(message);
+}
+
+export async function inspecter(cheminEntree: string): Promise<SpanAnonymisation[]> {
+  const resultat = await executerCli(["inspect", cheminEntree, "--json"]);
+  let donnees: { ok: boolean; erreur?: string; spans?: SpanAnonymisation[] };
   try {
     donnees = JSON.parse(resultat.stdout.trim());
   } catch {
@@ -67,47 +84,25 @@ function analyserJson<T>(resultat: ResultatCli): T {
     }
     throw new Error(message);
   }
-  return donnees as T;
-}
-
-export async function inspecter(
-  cheminEntree: string,
-  avecImages: boolean
-): Promise<SpanAnonymisation[]> {
-  const args = ["inspect", cheminEntree, "--json"];
-  if (!avecImages) args.push("--no-images");
-  const resultat = await executerCli(args);
-  const donnees = analyserJson<{ spans: SpanAnonymisation[] }>(resultat);
-  return donnees.spans;
+  return donnees.spans ?? [];
 }
 
 export async function anonymiser(
   cheminEntree: string,
   cheminVault: string,
-  cheminSortie: string,
-  avecImages: boolean
-): Promise<{ cheminSortie: string; spans: SpanAnonymisation[] }> {
-  const args = ["anonymize", cheminEntree, "--vault", cheminVault, "--out", cheminSortie, "--json"];
-  if (!avecImages) args.push("--no-images");
-  const resultat = await executerCli(args);
-  const donnees = analyserJson<{ outPath: string; spans: SpanAnonymisation[] }>(resultat);
-  return { cheminSortie: donnees.outPath, spans: donnees.spans };
+  cheminSortie: string
+): Promise<{ nbEntites: number }> {
+  // --out impose toujours le chemin de sortie exact (le moteur ne
+  // recalcule un nom par defaut - ex. ".anon.docx" force pour une entree
+  // .pdf, voir pdf_handler.py - que lorsque --out est omis, jamais le cas
+  // ici) : pas besoin de reparser le chemin depuis la sortie humaine.
+  const resultat = await executerCli(["anonymize", cheminEntree, "--vault", cheminVault, "--out", cheminSortie]);
+  if (resultat.code !== 0) throw erreurDepuisStderr(resultat);
+  const correspondance = /^(\d+)\s+entit/.exec(resultat.stdout.trim());
+  return { nbEntites: correspondance ? Number(correspondance[1]) : 0 };
 }
 
-export async function restaurer(
-  cheminEntree: string,
-  cheminVault: string,
-  cheminSortie: string
-): Promise<{ cheminSortie: string }> {
-  const resultat = await executerCli([
-    "deanonymize",
-    cheminEntree,
-    "--vault",
-    cheminVault,
-    "--out",
-    cheminSortie,
-    "--json",
-  ]);
-  const donnees = analyserJson<{ outPath: string }>(resultat);
-  return { cheminSortie: donnees.outPath };
+export async function restaurer(cheminEntree: string, cheminVault: string, cheminSortie: string): Promise<void> {
+  const resultat = await executerCli(["deanonymize", cheminEntree, "--vault", cheminVault, "--out", cheminSortie]);
+  if (resultat.code !== 0) throw erreurDepuisStderr(resultat);
 }

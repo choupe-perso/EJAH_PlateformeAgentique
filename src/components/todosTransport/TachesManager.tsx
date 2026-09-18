@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useState } from "react";
 import { TextArea } from "@/components/form/TextInput";
-import { DownloadIcon } from "@/components/icons";
+import { CheckIcon, CopyIcon, DownloadIcon } from "@/components/icons";
 import { RdvForm } from "./RdvForm";
 import { EmailForm } from "./EmailForm";
 import { PromptForm } from "./PromptForm";
@@ -37,6 +37,32 @@ const LIBELLE_TYPE: Record<TypeTache, string> = { rdv: "RDV", email: "Email", pr
 
 function formaterDate(iso: string): string {
   return new Date(iso).toLocaleString("fr-FR");
+}
+
+function BoutonCopier({ texte, label }: { texte: string; label: string }) {
+  const [copie, setCopie] = useState(false);
+
+  async function copier() {
+    try {
+      await navigator.clipboard.writeText(texte);
+      setCopie(true);
+      setTimeout(() => setCopie(false), 1500);
+    } catch {
+      // Presse-papiers indisponible - ignore silencieusement.
+    }
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={copier}
+      aria-label={label}
+      title={label}
+      className="flex h-8 w-8 flex-none items-center justify-center rounded-[9px] bg-[var(--util-bg)] text-[var(--util-ink)]"
+    >
+      {copie ? <CheckIcon /> : <CopyIcon />}
+    </button>
+  );
 }
 
 function DetailTache({ tache }: { tache: Tache }) {
@@ -167,6 +193,9 @@ export function TachesManager() {
                       <DownloadIcon />
                     </a>
                   )}
+                  {(tache.type === "email" || tache.type === "prompt") && (
+                    <BoutonCopier texte={tache.titre} label="Copier le titre" />
+                  )}
                   <button
                     type="button"
                     onClick={() => marquerTraite(tache.id)}
@@ -177,13 +206,15 @@ export function TachesManager() {
                 </div>
               </div>
               {tache.type === "email" && tache.emailTexte && (
-                <div className="mt-2.5">
+                <div className="mt-2.5 flex items-start gap-1.5">
                   <TextArea readOnly value={tache.emailTexte} rows={3} />
+                  <BoutonCopier texte={tache.emailTexte} label="Copier le corps" />
                 </div>
               )}
               {tache.type === "prompt" && tache.promptTexte && (
-                <div className="mt-2.5">
+                <div className="mt-2.5 flex items-start gap-1.5">
                   <TextArea readOnly value={tache.promptTexte} rows={3} />
+                  <BoutonCopier texte={tache.promptTexte} label="Copier le corps" />
                 </div>
               )}
             </li>

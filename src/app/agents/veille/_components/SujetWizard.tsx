@@ -6,11 +6,12 @@ import { SectionHead } from "@/components/SectionHead";
 import { ActionButton } from "@/components/ActionButton";
 import { SpinnerIcon } from "@/components/icons";
 import { MoteurPicker } from "./MoteurPicker";
-import { DialogueThread } from "./DialogueThread";
+import { DialogueThread, type BrouillonAvecSources } from "./DialogueThread";
 import { SourcesEditor } from "./SourcesEditor";
 import { ContractSummary } from "./ContractSummary";
 import { useChrono, formaterDuree } from "./useChrono";
 import { normaliserBrouillon, reformulerContrat } from "@/core/veille/contrat";
+import { MOTEURS_ANALYSE } from "@/shared/veille/types";
 import type { VeilleMoteur, ContratChamps, SourceProposee, SujetDTO } from "@/shared/veille/types";
 
 type Etape = "moteurDialogue" | "dialogue" | "sources" | "moteurAnalyse" | "resume";
@@ -69,11 +70,20 @@ export function SujetWizard({ sujetExistant }: { sujetExistant?: SujetDTO }) {
     }
   }
 
-  function onBrouillonPret(nouveauBrouillon: Partial<ContratChamps>) {
-    const fusion = { ...brouillon, ...nouveauBrouillon };
+  function onBrouillonPret(nouveauBrouillon: BrouillonAvecSources) {
+    const { sources: sourcesExtraites, ...champsBrouillon } = nouveauBrouillon;
+    const fusion = { ...brouillon, ...champsBrouillon };
     setBrouillon(fusion);
     setEtape("sources");
-    demanderPropositionSources(normaliserBrouillon(fusion, moteurDialogue!, moteurAnalyse ?? moteurDialogue!));
+    if (sourcesExtraites && sourcesExtraites.length > 0) {
+      // Le prompt de qualification riche liste deja des sources concretes
+      // dans sa reponse (extraites par l'etape d'interpretation Ollama) -
+      // on les reutilise directement plutot que de relancer un appel IA.
+      setErreur(null);
+      setSources(sourcesExtraites);
+    } else {
+      demanderPropositionSources(normaliserBrouillon(fusion, moteurDialogue!, moteurAnalyse ?? moteurDialogue!));
+    }
   }
 
   function relancerRechercheSources() {
@@ -101,7 +111,13 @@ export function SujetWizard({ sujetExistant }: { sujetExistant?: SujetDTO }) {
         setErreursValidation(donnees.erreurs ?? ["Erreur inconnue."]);
         return;
       }
-      router.push(`/agents/veille/sujets/${donnees.sujet.id}`);
+      // ?cree=1 uniquement lors d'une creation (pas d'une modification) :
+      // la page de destination reutilise ce meme composant en etape
+      // "resume", visuellement identique a l'ecran qu'on vient de quitter -
+      // sans ce marqueur, valider un nouveau sujet donne l'impression que
+      // "rien ne se passe" (constate a l'usage).
+      const suffixe = sujetExistant ? "" : "?cree=1";
+      router.push(`/agents/veille/sujets/${donnees.sujet.id}${suffixe}`);
       router.refresh();
     } catch {
       setErreursValidation(["Impossible de contacter le serveur."]);
@@ -173,7 +189,7 @@ export function SujetWizard({ sujetExistant }: { sujetExistant?: SujetDTO }) {
           <p className="mb-3 text-xs text-[var(--ink-soft)]">
             Choisi séparément du moteur de dialogue (EXG-015) - c'est lui qui analysera les collectes lors de chaque veille.
           </p>
-          <MoteurPicker valeur={moteurAnalyse} onChange={setMoteurAnalyse} />
+          <MoteurPicker valeur={moteurAnalyse} onChange={setMoteurAnalyse} options={MOTEURS_ANALYSE} />
           <div className="mt-4">
             <ActionButton disabled={!moteurAnalyse} onClick={() => setEtape("resume")}>
               Continuer

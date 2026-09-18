@@ -1,32 +1,21 @@
 "use client";
 
-import { useState } from "react";
 import { LIBELLE_MOTEUR, MOTEURS } from "@/shared/veille/types";
 import type { VeilleMoteur } from "@/shared/veille/types";
 
 export function MoteurPicker({
   valeur,
   onChange,
+  options = MOTEURS,
 }: {
   valeur: VeilleMoteur | null;
   onChange: (moteur: VeilleMoteur) => void;
+  options?: VeilleMoteur[];
 }) {
-  const [ouverture, setOuverture] = useState<"idle" | "ouverture" | "ouvert">("idle");
-
-  async function ouvrirConnexionChatGpt() {
-    setOuverture("ouverture");
-    try {
-      await fetch("/api/veille/chatgpt-connexion", { method: "POST" });
-      setOuverture("ouvert");
-    } catch {
-      setOuverture("idle");
-    }
-  }
-
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap gap-[9px]">
-        {MOTEURS.map((m) => (
+        {options.map((m) => (
           <button
             key={m}
             type="button"
@@ -43,20 +32,18 @@ export function MoteurPicker({
         ))}
       </div>
       {valeur === "chatgpt" && (
-        <div className="flex items-center gap-2">
-          <button
-            type="button"
-            onClick={ouvrirConnexionChatGpt}
-            className="rounded-[9px] bg-[var(--util-bg)] px-3 py-1.5 text-xs font-semibold text-[var(--util-ink)]"
+        <p className="text-[11px] text-[var(--ink-soft)]">
+          Mode manuel, hors IA - EJAH ne se connecte jamais à ta place (EXG-005). Tu échanges toi-même sur{" "}
+          <a
+            href="https://chatgpt.com"
+            target="_blank"
+            rel="noreferrer"
+            className="font-semibold text-[var(--orange-deep)] underline"
           >
-            Se connecter à ChatGPT
-          </button>
-          {ouverture === "ouvert" && (
-            <span className="text-[11px] text-[var(--ink-soft)]">
-              Fenêtre ouverte - connecte-toi manuellement, puis reviens ici.
-            </span>
-          )}
-        </div>
+            chatgpt.com
+          </a>
+          , puis colles la réponse ici.
+        </p>
       )}
     </div>
   );

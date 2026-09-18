@@ -6,7 +6,18 @@
 
 import type { MoteurAnalyse, MoteurDialogue, MoteurResultat, TourDialogue } from "@/shared/veille/moteur";
 
-const MODELE_PAR_DEFAUT = "gemini-2.0-flash";
+// gemini-2.0-flash, puis gemini-2.5-flash-lite, se sont reveles retires
+// coup sur coup (Google fait evoluer son catalogue tres vite - constate le
+// 2026-09-16, a quelques heures d'intervalle, via l'appel reel qui a
+// renvoye "This model ... is no longer available to new users. Please
+// update your code to use models/gemini-3.5-flash-lite"). gemini-3.5-flash-lite
+// est le remplacement direct recommande par Google lui-meme, confirme par
+// un appel reel (HTTP 200) - toujours au palier gratuit (EXG-001 : jamais
+// de palier payant). Si ce modele est a son tour retire, l'erreur HTTP 404
+// remontee par Google nomme explicitement son remplacant : verifier avec un
+// appel direct avant de changer cette valeur, la page de pricing seule
+// s'est deja reveled en retard sur le catalogue reel.
+const MODELE_PAR_DEFAUT = "gemini-3.5-flash-lite";
 const DELAI_MAX_MS = 60_000;
 
 function configuration(): { cle: string | null; modele: string } {
@@ -67,7 +78,22 @@ async function appelGemini(prompt: string): Promise<{ ok: true; texte: string } 
     return { ok: false, raison: "Quota gratuit Gemini atteint - moteur temporairement indisponible." };
   }
   if (!reponse.ok) {
-    return { ok: false, raison: `Gemini a répondu une erreur (HTTP ${reponse.status}).` };
+    // Google renomme/retire ses modeles frequemment (constate deux fois en
+    // une session) - son message d'erreur nomme explicitement le modele de
+    // remplacement recommande quand c'est le cas, bien plus utile que le
+    // seul code HTTP pour diagnostiquer sans repasser par un appel manuel.
+    const corpsErreur = await reponse.text().catch(() => "");
+    let messageDetaille = "";
+    try {
+      const json = JSON.parse(corpsErreur) as { error?: { message?: string } };
+      messageDetaille = json.error?.message ?? "";
+    } catch {
+      messageDetaille = corpsErreur.slice(0, 300);
+    }
+    return {
+      ok: false,
+      raison: `Gemini a répondu une erreur (HTTP ${reponse.status})${messageDetaille ? ` - ${messageDetaille}` : ""}.`,
+    };
   }
 
   const corps = (await reponse.json()) as {

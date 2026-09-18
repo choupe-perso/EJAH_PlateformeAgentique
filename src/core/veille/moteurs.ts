@@ -5,18 +5,20 @@
 // recoit "indisponible" tel quel (EXG-002/003/004).
 
 import type { MoteurAnalyse, MoteurDialogue, MoteurId } from "@/shared/veille/moteur";
-import { ollamaDialogue, ollamaAnalyse } from "@/integrations/ollama/veilleAdapter";
+import { ollamaDialogue, ollamaAnalyse, ollamaLegerDialogue, ollamaLegerAnalyse } from "@/integrations/ollama/veilleAdapter";
 import { geminiDialogue, geminiAnalyse } from "@/integrations/gemini/client";
 import { chatgptDialogue, chatgptAnalyse } from "@/integrations/chatgptWeb/client";
 
 const DIALOGUE: Record<MoteurId, MoteurDialogue> = {
   ollama: ollamaDialogue,
+  ollama_leger: ollamaLegerDialogue,
   gemini: geminiDialogue,
   chatgpt: chatgptDialogue,
 };
 
 const ANALYSE: Record<MoteurId, MoteurAnalyse> = {
   ollama: ollamaAnalyse,
+  ollama_leger: ollamaLegerAnalyse,
   gemini: geminiAnalyse,
   chatgpt: chatgptAnalyse,
 };

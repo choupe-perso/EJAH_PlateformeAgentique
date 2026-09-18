@@ -20,9 +20,13 @@ export async function POST(request: Request) {
     return NextResponse.json({ ok: false, erreurs: [resultat.erreur] });
   }
 
+  // application/octet-stream, pas text/plain : depuis que docx/pptx/xlsx
+  // sont restaurables (v2.0.0 du moteur, pas seulement .txt), un type fixe
+  // text/plain serait faux pour ces formats - le nom de fichier (Content-
+  // Disposition) suffit au navigateur/OS pour l'association d'ouverture.
   return new Response(new Blob([Uint8Array.from(resultat.donnees.contenu)]), {
     headers: {
-      "Content-Type": "text/plain; charset=utf-8",
+      "Content-Type": "application/octet-stream",
       "Content-Disposition": `attachment; filename="${resultat.donnees.nomFichierSortie}"`,
     },
   });

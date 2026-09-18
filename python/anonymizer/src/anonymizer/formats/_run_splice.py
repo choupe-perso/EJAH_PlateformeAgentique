@@ -5,14 +5,18 @@ detection has to run on a paragraph's full joined text and the resulting
 span then has to be spliced back across whichever runs it touches.
 
 Not used for XLSX: an Excel cell is a single atomic string with no run
-splitting to worry about, so xlsx_handler replaces cell.value directly.
+splitting to worry about, so xlsx_handler replaces cell.value directly
+(it does reuse `restore_in_paragraphs` below for the same reason it's
+usable there - a token never spans more than one "run").
 
-No inverse ("un-splice") direction exists here - restoring the original
-document isn't implemented for docx/pptx (see the project plan); the
-vault's token -> value table is the audit trail.
+The inverse direction (`restore_in_paragraphs`) is much simpler than the
+forward splice: a token is always inserted atomically into a single run
+by `replace_in_paragraphs`, so restoring it back is a plain per-run regex
+substitution - no offset map needed.
 """
 from __future__ import annotations
 
+import re
 from typing import Protocol, Sequence
 
 from anonymizer.engine import detect_only
@@ -20,6 +24,7 @@ from anonymizer.span import Span
 from anonymizer.vault import Vault
 
 _BLOCK_JOIN = "\n\n"
+_TOKEN_RE = re.compile(r"\[[A-Z_]+_\d+\]")
 
 
 class RunLike(Protocol):
@@ -95,3 +100,17 @@ def replace_in_paragraphs(paragraphs: Sequence[Sequence[RunLike]], vault: Vault)
                 run.text = text[:local_start] + text[local_end:]
 
     return spans
+
+
+def restore_in_paragraphs(paragraphs: Sequence[Sequence[RunLike]], vault: Vault) -> None:
+    """Inverse of `replace_in_paragraphs`: substitutes every vault token
+    found in a run's text with its original value. A token unresolvable
+    in this vault (unknown, or belonging to a different vault) is left
+    untouched, same as `engine.deanonymize`."""
+    for runs in paragraphs:
+        for run in runs:
+            text = run.text
+            if text and _TOKEN_RE.search(text):
+                run.text = _TOKEN_RE.sub(
+                    lambda m: vault.resolve(m.group(0)) or m.group(0), text
+                )

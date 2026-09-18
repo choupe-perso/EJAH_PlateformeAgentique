@@ -16,7 +16,7 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
   const [longueur, setLongueur] = useState<LongueurMail>("court");
   const [titre, setTitre] = useState("");
   const [texte, setTexte] = useState("");
-  const [champsGeneresModifiables, setChampsGeneresModifiables] = useState(false);
+  const [titreUtilisateur, setTitreUtilisateur] = useState("");
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [redaction, setRedaction] = useState(false);
   const [envoi, setEnvoi] = useState(false);
@@ -40,7 +40,6 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
       }
       setTitre(donnees.titre);
       setTexte(donnees.texte);
-      setChampsGeneresModifiables(false);
     } finally {
       setRedaction(false);
     }
@@ -53,7 +52,13 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
       const reponse = await fetch("/api/agents/todos-transport/taches", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "email", titre, destinataire, texte, notesBrutes: notes }),
+        body: JSON.stringify({
+          type: "email",
+          titre: titreUtilisateur || titre,
+          destinataire,
+          texte,
+          notesBrutes: notes,
+        }),
       });
       const donnees = await reponse.json();
       if (!donnees.ok) {
@@ -64,7 +69,7 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
       setNotes("");
       setTitre("");
       setTexte("");
-      setChampsGeneresModifiables(false);
+      setTitreUtilisateur("");
       onCree();
     } finally {
       setEnvoi(false);
@@ -72,7 +77,6 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
   }
 
   const champsGeneres = titre.trim() !== "" || texte.trim() !== "";
-  const familleGeneree = champsGeneresModifiables ? "user" : "platform";
 
   return (
     <div className="flex flex-col gap-3.5">
@@ -89,6 +93,14 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
           value={destinataire}
           onChange={(e) => setDestinataire(e.target.value)}
           placeholder="Ex : le client, Marc…"
+        />
+      </Field>
+
+      <Field label="Titre" family="user">
+        <TextInput
+          value={titreUtilisateur}
+          onChange={(e) => setTitreUtilisateur(e.target.value)}
+          placeholder="Repris automatiquement du titre genere si laisse vide"
         />
       </Field>
 
@@ -140,25 +152,23 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
         {redaction ? `Génération en cours… (${dureeGeneration})` : "Générer un brouillon"}
       </ActionButton>
 
-      <Field label="Titre" family={familleGeneree} texteACopier={champsGeneres ? titre : undefined}>
-        <TextInput
-          value={titre}
-          onChange={(e) => setTitre(e.target.value)}
-          readOnly={!champsGeneresModifiables}
-        />
+      <Field label="Titre" family="platform" texteACopier={champsGeneres ? titre : undefined}>
+        <TextInput value={titre} onChange={(e) => setTitre(e.target.value)} readOnly />
       </Field>
 
-      <Field label="Texte" family={familleGeneree} texteACopier={champsGeneres ? texte : undefined}>
-        <TextArea
-          rows={5}
-          value={texte}
-          onChange={(e) => setTexte(e.target.value)}
-          readOnly={!champsGeneresModifiables}
-        />
+      <Field label="Texte" family="platform" texteACopier={champsGeneres ? texte : undefined}>
+        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} readOnly />
       </Field>
 
-      {champsGeneres && !champsGeneresModifiables && (
-        <ActionButton variant="ghost" disabled={enCours} onClick={() => setChampsGeneresModifiables(true)}>
+      {champsGeneres && (
+        <ActionButton
+          variant="ghost"
+          disabled={enCours}
+          onClick={() => {
+            setNotes(texte);
+            setTitreUtilisateur(titre);
+          }}
+        >
           Recopier les champs dans espace utilisateur
         </ActionButton>
       )}

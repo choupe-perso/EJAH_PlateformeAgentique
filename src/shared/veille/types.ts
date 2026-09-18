@@ -24,12 +24,20 @@ export type {
 };
 
 export const CATEGORIES_SOURCE: VeilleSourceCategorie[] = ["officielle", "reseau_social", "ecommerce"];
-export const MOTEURS: VeilleMoteur[] = ["ollama", "gemini", "chatgpt"];
+
+// Moteur de dialogue (qualification, interactif) - les 4 choix.
+export const MOTEURS: VeilleMoteur[] = ["ollama", "ollama_leger", "gemini", "chatgpt"];
+// Moteur d'analyse (execution automatique, sans utilisateur present) -
+// ChatGPT est exclu : c'est un mode manuel "hors IA" (copier-coller), il ne
+// peut pas fonctionner sans intervention humaine pendant une veille lancee
+// seule (EXG-005 : jamais d'automatisation de la connexion/pilotage du site).
+export const MOTEURS_ANALYSE: VeilleMoteur[] = ["ollama", "ollama_leger", "gemini"];
 
 export const LIBELLE_MOTEUR: Record<VeilleMoteur, string> = {
-  ollama: "Ollama (local)",
+  ollama: "Ollama (local, complet)",
+  ollama_leger: "Ollama (local, rapide)",
   gemini: "Gemini",
-  chatgpt: "ChatGPT (Web)",
+  chatgpt: "ChatGPT (manuel)",
 };
 
 export const LIBELLE_CATEGORIE: Record<VeilleSourceCategorie, string> = {

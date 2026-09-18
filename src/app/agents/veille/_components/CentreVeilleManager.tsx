@@ -7,7 +7,7 @@ import { ActionButton } from "@/components/ActionButton";
 import { ArrowRightIcon, SpinnerIcon } from "@/components/icons";
 import { InfoCard } from "./InfoCard";
 import { useChrono, formaterDuree } from "./useChrono";
-import type { EvenementDTO, SyntheseVeille } from "@/shared/veille/types";
+import type { EvenementDTO, ExecutionResultatDTO, SyntheseVeille } from "@/shared/veille/types";
 
 export function CentreVeilleManager() {
   const [synthese, setSynthese] = useState<SyntheseVeille | null>(null);
@@ -15,6 +15,7 @@ export function CentreVeilleManager() {
   const [chargement, setChargement] = useState(true);
   const [lancement, setLancement] = useState(false);
   const [erreur, setErreur] = useState<string | null>(null);
+  const [dernierResultat, setDernierResultat] = useState<ExecutionResultatDTO | null>(null);
   const secondesLancement = useChrono(lancement);
 
   const rafraichir = useCallback(async () => {
@@ -42,8 +43,17 @@ export function CentreVeilleManager() {
 
   async function lancerVeille() {
     setLancement(true);
+    setDernierResultat(null);
     try {
-      await fetch("/api/veille/run", { method: "POST" });
+      const reponse = await fetch("/api/veille/run", { method: "POST" });
+      const donnees = await reponse.json();
+      if (donnees.ok) {
+        setDernierResultat(donnees.resultat);
+      } else {
+        setErreur(donnees.erreurs?.[0] ?? "Erreur inconnue lors du lancement de la veille.");
+      }
+    } catch {
+      setErreur("Impossible de contacter le serveur.");
     } finally {
       setLancement(false);
       rafraichir();
@@ -78,6 +88,23 @@ export function CentreVeilleManager() {
         </p>
       )}
 
+      {dernierResultat && dernierResultat.statut !== "reussi" && (
+        <div className="mb-3 rounded-lg border border-[var(--critical)] bg-[#FDECEB] px-3 py-2 text-sm text-[var(--critical)]">
+          <p className="font-semibold">
+            {dernierResultat.statut === "echoue" ? "La veille a échoué." : "La veille s'est terminée avec des erreurs."}
+          </p>
+          <ul className="mt-1 list-inside list-disc">
+            {dernierResultat.sujets
+              .filter((s) => s.erreur)
+              .map((s) => (
+                <li key={s.sujetId}>
+                  {s.sujetNom} : {s.erreur}
+                </li>
+              ))}
+          </ul>
+        </div>
+      )}
+
       {synthese && (
         <div className="mb-5 grid grid-cols-1 gap-3 sm:grid-cols-4">
           <KpiTile label="Sujets actifs" value={String(synthese.sujetsActifs)} trend="" />
@@ -97,8 +124,13 @@ export function CentreVeilleManager() {
 
       <div className="mb-2.5 text-xs font-semibold text-[var(--ink-soft)]">Nouveautés</div>
       {chargement && <p className="text-sm text-[var(--ink-soft)]">Chargement…</p>}
-      {!chargement && evenements.length === 0 && (
+      {!chargement && evenements.length === 0 && synthese?.derniereExecution?.statut !== "echoue" && (
         <p className="text-sm text-[var(--ink-soft)]">Aucune nouveauté pour le moment - c&apos;est un résultat normal.</p>
+      )}
+      {!chargement && evenements.length === 0 && synthese?.derniereExecution?.statut === "echoue" && !dernierResultat && (
+        <p className="text-sm text-[var(--ink-soft)]">
+          Aucune nouveauté, mais la dernière veille a échoué - voir l&apos;historique pour le détail.
+        </p>
       )}
       <ul className="flex flex-col gap-2.5">
         {evenements.map((e) => (

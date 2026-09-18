@@ -114,6 +114,7 @@ model TodoTransport {
 
 enum VeilleMoteur {
   ollama
+  ollama_leger
   gemini
   chatgpt
 }
