@@ -38,3 +38,9 @@ Thumbs.db
 
 # Raccourcis bureau (.lnk) - specifiques a la machine, jamais commit
 deployment/raccourcis-bureau/
+
+# Moteur Python anonymisation - environnement virtuel et cache (jamais commit,
+# recree localement via python/anonymizer/README.md)
+python/anonymizer/.venv/
+python/anonymizer/**/__pycache__/
+python/anonymizer/**/*.egg-info/

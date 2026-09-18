@@ -15,6 +15,7 @@ import {
   DownloadIcon,
 } from "@/components/icons";
 import { Field } from "@/components/form/Field";
+import { FieldLegend } from "@/components/form/FieldLegend";
 import { TextInput, TextArea } from "@/components/form/TextInput";
 import { Chip } from "@/components/form/Chip";
 import { ScaleField } from "@/components/form/ScaleField";
@@ -161,6 +162,21 @@ export default function GabaritPage() {
 
       <section className="mt-12">
         <SectionHead eyebrow="Configuration" title="Nouvel agent" />
+
+        <FieldLegend>
+          <Field label="Nom de l'agent" family="user">
+            <TextInput type="text" placeholder="Ex : Agent Facturation" />
+          </Field>
+          <Field label="Instructions pour l'agent" family="user">
+            <TextArea rows={2} placeholder="Décrivez le rôle de l'agent…" />
+          </Field>
+          <Field label="Identifiant technique" family="platform">
+            <TextInput type="text" defaultValue="agt_8f21c4e0" readOnly />
+          </Field>
+          <Field label="Date de création" family="platform">
+            <TextInput type="text" defaultValue="12/09/2026 09:14" readOnly />
+          </Field>
+        </FieldLegend>
 
         <div className="grid grid-cols-1 gap-[18px] md:grid-cols-2">
           <Field label="Nom de l'agent" family="user">

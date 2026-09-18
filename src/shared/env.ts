@@ -19,3 +19,20 @@ export const appEnvironment = (): AppEnvironment => {
 
 export const appEnvironmentOrNull = (): AppEnvironment | null =>
   parseAppEnvironment(process.env.APP_ENV);
+
+// Dossier racine du worktree en cours d'execution - derive de process.cwd()
+// (jamais code en dur : chaque environnement tourne depuis son propre
+// worktree, donc cette valeur reflete toujours le bon dossier sans le
+// nommer explicitement, y compris si la plateforme est un jour deplacee
+// ou installee sur un autre poste).
+export const racineProjet = (): string => process.cwd();
+
+// Nom affiche dans le header de l'app - personnalisation optionnelle via
+// .env.local (APP_DISPLAY_NAME), jamais codee en dur : "EJAH" reste le nom
+// par defaut si la cle est absente (TEST/PROD notamment).
+export const nomAffiche = (): string => process.env.APP_DISPLAY_NAME?.trim() || "EJAH";
+
+// Jeton du declenchement externe de la veille (POST /api/veille/run/externe)
+// - null si non configure, auquel cas la route doit refuser toute requete
+// plutot que d'accepter un jeton vide.
+export const veilleRunToken = (): string | null => process.env.VEILLE_RUN_TOKEN?.trim() || null;

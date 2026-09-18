@@ -17,11 +17,11 @@ datasource db {
 model ActionHistory {
   id          String   @id @default(cuid())
   occurredAt  DateTime @default(now())
-  universe    String   // "cockpit" | "agents"
+  universe    String // "cockpit" | "agents"
   actionType  String
   description String
   payload     Json?
-  createdBy   String?  // identifiant utilisateur, ex: adresse email
+  createdBy   String? // identifiant utilisateur, ex: adresse email
 
   @@index([occurredAt])
   @@index([universe])
@@ -32,11 +32,11 @@ model ActionHistory {
 model DeploymentHistory {
   id          String   @id @default(cuid())
   occurredAt  DateTime @default(now())
-  environment String   // "dev" | "test" | "prod"
-  version     String   // ex: "1.0" - correspond au tag git
+  environment String // "dev" | "test" | "prod"
+  version     String // ex: "1.0" - correspond au tag git
   gitTag      String?
   gitBranch   String
-  validatedBy String?  // identifiant utilisateur ayant valide explicitement
+  validatedBy String? // identifiant utilisateur ayant valide explicitement
   notes       String?
 
   @@index([occurredAt])
@@ -46,16 +46,286 @@ model DeploymentHistory {
 
 // Menus de la plateforme (Cockpit / Agents)
 model MenuItem {
-  id        String     @id @default(cuid())
-  universe  String     // "cockpit" | "agents"
-  label     String
-  path      String
-  icon      String?
-  order     Int        @default(0)
-  parentId  String?
-  parent    MenuItem?  @relation("MenuItemChildren", fields: [parentId], references: [id])
-  children  MenuItem[] @relation("MenuItemChildren")
+  id       String     @id @default(cuid())
+  universe String // "cockpit" | "agents"
+  label    String
+  path     String
+  icon     String?
+  order    Int        @default(0)
+  parentId String?
+  parent   MenuItem?  @relation("MenuItemChildren", fields: [parentId], references: [id])
+  children MenuItem[] @relation("MenuItemChildren")
 
   @@index([universe])
   @@map("menu_item")
+}
+
+enum TodoTransportType {
+  rdv
+  email
+  prompt
+}
+
+enum TodoTransportStatut {
+  active
+  archivee
+}
+
+// Agent "Taches" (univers Agents > Perso > Taches) - migre depuis l'ancienne
+// plateforme Flask (agents/todos_transport). Une table unique avec des
+// colonnes prefixees par type (rdv_*, email_*, prompt_*), laissees NULL pour
+// les types non concernes - meme choix assume que l'original : usage
+// strictement personnel, volume de donnees faible.
+model TodoTransport {
+  id       String              @id @default(cuid())
+  type     TodoTransportType
+  titre    String
+  statut   TodoTransportStatut @default(active)
+  creeLe   DateTime            @default(now()) @map("cree_le")
+  traiteLe DateTime?           @map("traite_le")
+
+  // rdv_date_debut : TIMESTAMP sans fuseau (heure "mur" flottante) - voir
+  // src/shared/ics.ts, meme convention que l'agent Voyages a venir.
+  rdvDateDebut     DateTime? @map("rdv_date_debut") @db.Timestamp(6)
+  rdvDureeMinutes  Int?      @map("rdv_duree_minutes")
+  rdvAlerteMinutes Int?      @map("rdv_alerte_minutes")
+  rdvDescription   String?   @map("rdv_description")
+
+  emailDestinataire String? @map("email_destinataire")
+  emailNotesBrutes  String? @map("email_notes_brutes")
+  emailTexte        String? @map("email_texte")
+
+  promptIa          String? @map("prompt_ia")
+  promptProjet      String? @map("prompt_projet")
+  promptNotesBrutes String? @map("prompt_notes_brutes")
+  promptTexte       String? @map("prompt_texte")
+
+  @@index([statut])
+  @@index([type])
+  @@map("todos_transport")
+}
+
+// Agent "Veille" (univers Agents > Toolkit > Veille) - Centre de veille
+// informationnelle personnel. Voir EJAH_Specification_Fonctionnelle_Centre_
+// de_Veille_V1.md pour le besoin fonctionnel complet.
+// Chaine du modele : Sujet -> Source -> Execution -> Collecte -> Observation
+// -> Evenement. Aucune suppression de sujet sans confirmation explicite
+// cote applicatif (voir src/core/veille/sujets.ts).
+
+enum VeilleMoteur {
+  ollama
+  ollama_leger
+  gemini
+  chatgpt
+}
+
+enum VeilleSujetEtat {
+  actif
+  suspendu
+}
+
+enum VeilleSourceCategorie {
+  officielle
+  reseau_social
+  ecommerce
+}
+
+enum VeilleSourceOrigine {
+  ia
+  utilisateur
+}
+
+enum VeilleExecutionType {
+  globale
+  individuelle
+}
+
+enum VeilleDeclencheur {
+  manuel
+  externe
+}
+
+// Reutilise pour VeilleExecution.statut (etat global) et
+// VeilleExecutionSujet.statut (resultat par sujet, voir EXG-090/091).
+enum VeilleExecutionStatut {
+  en_cours
+  reussi
+  partiel
+  echoue
+}
+
+enum VeilleCollecteStatut {
+  ok
+  echec
+}
+
+enum VeilleEvenementStatut {
+  nouveau
+  modifie
+  connu
+}
+
+// Contrat de surveillance d'un sujet (section 6 de la spec fonctionnelle).
+model VeilleSujet {
+  id          String          @id @default(cuid())
+  nom         String
+  description String?
+  objectif    String
+  etat        VeilleSujetEtat @default(actif)
+
+  // Choix separe et explicite (EXG-003) : jamais le meme champ reutilise.
+  moteurDialogue VeilleMoteur @map("moteur_dialogue")
+  moteurAnalyse  VeilleMoteur @map("moteur_analyse")
+
+  evenementsRecherches  Json    @map("evenements_recherches")
+  criteresInclusion     Json?   @map("criteres_inclusion")
+  criteresExclusion     Json?   @map("criteres_exclusion")
+  zoneGeographique      String? @map("zone_geographique")
+  categoriesSources     Json    @map("categories_sources")
+  informationsAExtraire Json    @map("informations_a_extraire")
+
+  creeLe  DateTime @default(now()) @map("cree_le")
+  creePar String?  @map("cree_par")
+
+  // Fenetre temporelle EXG-040/041 : seule une execution reussie avance
+  // derniereExecutionReussieAt (jamais de trou de collecte).
+  derniereExecutionReussieAt DateTime? @map("derniere_execution_reussie_at")
+  derniereTentativeAt        DateTime? @map("derniere_tentative_at")
+  derniereNouveauteAt        DateTime? @map("derniere_nouveaute_at")
+
+  sources         VeilleSource[]
+  executionsSujet VeilleExecutionSujet[]
+  evenements      VeilleEvenement[]
+
+  @@index([etat])
+  @@map("veille_sujet")
+}
+
+model VeilleSource {
+  id         String                @id @default(cuid())
+  sujetId    String                @map("sujet_id")
+  sujet      VeilleSujet           @relation(fields: [sujetId], references: [id], onDelete: Cascade)
+  categorie  VeilleSourceCategorie
+  libelle    String
+  url        String?
+  proposePar VeilleSourceOrigine   @map("propose_par")
+  valide     Boolean               @default(false)
+  creeLe     DateTime              @default(now()) @map("cree_le")
+
+  collectes VeilleCollecte[]
+
+  @@index([sujetId])
+  @@map("veille_source")
+}
+
+// Un lancement de veille, globale (tous les sujets actifs) ou individuelle.
+model VeilleExecution {
+  id          String                @id @default(cuid())
+  type        VeilleExecutionType
+  declencheur VeilleDeclencheur
+  demarreeAt  DateTime              @default(now()) @map("demarree_at")
+  termineeAt  DateTime?             @map("terminee_at")
+  statut      VeilleExecutionStatut @default(en_cours)
+
+  executionsSujet VeilleExecutionSujet[]
+
+  @@index([demarreeAt])
+  @@map("veille_execution")
+}
+
+// Resultat d'un sujet au sein d'une execution (EXG-090/091/093) - une source
+// en erreur ne fait pas necessairement echouer tout le sujet.
+model VeilleExecutionSujet {
+  id            String                @id @default(cuid())
+  executionId   String                @map("execution_id")
+  execution     VeilleExecution       @relation(fields: [executionId], references: [id], onDelete: Cascade)
+  sujetId       String                @map("sujet_id")
+  sujet         VeilleSujet           @relation(fields: [sujetId], references: [id], onDelete: Cascade)
+  statut        VeilleExecutionStatut
+  fenetreDepuis DateTime?             @map("fenetre_depuis")
+  fenetreJusqua DateTime              @map("fenetre_jusqua")
+  erreur        String?
+  nbNouveautes  Int                   @default(0) @map("nb_nouveautes")
+
+  collectes VeilleCollecte[]
+
+  @@index([sujetId])
+  @@index([executionId])
+  @@map("veille_execution_sujet")
+}
+
+// Contenu recupere depuis une source lors d'une execution - pas
+// necessairement pertinent (voir section 4.3 de la spec).
+model VeilleCollecte {
+  id               String               @id @default(cuid())
+  executionSujetId String               @map("execution_sujet_id")
+  executionSujet   VeilleExecutionSujet @relation(fields: [executionSujetId], references: [id], onDelete: Cascade)
+  sourceId         String               @map("source_id")
+  source           VeilleSource         @relation(fields: [sourceId], references: [id], onDelete: Cascade)
+  contenuBrut      String?              @map("contenu_brut") @db.Text
+  recupereAt       DateTime             @default(now()) @map("recupere_at")
+  statut           VeilleCollecteStatut
+  erreur           String?
+
+  observations VeilleObservation[]
+
+  @@index([executionSujetId])
+  @@index([sourceId])
+  @@map("veille_collecte")
+}
+
+// Information extraite d'une collecte, candidate a correspondre au contrat.
+model VeilleObservation {
+  id               String           @id @default(cuid())
+  collecteId       String           @map("collecte_id")
+  collecte         VeilleCollecte   @relation(fields: [collecteId], references: [id], onDelete: Cascade)
+  donneesExtraites Json             @map("donnees_extraites")
+  pertinente       Boolean          @default(false)
+  creeLe           DateTime         @default(now()) @map("cree_le")
+  evenementId      String?          @map("evenement_id")
+  evenement        VeilleEvenement? @relation(fields: [evenementId], references: [id], onDelete: Cascade)
+
+  @@index([collecteId])
+  @@index([evenementId])
+  @@map("veille_observation")
+}
+
+// Fait consolide (section 4.5) - statut NOUVEAU/MODIFIE/CONNU (section 12).
+// cleDedup porte la deduplication semantique V1 (EXG-050).
+model VeilleEvenement {
+  id                  String                @id @default(cuid())
+  sujetId             String                @map("sujet_id")
+  sujet               VeilleSujet           @relation(fields: [sujetId], references: [id], onDelete: Cascade)
+  cleDedup            String                @map("cle_dedup")
+  titre               String
+  resume              String                @db.Text
+  statut              VeilleEvenementStatut
+  donnees             Json
+  premiereDetectionAt DateTime              @default(now()) @map("premiere_detection_at")
+  derniereDetectionAt DateTime              @default(now()) @map("derniere_detection_at")
+  lu                  Boolean               @default(false)
+  luAt                DateTime?             @map("lu_at")
+
+  observations VeilleObservation[]
+  versions     VeilleEvenementVersion[]
+
+  @@unique([sujetId, cleDedup])
+  @@index([sujetId])
+  @@index([statut])
+  @@index([lu])
+  @@map("veille_evenement")
+}
+
+// Historique des valeurs d'un evenement MODIFIE (EXG-053) - garde l'ancienne
+// et la nouvelle valeur pour la tracabilite (section 16).
+model VeilleEvenementVersion {
+  id           String          @id @default(cuid())
+  evenementId  String          @map("evenement_id")
+  evenement    VeilleEvenement @relation(fields: [evenementId], references: [id], onDelete: Cascade)
+  donneesAvant Json?           @map("donnees_avant")
+  donneesApres Json            @map("donnees_apres")
+  detecteAt    DateTime        @default(now()) @map("detecte_at")
+
+  @@index([evenementId])
+  @@map("veille_evenement_version")
 }
