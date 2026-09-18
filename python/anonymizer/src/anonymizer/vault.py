@@ -6,10 +6,13 @@ Storage: a single SQLite file with three tables.
   encryption key from a passphrase and to detect a wrong passphrase.
 - counters: next free sequence number per entity type, used to build
   human-readable tokens like "[PERSONNE_3]".
-- mappings: token -> encrypted original value.
+- mappings: token -> encrypted original value, plus a `kind` ('text' or
+  'bytes') so resolve()/resolve_bytes() never mix up which decode path a
+  token belongs to.
 - value_index: a keyed (HMAC) blind index of "entity_type + normalized
-  value" -> token, so the same real-world value always gets the same
-  token again, without storing the plaintext value anywhere queryable.
+  value" (or, for a bytes value, "entity_type + sha256(value)") -> token,
+  so the same real-world value always gets the same token again, without
+  storing the plaintext value anywhere queryable.
 
 The passphrase itself is never written to disk; only a PBKDF2 salt and an
 encrypted canary are. Losing the passphrase means the vault is
@@ -66,6 +69,18 @@ class Vault:
                 ) from exc
             if decrypted != _CANARY_PLAINTEXT:
                 raise WrongPassphraseError("Passphrase incorrecte pour ce vault.")
+            self._upgrade_schema()
+
+    def _upgrade_schema(self) -> None:
+        """A vault created before the `kind` column existed (image/binary
+        support) is missing it - add it transparently so an older, already
+        deployed vault file keeps working with no manual migration step."""
+        columns = {row[1] for row in self._conn.execute("PRAGMA table_info(mappings)")}
+        if "kind" not in columns:
+            self._conn.execute(
+                "ALTER TABLE mappings ADD COLUMN kind TEXT NOT NULL DEFAULT 'text'"
+            )
+            self._conn.commit()
 
     # -- setup -------------------------------------------------------
     def _init_schema(self) -> None:
@@ -85,6 +100,7 @@ class Vault:
                 token TEXT PRIMARY KEY,
                 entity_type TEXT NOT NULL,
                 ciphertext BLOB NOT NULL,
+                kind TEXT NOT NULL DEFAULT 'text',
                 created_at TEXT NOT NULL
             );
             CREATE TABLE value_index (
@@ -125,6 +141,13 @@ class Vault:
         message = f"{entity_type.value}\x00{normalized_value}".encode("utf-8")
         return hmac.new(self._index_key, message, hashlib.sha256).hexdigest()
 
+    def _blind_index_bytes(self, entity_type: EntityType, data: bytes) -> str:
+        # Hash first so the HMAC message stays a small, fixed size instead
+        # of feeding it a multi-MB image directly.
+        digest = hashlib.sha256(data).digest()
+        message = entity_type.value.encode("utf-8") + b"\x00" + digest
+        return hmac.new(self._index_key, message, hashlib.sha256).hexdigest()
+
     def _next_counter(self, entity_type: EntityType) -> int:
         cur = self._conn.execute(
             "SELECT next_value FROM counters WHERE entity_type = ?",
@@ -143,12 +166,9 @@ class Vault:
         )
         return next_value
 
-    def tokenize(self, entity_type: EntityType, value: str) -> str:
-        """Return the token for `value`, creating one if unseen. The same
-        (entity_type, value) pair always yields the same token, even
-        across separate anonymize() calls against this vault."""
-        normalized = value.strip()
-        index_key = self._blind_index(entity_type, normalized)
+    def _get_or_create_token(
+        self, entity_type: EntityType, index_key: str, plaintext: bytes, kind: str
+    ) -> str:
         row = self._conn.execute(
             "SELECT token FROM value_index WHERE index_key = ?", (index_key,)
         ).fetchone()
@@ -157,12 +177,12 @@ class Vault:
 
         counter = self._next_counter(entity_type)
         token = f"[{entity_type.value}_{counter}]"
-        ciphertext = self._fernet.encrypt(normalized.encode("utf-8"))
+        ciphertext = self._fernet.encrypt(plaintext)
         now = datetime.now(timezone.utc).isoformat()
         self._conn.execute(
-            "INSERT INTO mappings (token, entity_type, ciphertext, created_at) "
-            "VALUES (?, ?, ?, ?)",
-            (token, entity_type.value, ciphertext, now),
+            "INSERT INTO mappings (token, entity_type, ciphertext, kind, created_at) "
+            "VALUES (?, ?, ?, ?, ?)",
+            (token, entity_type.value, ciphertext, kind, now),
         )
         self._conn.execute(
             "INSERT INTO value_index (index_key, token) VALUES (?, ?)",
@@ -171,15 +191,44 @@ class Vault:
         self._conn.commit()
         return token
 
+    def tokenize(self, entity_type: EntityType, value: str) -> str:
+        """Return the token for `value`, creating one if unseen. The same
+        (entity_type, value) pair always yields the same token, even
+        across separate anonymize() calls against this vault."""
+        normalized = value.strip()
+        index_key = self._blind_index(entity_type, normalized)
+        return self._get_or_create_token(
+            entity_type, index_key, normalized.encode("utf-8"), "text"
+        )
+
+    def tokenize_bytes(self, entity_type: EntityType, data: bytes) -> str:
+        """Same as `tokenize`, for a binary value (e.g. a whole image
+        that's being swapped out for a placeholder) instead of a string -
+        used to make that swap reversible via `resolve_bytes`."""
+        index_key = self._blind_index_bytes(entity_type, data)
+        return self._get_or_create_token(entity_type, index_key, data, "bytes")
+
     def resolve(self, token: str) -> str | None:
-        """Return the original value for `token`, or None if this vault
-        has never seen that token."""
+        """Return the original text value for `token`, or None if this
+        vault has never seen that token (or it was stored via
+        `tokenize_bytes`, not `tokenize`)."""
         row = self._conn.execute(
-            "SELECT ciphertext FROM mappings WHERE token = ?", (token,)
+            "SELECT ciphertext, kind FROM mappings WHERE token = ?", (token,)
         ).fetchone()
-        if row is None:
+        if row is None or row[1] != "text":
             return None
         return self._fernet.decrypt(row[0]).decode("utf-8")
+
+    def resolve_bytes(self, token: str) -> bytes | None:
+        """Return the original binary value for `token`, or None if this
+        vault has never seen that token (or it was stored via `tokenize`,
+        not `tokenize_bytes`)."""
+        row = self._conn.execute(
+            "SELECT ciphertext, kind FROM mappings WHERE token = ?", (token,)
+        ).fetchone()
+        if row is None or row[1] != "bytes":
+            return None
+        return self._fernet.decrypt(row[0])
 
     def close(self) -> None:
         self._conn.close()

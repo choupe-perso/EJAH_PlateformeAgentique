@@ -1,5 +1,5 @@
 import type { ReactNode } from "react";
-import { FIELD_FAMILY_COLOR } from "./Field";
+import { FIELD_FAMILY_COLOR } from "./fieldFamilyColor";
 
 function LegendItem({ family, label }: { family: "user" | "platform"; label: string }) {
   return (

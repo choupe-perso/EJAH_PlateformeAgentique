@@ -53,12 +53,13 @@ Aucun indicateur n'est encore defini pour Cockpit (2026-09-13).
 
 Le menu de navigation d'Agents (`/agents`, barre laterale) a ete defini le
 2026-09-15, puis ajuste le meme jour (renommage Voyages -> Trajets SNCF,
-Taches -> TODO Offline, suppression de l'entree Generiques, puis ajout de
-l'agent Anonymisation sous Toolkit) :
+Taches -> TODO Offline, suppression de l'entree Generiques, ajout de
+l'agent Anonymisation puis de l'agent Veille sous Toolkit) :
 
 ```text
 Toolkit
   |_ Anonymisation
+  |_ Veille
 Perso
   |_ Trajets SNCF
   |_ TODO Offline
@@ -66,8 +67,11 @@ Perso
 
 `Trajets SNCF` (agent Voyages / generateur_ics_sncf) et `TODO Offline`
 (agent Taches / todos_transport) sont des agents reels, migres depuis
-l'ancienne plateforme Flask. `Anonymisation` est un agent reel integrant un
-moteur Python vendorise (voir Etat d'avancement).
+l'ancienne plateforme Flask. `Anonymisation` et `Veille` sont des agents
+reels (voir Etat d'avancement) - `Anonymisation` integre un moteur Python
+vendorise, `Veille` est un centre de veille informationnelle (qualification
+par dialogue IA, sources validees par l'utilisateur, execution avec
+deduplication).
 
 ## Environnements
 
@@ -403,3 +407,59 @@ explicitement avec l'utilisateur avant de la construire.
   `ANONYMIZER_PASSPHRASE` dans `.env.local` - voir
   `python/anonymizer/README.md`). Pas encore valide par l'utilisateur sur
   TEST.
+- 2026-09-15/16 : corrections de retours utilisateur sur 3 agents.
+  `ActionButton` : le variant "loading" etait a la fois estompe et sans
+  animation visible (ancien style partage avec l'etat `disabled` generique) ;
+  ajout d'un spinner automatique pour "loading" et retrait de l'estompage
+  sur ce variant precis - seuls les AUTRES boutons (inactifs pendant
+  qu'une action tourne) restent estompes desormais. Corrige le
+  cross-disable manquant sur Anonymisation. `TachesManager` : date de
+  creation affichee sur les taches actives, section "Taches traitees"
+  repliee par defaut triee par date de traitement decroissante.
+  `EmailForm`/`PromptForm` : liserets Utilisateur/Plateforme (`Field`) sur
+  tous les champs, champs generes en lecture seule avec un bouton
+  "Recopier les champs dans espace utilisateur" pour les rendre editables,
+  minuteur en direct dans le bouton pendant la generation Ollama, bouton
+  copier par champ genere (`Field` accepte un `texteACopier` optionnel).
+  Regle "termine par Je te/vous remercie si une question est posee"
+  ajoutee aux fragments tutoiement/vouvoiement (pas a `regles.txt`,
+  independant du registre). Diagnostic en cours de route : le port 3000 de
+  DEV tournait par erreur en mode production (`next start`, sans watcher)
+  au lieu de `next dev` - explique une longue serie de faux symptomes
+  (modifications de code invisibles) ; a verifier systematiquement en cas
+  de comportement inexplicable (`curl -I` : `Cache-Control: no-store`
+  attendu en dev, `x-nextjs-cache: HIT` trahit un serveur de production).
+- 2026-09-16 : agent Veille ajoute sous Toolkit - centre de veille
+  informationnelle personnel (qualification d'un besoin par dialogue avec
+  un moteur au choix - Ollama local/Gemini/ChatGPT Web -, proposition de
+  sources validees par l'utilisateur, moteur d'analyse choisi separement,
+  execution avec deduplication deterministe et historique de versions,
+  dashboard KPI + historique tracable de bout en bout). Trois moteurs
+  branchables derriere un contrat commun (`ok`/`indisponible`, jamais de
+  bascule silencieuse vers un autre moteur). ChatGPT Web reutilise le
+  pattern Playwright + profil persistant deja etabli pour SNCF, sans
+  automatiser la connexion. Cles `GEMINI_API_KEY`/`GEMINI_MODEL`/
+  `VEILLE_RUN_TOKEN` ajoutees a `config/.env.dev.example`, sans valeurs.
+  Verifie de bout en bout dans le navigateur avec le moteur Ollama :
+  parcours complet de qualification (dialogue reel, question de
+  clarification, contrat final coherent), creation du sujet, execution
+  reelle - echoue proprement (sans crash) sur les 3 sources choisies pour
+  le test (page Samsung protegee/rendue en JS, hote injoignable, Twitter
+  bloque le fetch simple), comportement V1 attendu et documente pour des
+  sources non compatibles avec un simple fetch (pas de rendu JS par site
+  en V1). Corrige au passage : `FIELD_FAMILY_COLOR` extrait de `Field.tsx`
+  vers `fieldFamilyColor.ts` (un composant serveur ne peut pas importer
+  une constante depuis un module "use client") ; `TextInput`/`TextArea`
+  ignoraient silencieusement un `className` passe par l'appelant. Travail
+  initialement demarre par une session parallele sur le meme worktree DEV
+  (l'utilisateur a explicitement arrete de travailler en double session et
+  demande de reprendre Veille) ; aucun document de specification separe
+  trouve dans le depot malgre ~90 commentaires "EXG-0xx" - le code fait foi.
+  Pas encore valide par l'utilisateur.
+- 2026-09-18 : agent Anonymisation - support PDF (nouveau
+  `python/anonymizer/formats/pdf_handler.py`). Agent Veille - moteur
+  "ollama_leger" (nouvelle valeur enum `VeilleMoteur`, migration Prisma),
+  routes de saisie manuelle dialogue/prompt (`/api/veille/sujets/
+  dialogue-manuel`, `/prompt-manuel`) sans passer par le dialogue
+  qualificatif standard. Merge `dev` -> `test` (quatrieme fusion). Pas
+  encore valide par l'utilisateur sur TEST.

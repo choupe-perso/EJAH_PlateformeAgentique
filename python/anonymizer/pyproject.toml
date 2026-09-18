@@ -1,8 +1,10 @@
 [project]
 name = "anonymizer"
-version = "1.0.0"
+version = "2.0.0"
 description = "Agent d'anonymisation reversible"
 requires-python = ">=3.11"
+authors = [{ name = "ADBI" }]
+license = { text = "Propriete exclusive d'ADBI. Usage strictement reserve aux consultants ADBI dans le cadre de leurs missions. Toute utilisation, copie ou diffusion par un tiers non autorise est interdite." }
 dependencies = [
     "cryptography>=42",
     "spacy>=3.8",
@@ -11,6 +13,7 @@ dependencies = [
     "openpyxl>=3.1",
     "rapidocr-onnxruntime>=1.2",
     "Pillow>=10",
+    "pypdf>=5",
 ]
 
 [project.scripts]
@@ -22,6 +25,9 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["src"]
+
+[tool.setuptools.package-data]
+anonymizer = ["formats/assets/*.png"]
 
 [tool.pytest.ini_options]
 pythonpath = ["src"]

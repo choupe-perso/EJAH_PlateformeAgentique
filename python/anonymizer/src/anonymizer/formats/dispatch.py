@@ -1,26 +1,33 @@
 """Selects the right format handler module by file extension.
 
-Each handler module exposes `inspect(path, avec_images=True) -> list[Span]`
-and `anonymize(path, vault, out_path=None, avec_images=True) ->
-tuple[Path, list[Span]]`. `avec_images` controls whether embedded images are
-OCR'd for PII (docx/pptx/xlsx only - text_handler accepts and ignores it,
-a .txt file never has images). `text_handler` additionally exposes
-`deanonymize` - the docx/pptx/xlsx handlers deliberately don't (see the
-project plan: restoring the original document isn't implemented for those
-formats, only the vault's token -> value correspondence table is kept for
-audit)."""
+Each handler module exposes `inspect(path) -> list[Span]` and
+`anonymize(path, vault, out_path=None) -> tuple[Path, list[Span]]`.
+`text_handler`/`docx_handler`/`pptx_handler`/`xlsx_handler` additionally
+expose `deanonymize(path, vault, out_path=None) -> Path` - text and
+(where applicable) whole swapped-out images are restored exactly via the
+same vault used to anonymize. `pdf_handler` doesn't: a PDF is converted
+once into a plain .docx and anonymized as one (see pdf_handler's own
+docstring for why) - the resulting .docx is what gets restored, via
+docx_handler, like any other one."""
 from __future__ import annotations
 
 from pathlib import Path
 from types import ModuleType
 
-from anonymizer.formats import docx_handler, pptx_handler, text_handler, xlsx_handler
+from anonymizer.formats import (
+    docx_handler,
+    pdf_handler,
+    pptx_handler,
+    text_handler,
+    xlsx_handler,
+)
 
 _HANDLERS: dict[str, ModuleType] = {
     ".txt": text_handler,
     ".docx": docx_handler,
     ".pptx": pptx_handler,
     ".xlsx": xlsx_handler,
+    ".pdf": pdf_handler,
 }
 
 

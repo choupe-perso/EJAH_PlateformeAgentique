@@ -44,6 +44,19 @@ class EntityType(str, Enum):
     SYNDICAT = "SYNDICAT"
     OPINION_POLITIQUE = "OPINION_POLITIQUE"
     CASIER_JUDICIAIRE = "CASIER_JUDICIAIRE"
+    # Structural - never produced by a recognizer/detect_only. Used by the
+    # format handlers to store a whole sensitive image as a binary vault
+    # value (see Vault.tokenize_bytes), so never scored in MACRO_CATEGORY.
+    IMAGE = "IMAGE"
+
+
+# Entity types never produced by detect_only()/the recognizer pipeline -
+# format handlers call the vault directly with these (see EntityType.IMAGE).
+# Excluded from MACRO_CATEGORY_BY_ENTITY and from anything that scores
+# recognizer output against the golden corpus.
+STRUCTURAL_TYPES = {
+    EntityType.IMAGE,
+}
 
 
 SPECIAL_CATEGORY = {

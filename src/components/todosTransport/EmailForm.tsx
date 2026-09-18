@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import { ActionButton } from "@/components/ActionButton";
+import { Field } from "@/components/form/Field";
 import { TextInput, TextArea } from "@/components/form/TextInput";
 import { SelectChips } from "./SelectChips";
+import { useMinuteur } from "./useMinuteur";
 import type { LongueurMail, Registre, Ton } from "@/integrations/ollama/redactionTransport";
 
 export function EmailForm({ onCree }: { onCree: () => void }) {
@@ -14,9 +16,13 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
   const [longueur, setLongueur] = useState<LongueurMail>("court");
   const [titre, setTitre] = useState("");
   const [texte, setTexte] = useState("");
+  const [titreUtilisateur, setTitreUtilisateur] = useState("");
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [redaction, setRedaction] = useState(false);
   const [envoi, setEnvoi] = useState(false);
+
+  const enCours = redaction || envoi;
+  const dureeGeneration = useMinuteur(redaction);
 
   async function genererBrouillon() {
     setRedaction(true);
@@ -46,7 +52,13 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
       const reponse = await fetch("/api/agents/todos-transport/taches", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "email", titre, destinataire, texte, notesBrutes: notes }),
+        body: JSON.stringify({
+          type: "email",
+          titre: titreUtilisateur || titre,
+          destinataire,
+          texte,
+          notesBrutes: notes,
+        }),
       });
       const donnees = await reponse.json();
       if (!donnees.ok) {
@@ -57,11 +69,14 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
       setNotes("");
       setTitre("");
       setTexte("");
+      setTitreUtilisateur("");
       onCree();
     } finally {
       setEnvoi(false);
     }
   }
+
+  const champsGeneres = titre.trim() !== "" || texte.trim() !== "";
 
   return (
     <div className="flex flex-col gap-3.5">
@@ -73,22 +88,27 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
         </ul>
       )}
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Destinataire</label>
+      <Field label="Destinataire" family="user">
         <TextInput
           value={destinataire}
           onChange={(e) => setDestinataire(e.target.value)}
           placeholder="Ex : le client, Marc…"
         />
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Notes (ce que tu veux dire)</label>
+      <Field label="Titre" family="user">
+        <TextInput
+          value={titreUtilisateur}
+          onChange={(e) => setTitreUtilisateur(e.target.value)}
+          placeholder="Repris automatiquement du titre genere si laisse vide"
+        />
+      </Field>
+
+      <Field label="Notes (ce que tu veux dire)" family="user">
         <TextArea rows={2} value={notes} onChange={(e) => setNotes(e.target.value)} />
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Registre</label>
+      <Field label="Registre" family="user">
         <SelectChips
           value={registre}
           onChange={setRegistre}
@@ -97,10 +117,9 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
             { value: "vouvoiement", label: "Vouvoiement" },
           ]}
         />
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Ton</label>
+      <Field label="Ton" family="user">
         <SelectChips
           value={ton}
           onChange={setTon}
@@ -111,10 +130,9 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
             { value: "amical", label: "Amical" },
           ]}
         />
-      </div>
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Longueur</label>
+      <Field label="Longueur" family="user">
         <SelectChips
           value={longueur}
           onChange={setLongueur}
@@ -124,27 +142,38 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
             { value: "developpe", label: "Développé" },
           ]}
         />
-      </div>
+      </Field>
 
       <ActionButton
         variant={redaction ? "loading" : "primary"}
-        disabled={redaction}
+        disabled={enCours}
         onClick={genererBrouillon}
       >
-        Générer un brouillon
+        {redaction ? `Génération en cours… (${dureeGeneration})` : "Générer un brouillon"}
       </ActionButton>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Titre</label>
-        <TextInput value={titre} onChange={(e) => setTitre(e.target.value)} />
-      </div>
+      <Field label="Titre" family="platform" texteACopier={champsGeneres ? titre : undefined}>
+        <TextInput value={titre} onChange={(e) => setTitre(e.target.value)} readOnly />
+      </Field>
 
-      <div className="flex flex-col gap-1.5">
-        <label className="text-xs font-semibold text-[var(--ink-soft)]">Texte</label>
-        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} />
-      </div>
+      <Field label="Texte" family="platform" texteACopier={champsGeneres ? texte : undefined}>
+        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} readOnly />
+      </Field>
 
-      <ActionButton variant={envoi ? "loading" : "success"} disabled={envoi} onClick={soumettre}>
+      {champsGeneres && (
+        <ActionButton
+          variant="ghost"
+          disabled={enCours}
+          onClick={() => {
+            setNotes(texte);
+            setTitreUtilisateur(titre);
+          }}
+        >
+          Recopier les champs dans espace utilisateur
+        </ActionButton>
+      )}
+
+      <ActionButton variant={envoi ? "loading" : "success"} disabled={enCours} onClick={soumettre}>
         Enregistrer l&apos;email
       </ActionButton>
     </div>
