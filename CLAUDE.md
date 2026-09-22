@@ -56,14 +56,17 @@ Le menu de navigation d'Agents (`/agents`, barre laterale) a ete defini le
 
 ```text
 Toolkit
-  |_ Generiques
+  |_ Anonymisation
 Perso
   |_ Voyages
   |_ Taches
 ```
 
-Ce sont des categories de menu, pas encore des agents reels - aucun agent
-n'est encore defini a l'interieur.
+Mis a jour le 2026-09-22 : "Anonymisation" (agent livre par ADBI, coeur
+Python derriere `python/gateway/`, voir `docs/ARCHITECTURE.md` section
+5bis) est le premier agent reel du menu, accessible depuis
+`/agents/anonymizer`. Voyages et Taches restent des categories sans agent
+reel pour le moment.
 
 ## Environnements
 

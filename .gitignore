@@ -38,3 +38,9 @@ Thumbs.db
 
 # Raccourcis bureau (.lnk) - specifiques a la machine, jamais commit
 deployment/raccourcis-bureau/
+
+# Gateway agents Python (python/) - environnements virtuels et bytecode
+python/**/.venv/
+python/**/__pycache__/
+python/**/*.pyc
+python/**/*.egg-info/

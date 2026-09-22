@@ -1,0 +1,55 @@
+L'ENTRETIEN DE NATHAN KOUASSI
+=============================
+
+Récit fictif — jeu de données de test pour outil d'anonymisation
+
+Nathan Kouassi, né le 29 août 1994 à Abidjan, en Côte d'Ivoire, arriva dix minutes en avance pour
+son entretien chez Vertex Software. Il habitait au 3 rue des Tanneurs, 67000 Strasbourg, joignable
+au 06 15 73 28 44 ou par mail à nathan.kouassi94@proton.me.
+
+La chargée de recrutement, Élise Marchand, vérifia son dossier : permis de conduire 940817B67291, et
+carte de séjour, en tant que ressortissant ivoirien installé en France depuis dix ans, portant le
+numéro 831045672290. Elle nota aussi le nom de son ancien employeur, Digital Vosges, où il occupait
+un poste de développeur backend senior pour 44 500 euros bruts annuels.
+
+Nathan mentionna, comme il le faisait toujours en entretien, sa reconnaissance de travailleur
+handicapé (RQTH), accordée à la suite d'une épilepsie diagnostiquée à seize ans, aujourd'hui
+stabilisée par un traitement quotidien de lévétiracétam. Il précisa qu'il n'avait besoin d'aucun
+aménagement de poste particulier, sinon d'être informé à l'avance en cas de réunion avec éclairages
+stroboscopiques.
+
+Sur les questions de convictions, souvent posées en fin d'entretien chez Vertex Software dans le
+cadre de leur charte diversité, Nathan indiqua être chrétien évangélique pratiquant et se rendre au
+temple chaque dimanche. Il ajouta qu'il était membre actif du syndicat SUD dans sa précédente
+entreprise, engagement qu'il comptait poursuivre s'il était recruté.
+
+Élise nota également ses identifiants pour la suite du process : profil LinkedIn "Nathan Kouassi —
+Backend & Cloud", et lui indiqua que l'adresse mail professionnelle prévue serait
+n.kouassi@vertex-software.fr, avec un accès VPN temporaire depuis l'IP du siège, 194.51.88.23, dès
+la signature du contrat.
+
+En fin d'entretien, Nathan évoqua une question administrative en suspens : un courrier de la
+préfecture concernant le renouvellement de sa carte de séjour, à renvoyer avant le 14 décembre 2026,
+ainsi qu'un rendez-vous à la CPAM pour mettre à jour son dossier RQTH avec son numéro de sécurité
+sociale, 1 94 08 67 108 552 37.
+
+Élise le raccompagna à la réception, lui promit une réponse sous quinze jours, et nota, en dernière
+ligne de son compte rendu, que le dossier complet serait transmis au service RH à l'adresse
+rh@vertex-software.fr accompagné du CV et du numéro de candidature interne, CAND-2026-05521.
+
+Avant de partir, Nathan reçut un rappel de sa banque concernant l'ouverture d'un compte joint avec
+sa compagne, Aïcha Benyahia, née le 3 mars 1996, en vue de l'achat d'un véhicule. La conseillère
+bancaire lui communiqua le numéro de dossier de financement, FIN-STR-208874, et l'IBAN provisoire du
+compte, FR76 3007 6021 0100 0234 5678 921, en attendant la signature définitive prévue la semaine
+suivante.
+
+Le lendemain matin, Nathan reçut aussi un appel de son ancienne mutuelle d'entreprise pour clore son
+contrat : elle lui demanda de confirmer son numéro d'adhérent, MUT-77-204981, ainsi que son adresse
+actuelle, 3 rue des Tanneurs, 67000 Strasbourg, avant l'envoi du solde de tout compte, qui devait
+inclure la régularisation de ses indemnités de congés payés.
+
+Nathan profita aussi de l'entretien pour évoquer un projet associatif : il envisageait de créer une
+structure sportive dans son quartier, Strasbourg Cyclo Solidaire, dont il serait président, et
+demanda si Vertex Software proposait un dispositif de mécénat de compétences. Il indiqua, pour la
+déclaration en préfecture, le futur numéro national d'association, W673002145, et confirma que le
+siège serait domicilié à son adresse personnelle, 3 rue des Tanneurs, 67000 Strasbourg.

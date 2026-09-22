@@ -1,0 +1,46 @@
+# Créé par Cédric HOUPE.
+# Usage ou reproduction à l'identique interdit sans autorisation.
+#
+# Paquet CŒUR SEUL de l'agent anonymizer, destiné à être dupliqué dans la
+# plateforme web EJAH et évoluer ensuite de façon indépendante de ce
+# dépôt (agents/anonymizer/). Ne contient PAS adapters/ (CLI) ni
+# installer/ (lanceurs DOS) - le web importe app.service directement,
+# jamais via un sous-processus. Voir README.md dans ce paquet (ou
+# docs/web_gui_integration.md dans le dépôt source) pour le contrat
+# d'intégration complet.
+
+[project]
+name = "ejah-agent-anonymizer-core"
+version = "3.0.0"
+description = "Coeur applicatif (sans CLI) de l'agent EJAH d'anonymisation reversible de documents"
+requires-python = ">=3.11"
+authors = [{ name = "ADBI" }]
+license = { text = "Propriete exclusive d'ADBI. Usage strictement reserve aux consultants ADBI dans le cadre de leurs missions. Toute utilisation, copie ou diffusion par un tiers non autorise est interdite." }
+dependencies = [
+    "cryptography>=42",
+    "spacy>=3.8",
+    "python-docx>=1.1",
+    "python-pptx>=1.0",
+    "openpyxl>=3.1",
+    "rapidocr-onnxruntime>=1.2",
+    "Pillow>=10",
+    "pypdf>=5",
+]
+
+[project.optional-dependencies]
+dev = ["pytest>=8", "PyYAML>=6"]
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["app*"]
+
+[tool.setuptools.package-data]
+"app.tools.formats" = ["assets/*.png"]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
