@@ -39,6 +39,9 @@ Thumbs.db
 # Raccourcis bureau (.lnk) - specifiques a la machine, jamais commit
 deployment/raccourcis-bureau/
 
+# Fichiers en attente de tri - jamais commit (voir avec l'utilisateur)
+/_a_trier/
+
 # Gateway agents Python (python/) - environnements virtuels et bytecode
 python/**/.venv/
 python/**/__pycache__/

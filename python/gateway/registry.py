@@ -56,6 +56,16 @@ class AgentDescriptor:
             if spec.get("type") == "scalar"
         }
 
+    def json_fields(self) -> set[str]:
+        """Champs `collection` dont les éléments ne sont pas des `artifact`
+        (ex. liste d'objets métier) : transmis en form-data comme un champ
+        texte JSON-encodé, décodé ici avant d'être passé à web_adapter.run."""
+        result = set()
+        for prop_name, spec in self._input_properties().items():
+            if spec.get("type") == "collection" and spec.get("items", {}).get("type") != "artifact":
+                result.add(prop_name)
+        return result
+
 
 def discover_agents() -> dict[str, AgentDescriptor]:
     agents: dict[str, AgentDescriptor] = {}

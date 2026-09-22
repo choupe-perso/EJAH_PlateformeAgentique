@@ -12,6 +12,8 @@ exposée au navigateur : liée à 127.0.0.1 uniquement (voir run.py).
 """
 from __future__ import annotations
 
+import asyncio
+import json
 import re
 import shutil
 import tempfile
@@ -34,6 +36,13 @@ GATEWAY_TEMP_ROOT.mkdir(parents=True, exist_ok=True)
 _MAX_TEMP_DIR_AGE_SECONDS = 24 * 3600
 _REQUEST_ID_RE = re.compile(r"^[0-9a-f]{32}$")
 
+# Canal générique optionnel : un web_adapter.run() long (ex. voyages/recuperer,
+# plusieurs minutes) peut écrire son état ici pendant qu'il tourne dans son
+# thread ; ce endpoint ne connaît pas le sens du contenu, il le relit tel
+# quel - un agent qui n'écrit jamais ici répond simplement {"state": null}.
+PROGRESS_ROOT = Path(tempfile.gettempdir()) / "ejah-agent-progress"
+_AGENT_ID_RE = re.compile(r"^[a-zA-Z0-9_-]+$")
+
 
 def _cleanup_old_requests() -> None:
     now = time.time()
@@ -55,6 +64,19 @@ def _shutdown() -> None:
 @app.get("/health")
 def health() -> dict[str, str]:
     return {"status": "ok"}
+
+
+@app.get("/agents/{agent_id}/progress")
+def agent_progress(agent_id: str) -> dict[str, Any]:
+    if not _AGENT_ID_RE.match(agent_id):
+        raise HTTPException(status_code=404, detail=f"Agent inconnu : {agent_id!r}")
+    path = PROGRESS_ROOT / f"{agent_id}.json"
+    if not path.is_file():
+        return {"state": None}
+    try:
+        return json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"state": None}
 
 
 @app.get("/agents")
@@ -88,6 +110,7 @@ async def execute_agent(agent_id: str, request: Request) -> JSONResponse:
 
     artifact_names = agent.artifact_fields()
     scalar_names = agent.scalar_fields()
+    json_names = agent.json_fields()
 
     fields: dict[str, Any] = {}
     files: dict[str, list[Path]] = {}
@@ -105,6 +128,14 @@ async def execute_agent(agent_id: str, request: Request) -> JSONResponse:
                         shutil.copyfileobj(value.file, out)
                     saved_paths.append(dest)
                 files[key] = saved_paths
+            elif key in json_names:
+                raw = values[0]
+                try:
+                    fields[key] = json.loads(raw) if isinstance(raw, str) else raw
+                except json.JSONDecodeError as exc:
+                    raise HTTPException(
+                        status_code=400, detail=f"Champ '{key}' : JSON invalide ({exc})."
+                    ) from exc
             elif key in scalar_names or key == "command":
                 raw = values[0]
                 if isinstance(raw, str) and raw.lower() in ("true", "false"):
@@ -118,7 +149,11 @@ async def execute_agent(agent_id: str, request: Request) -> JSONResponse:
 
         worker = get_worker(agent)
         try:
-            result = worker.run(command, fields, files)
+            # Exécuté dans un thread séparé : certains agents (ex. voyages -
+            # session Chrome interactive) peuvent bloquer plusieurs minutes,
+            # ce qui gèlerait toute la gateway (tous agents confondus) si
+            # exécuté directement dans la boucle asyncio.
+            result = await asyncio.to_thread(worker.run, command, fields, files)
         except Exception as exc:  # noqa: BLE001 - erreur agent renvoyée telle quelle
             raise HTTPException(status_code=400, detail=str(exc)) from exc
     except Exception:

@@ -35,7 +35,10 @@ export interface PythonAgentFileInput {
 
 export interface PythonAgentExecuteOptions {
   command: string;
-  fields?: Record<string, string | boolean | undefined | null>;
+  /** Valeur scalaire (string/boolean) envoyée telle quelle ; tableau/objet
+   * JSON-encodé (voir contract.yaml : propriété `type: collection` dont
+   * les éléments ne sont pas des `artifact`). */
+  fields?: Record<string, string | boolean | undefined | null | unknown[] | Record<string, unknown>>;
   files?: PythonAgentFileInput[];
 }
 
@@ -77,7 +80,10 @@ export async function listPythonAgents(): Promise<PythonAgentSummary[]> {
   const base = getGatewayBaseUrl();
   let response: Response;
   try {
-    response = await fetch(`${base}/agents`);
+    // no-store : la liste change dès qu'un agent est installé/retiré sous
+    // python/agents/ - le cache fetch de Next.js (par défaut sur les
+    // requêtes GET) ne doit jamais servir une liste périmée.
+    response = await fetch(`${base}/agents`, { cache: "no-store" });
   } catch (cause) {
     throw new Error(
       `Gateway agents Python injoignable sur ${base} - est-elle demarree ?`,
@@ -90,17 +96,19 @@ export async function listPythonAgents(): Promise<PythonAgentSummary[]> {
   return (await response.json()) as PythonAgentSummary[];
 }
 
-export async function executePythonAgent(
+export async function executePythonAgent<T = PythonAgentExecuteResult>(
   agentId: string,
   options: PythonAgentExecuteOptions
-): Promise<PythonAgentExecuteResult> {
+): Promise<T> {
   const base = getGatewayBaseUrl();
 
   const form = new FormData();
   form.append("command", options.command);
   for (const [key, value] of Object.entries(options.fields ?? {})) {
     if (value === undefined || value === null) continue;
-    form.append(key, typeof value === "boolean" ? String(value) : value);
+    if (typeof value === "string") form.append(key, value);
+    else if (typeof value === "boolean") form.append(key, String(value));
+    else form.append(key, JSON.stringify(value));
   }
   for (const file of options.files ?? []) {
     const blob =
@@ -117,6 +125,7 @@ export async function executePythonAgent(
     response = await fetch(`${base}/agents/${encodeURIComponent(agentId)}/execute`, {
       method: "POST",
       body: form,
+      cache: "no-store",
     });
   } catch (cause) {
     throw new Error(
@@ -128,7 +137,26 @@ export async function executePythonAgent(
   if (!response.ok) {
     throw new Error(`Echec d'execution de l'agent '${agentId}' : ${await parseErrorDetail(response)}`);
   }
-  return (await response.json()) as PythonAgentExecuteResult;
+  return (await response.json()) as T;
+}
+
+/**
+ * Canal générique optionnel : un agent long (web_adapter.run() de plusieurs
+ * minutes) peut écrire un état opaque pendant qu'il tourne ; cette fonction
+ * ne connaît pas le sens du contenu, elle le relit tel quel. Un agent qui
+ * n'écrit jamais de progression répond simplement { state: null }.
+ */
+export async function getPythonAgentProgress(agentId: string): Promise<{ state: string | null }> {
+  const base = getGatewayBaseUrl();
+  try {
+    const response = await fetch(`${base}/agents/${encodeURIComponent(agentId)}/progress`, {
+      cache: "no-store",
+    });
+    if (!response.ok) return { state: null };
+    return (await response.json()) as { state: string | null };
+  } catch {
+    return { state: null };
+  }
 }
 
 /** Télécharge un artefact produit par un agent (download_url renvoyé par executePythonAgent). */
@@ -137,7 +165,7 @@ export async function downloadPythonAgentArtifact(downloadUrl: string): Promise<
   const url = downloadUrl.startsWith("http") ? downloadUrl : `${base}${downloadUrl}`;
   let response: Response;
   try {
-    response = await fetch(url);
+    response = await fetch(url, { cache: "no-store" });
   } catch (cause) {
     throw new Error(`Gateway agents Python injoignable sur ${base} - est-elle demarree ?`, { cause });
   }

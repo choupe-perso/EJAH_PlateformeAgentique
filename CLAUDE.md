@@ -65,8 +65,13 @@ Perso
 Mis a jour le 2026-09-22 : "Anonymisation" (agent livre par ADBI, coeur
 Python derriere `python/gateway/`, voir `docs/ARCHITECTURE.md` section
 5bis) est le premier agent reel du menu, accessible depuis
-`/agents/anonymizer`. Voyages et Taches restent des categories sans agent
-reel pour le moment.
+`/agents/anonymizer`. "Voyages" (agent personnel - calendrier .ics des
+voyages SNCF a venir, meme gateway Python partagee, coeur sous
+`python/agents/voyages/`) est le second, accessible depuis
+`/agents/voyages` - voir avertissement dans `python/agents/voyages/README.md`
+sur la commande `recuperer` (session Chrome interactive locale, jusqu'a 5
+minutes, jamais appelee depuis un serveur distant). Taches reste une
+categorie sans agent reel pour le moment.
 
 ## Environnements
 
@@ -283,3 +288,19 @@ explicitement avec l'utilisateur avant de la construire.
   vraies pages `/cockpit` et `/agents` restent des placeholders - le
   portage vers ces pages reelles n'a pas commence. Aucun tag de version
   cree (pas de validation explicite d'environnement pour ce travail).
+- 2026-09-22 : integration de l'agent "Voyages" (`/agents/voyages`), coeur
+  Python de Cedric Houpe installe sous `python/agents/voyages/` derriere
+  la gateway partagee existante (`python/gateway/`, deja utilisee par
+  anonymizer - aucun nouveau port). Deux extensions generiques apportees a
+  la gateway (aucune ne connait la semantique d'un agent en particulier) :
+  support d'un champ `collection` de type JSON (au-dela des seuls
+  scalaires/fichiers, necessaire a la commande `generer`) et execution du
+  worker dans un thread separe (`asyncio.to_thread`) pour qu'un appel
+  bloquant (la commande `recuperer` peut bloquer jusqu'a 5 minutes -
+  session Chrome interactive, 2FA manuelle) ne gele pas la gateway pour
+  les autres agents. Correction egalement d'un bug latent decouvert a
+  cette occasion dans `src/integrations/python-agent-runtime.ts` : le
+  cache fetch de Next.js servait une liste d'agents perimee (`cache:
+  "no-store"` ajoute sur les 3 appels). 29 tests du paquet fournisseur
+  verifies au passage (`pytest`, tous verts). Aucun tag de version cree
+  (pas de validation explicite d'environnement pour ce travail).

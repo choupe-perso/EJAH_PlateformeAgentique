@@ -4,7 +4,7 @@ import { SidebarLeaf } from "@/components/sidebar/SidebarLeaf";
 import {
   GearIcon,
   PersonIcon,
-  PuzzleIcon,
+  MaskIcon,
   TrainIcon,
   ChecklistIcon,
 } from "@/components/icons";
@@ -14,13 +14,13 @@ export function AgentsSidebar() {
     <Sidebar>
       <SidebarCategory label="Toolkit" color="var(--orange)" icon={<GearIcon size={14} />}>
         <SidebarLeaf
-          icon={<PuzzleIcon size={13} />}
+          icon={<MaskIcon size={13} />}
           label="Anonymisation"
           href="/agents/anonymizer"
         />
       </SidebarCategory>
       <SidebarCategory label="Perso" color="var(--violet)" icon={<PersonIcon />}>
-        <SidebarLeaf icon={<TrainIcon size={13} />} label="Voyages" />
+        <SidebarLeaf icon={<TrainIcon size={13} />} label="Voyages" href="/agents/voyages" />
         <SidebarLeaf icon={<ChecklistIcon size={13} />} label="Tâches" />
       </SidebarCategory>
     </Sidebar>
