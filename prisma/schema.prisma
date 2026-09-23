@@ -17,11 +17,11 @@ datasource db {
 model ActionHistory {
   id          String   @id @default(cuid())
   occurredAt  DateTime @default(now())
-  universe    String // "cockpit" | "agents"
+  universe    String   // "cockpit" | "agents"
   actionType  String
   description String
   payload     Json?
-  createdBy   String? // identifiant utilisateur, ex: adresse email
+  createdBy   String?  // identifiant utilisateur, ex: adresse email
 
   @@index([occurredAt])
   @@index([universe])
@@ -32,11 +32,11 @@ model ActionHistory {
 model DeploymentHistory {
   id          String   @id @default(cuid())
   occurredAt  DateTime @default(now())
-  environment String // "dev" | "test" | "prod"
-  version     String // ex: "1.0" - correspond au tag git
+  environment String   // "dev" | "test" | "prod"
+  version     String   // ex: "1.0" - correspond au tag git
   gitTag      String?
   gitBranch   String
-  validatedBy String? // identifiant utilisateur ayant valide explicitement
+  validatedBy String?  // identifiant utilisateur ayant valide explicitement
   notes       String?
 
   @@index([occurredAt])
@@ -46,15 +46,15 @@ model DeploymentHistory {
 
 // Menus de la plateforme (Cockpit / Agents)
 model MenuItem {
-  id       String     @id @default(cuid())
-  universe String // "cockpit" | "agents"
-  label    String
-  path     String
-  icon     String?
-  order    Int        @default(0)
-  parentId String?
-  parent   MenuItem?  @relation("MenuItemChildren", fields: [parentId], references: [id])
-  children MenuItem[] @relation("MenuItemChildren")
+  id        String     @id @default(cuid())
+  universe  String     // "cockpit" | "agents"
+  label     String
+  path      String
+  icon      String?
+  order     Int        @default(0)
+  parentId  String?
+  parent    MenuItem?  @relation("MenuItemChildren", fields: [parentId], references: [id])
+  children  MenuItem[] @relation("MenuItemChildren")
 
   @@index([universe])
   @@map("menu_item")
@@ -71,11 +71,12 @@ enum TodoTransportStatut {
   archivee
 }
 
-// Agent "Taches" (univers Agents > Perso > Taches) - migre depuis l'ancienne
-// plateforme Flask (agents/todos_transport). Une table unique avec des
-// colonnes prefixees par type (rdv_*, email_*, prompt_*), laissees NULL pour
-// les types non concernes - meme choix assume que l'original : usage
-// strictement personnel, volume de donnees faible.
+// Agent "Taches" (univers Agents > Perso > Taches) - coeur Python derriere
+// python/agents/taches/ (validation, redaction assistee Ollama, .ics),
+// cette table ne fait que persister ce que le coeur a valide. Une table
+// unique avec des colonnes prefixees par type (rdv_*/email_*/prompt_*),
+// laissees NULL pour les types non concernes - usage strictement
+// personnel, volume de donnees faible.
 model TodoTransport {
   id       String              @id @default(cuid())
   type     TodoTransportType
@@ -84,8 +85,8 @@ model TodoTransport {
   creeLe   DateTime            @default(now()) @map("cree_le")
   traiteLe DateTime?           @map("traite_le")
 
-  // rdv_date_debut : TIMESTAMP sans fuseau (heure "mur" flottante) - voir
-  // src/shared/ics.ts, meme convention que l'agent Voyages a venir.
+  // rdv_date_debut : TIMESTAMP sans fuseau (heure "mur" flottante) - meme
+  // convention que l'agent Voyages (app/domain/ics.py).
   rdvDateDebut     DateTime? @map("rdv_date_debut") @db.Timestamp(6)
   rdvDureeMinutes  Int?      @map("rdv_duree_minutes")
   rdvAlerteMinutes Int?      @map("rdv_alerte_minutes")
@@ -111,6 +112,13 @@ model TodoTransport {
 // Chaine du modele : Sujet -> Source -> Execution -> Collecte -> Observation
 // -> Evenement. Aucune suppression de sujet sans confirmation explicite
 // cote applicatif (voir src/core/veille/sujets.ts).
+//
+// Restaure le 2026-09-22 dans prisma/schema.prisma (dev) pour retrouver la
+// base locale existante : ces modeles existaient deja sur main/test (commit
+// 3129562) et la base Postgres dev correspondante (tables veille_sujet/
+// veille_source/veille_execution/veille_execution_sujet/veille_collecte,
+// donnees reelles), mais avaient disparu du schema.prisma suivi par la
+// branche dev - a ne pas re-supprimer sans verification explicite.
 
 enum VeilleMoteur {
   ollama

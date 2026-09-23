@@ -1,0 +1,212 @@
+[
+  {
+    "start": 102,
+    "end": 122,
+    "text": "Grégory Vandenberghe",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 130,
+    "end": 145,
+    "text": "17 février 1979",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 148,
+    "end": 160,
+    "text": "Lille (Nord)",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 191,
+    "end": 214,
+    "text": "Maître Antoine Rousseau",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 348,
+    "end": 376,
+    "text": "6 rue Nationale, 59800 Lille",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 393,
+    "end": 407,
+    "text": "07 68 41 22 90",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 430,
+    "end": 452,
+    "text": "g.vandenberghe@free.fr",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 469,
+    "end": 486,
+    "text": "Isabelle Fontenoy",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 495,
+    "end": 507,
+    "text": "2 avril 1958",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 510,
+    "end": 517,
+    "text": "Roubaix",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 596,
+    "end": 608,
+    "text": "512847309261",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 665,
+    "end": 681,
+    "text": "parcelle AC 0142",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 726,
+    "end": 740,
+    "text": "ACT-2011-33765",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 828,
+    "end": 845,
+    "text": "PRET-LILLE-778245",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 867,
+    "end": 905,
+    "text": "IBAN FR76 3000 3011 3000 0500 1234 567",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 964,
+    "end": 985,
+    "text": "1 79 02 59 108 337 14",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 1099,
+    "end": 1146,
+    "text": "hypertension artérielle traitée depuis deux ans",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 1160,
+    "end": 1184,
+    "text": "traitement anticoagulant",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 1356,
+    "end": 1399,
+    "text": "ingénieur travaux chez Eiffage Construction",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1409,
+    "end": 1444,
+    "text": "salaire annuel brut de 52 800 euros",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1518,
+    "end": 1527,
+    "text": "MAT-77452",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1563,
+    "end": 1587,
+    "text": "délégué syndical CFE-CGC",
+    "macro_category": "SENSIBLE_JUDICIAIRE"
+  },
+  {
+    "start": 1840,
+    "end": 1878,
+    "text": "IBAN FR76 1027 8060 3600 0212 3456 789",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2008,
+    "end": 2038,
+    "text": "voter pour une liste centriste",
+    "macro_category": "SENSIBLE_JUDICIAIRE"
+  },
+  {
+    "start": 2176,
+    "end": 2189,
+    "text": "REP-2026-1904",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2498,
+    "end": 2513,
+    "text": "HAB-2019-664281",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2544,
+    "end": 2560,
+    "text": "Léa Vandenberghe",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 2569,
+    "end": 2580,
+    "text": "9 juin 1981",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 2735,
+    "end": 2744,
+    "text": "BX-317-QK",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2925,
+    "end": 2945,
+    "text": "Grégory Vandenberghe",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 2957,
+    "end": 2985,
+    "text": "6 rue Nationale, 59800 Lille",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 3020,
+    "end": 3053,
+    "text": "FR76 3000 4000 0112 3456 7891 045",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 3125,
+    "end": 3142,
+    "text": "AG-LILLE-20261190",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 3338,
+    "end": 3359,
+    "text": "2 58 04 62 108 442 90",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 3431,
+    "end": 3445,
+    "text": "06 24 88 17 05",
+    "macro_category": "IDENTITE_CONTACT"
+  }
+]

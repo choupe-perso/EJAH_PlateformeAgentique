@@ -2,7 +2,6 @@
 
 import { useState, type ReactNode } from "react";
 import { CheckIcon, CopyIcon } from "@/components/icons";
-import { FIELD_FAMILY_COLOR } from "./fieldFamilyColor";
 
 export function Field({
   label,
@@ -21,11 +20,11 @@ export function Field({
   children: ReactNode;
 }) {
   const [copie, setCopie] = useState(false);
-  const borderColor = FIELD_FAMILY_COLOR[family];
+  const borderColor = family === "user" ? "var(--orange)" : "#00B4D8";
   const tagClass =
     family === "user"
-      ? "bg-[#FFE4CF] text-[#C9430A]"
-      : "bg-[var(--util-bg)] text-[var(--util-ink)]";
+      ? "bg-[#FFE4CF] text-[var(--orange-deep)]"
+      : "bg-[#DFF6FB] text-[#0086A3]";
   const tagText = family === "user" ? "Utilisateur" : "Plateforme";
 
   async function copier() {
@@ -41,7 +40,13 @@ export function Field({
   }
 
   return (
-    <div className={"flex flex-col gap-[7px] " + (span2 ? "sm:col-span-2" : "")}>
+    <div
+      className={
+        "flex flex-col gap-[7px] border-l-[3px] pl-[11px] " +
+        (span2 ? "sm:col-span-2" : "")
+      }
+      style={{ borderColor }}
+    >
       <span className="flex items-center gap-1.5 text-xs font-semibold text-[var(--ink-soft)]">
         {label}
         {texteACopier !== undefined && (
@@ -63,9 +68,7 @@ export function Field({
           {tagText}
         </span>
       </span>
-      <div className="border-l-[3px] pl-[6px]" style={{ borderColor }}>
-        {children}
-      </div>
+      {children}
     </div>
   );
 }

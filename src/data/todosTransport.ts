@@ -1,6 +1,6 @@
 // Adaptateur de persistance pour l'agent Taches (table todos_transport).
-// Porte depuis l'ancienne plateforme Flask (agents/todos_transport/bdd.py) -
-// meme modele de donnees, remplace le SQL brut (psycopg2) par Prisma.
+// Aucune regle metier ici (validation, .ics...) - deleguee au coeur Python
+// de l'agent (python/agents/taches/), appele par core/agents/taches.ts.
 
 import { prisma } from "./db";
 import type { TodoTransportStatut, TodoTransportType } from "@prisma/client";

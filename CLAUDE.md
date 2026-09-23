@@ -52,26 +52,31 @@ Deux grands univers structurent la plateforme :
 Aucun indicateur n'est encore defini pour Cockpit (2026-09-13).
 
 Le menu de navigation d'Agents (`/agents`, barre laterale) a ete defini le
-2026-09-15, puis ajuste le meme jour (renommage Voyages -> Trajets SNCF,
-Taches -> TODO Offline, suppression de l'entree Generiques, ajout de
-l'agent Anonymisation puis de l'agent Veille sous Toolkit) :
+2026-09-15 :
 
 ```text
 Toolkit
   |_ Anonymisation
-  |_ Veille
 Perso
-  |_ Trajets SNCF
-  |_ TODO Offline
+  |_ Voyages
+  |_ Taches
 ```
 
-`Trajets SNCF` (agent Voyages / generateur_ics_sncf) et `TODO Offline`
-(agent Taches / todos_transport) sont des agents reels, migres depuis
-l'ancienne plateforme Flask. `Anonymisation` et `Veille` sont des agents
-reels (voir Etat d'avancement) - `Anonymisation` integre un moteur Python
-vendorise, `Veille` est un centre de veille informationnelle (qualification
-par dialogue IA, sources validees par l'utilisateur, execution avec
-deduplication).
+Mis a jour le 2026-09-22 : "Anonymisation" (agent livre par ADBI, coeur
+Python derriere `python/gateway/`, voir `docs/ARCHITECTURE.md` section
+5bis) est le premier agent reel du menu, accessible depuis
+`/agents/anonymizer`. "Voyages" (agent personnel - calendrier .ics des
+voyages SNCF a venir, meme gateway Python partagee, coeur sous
+`python/agents/voyages/`) est le second, accessible depuis
+`/agents/voyages` - voir avertissement dans `python/agents/voyages/README.md`
+sur la commande `recuperer` (session Chrome interactive locale, jusqu'a 5
+minutes, jamais appelee depuis un serveur distant). "Taches" (agent
+personnel - RDV/Email/Prompt, validation et redaction assistee via Ollama
+local, export .ics d'un RDV - meme gateway Python partagee, coeur sous
+`python/agents/taches/`) est le troisieme, accessible depuis
+`/agents/taches` - persistance (creation, liste, statut) geree par la
+plateforme (PostgreSQL/Prisma, table `todos_transport`), jamais par le
+coeur Python (voir `python/agents/taches/README.md`).
 
 ## Environnements
 
@@ -473,3 +478,95 @@ explicitement avec l'utilisateur avant de la construire.
   `src/styles/globals.css` (palette orange/rose/violet) et la version
   corrigee (sans estompage) du variant "loading" de `ActionButton`. Pas
   encore valide par l'utilisateur sur PROD.
+- 2026-09-18/22 (historique DEV, reconstitue apres retour a `dev-v3.0`) :
+  les vraies pages `/cockpit` et `/agents` restent des placeholders - le
+  portage vers ces pages reelles n'a pas commence. Aucun tag de version
+  cree (pas de validation explicite d'environnement pour ce travail).
+- 2026-09-22 : integration de l'agent "Voyages" (`/agents/voyages`), coeur
+  Python de Cedric Houpe installe sous `python/agents/voyages/` derriere
+  la gateway partagee existante (`python/gateway/`, deja utilisee par
+  anonymizer - aucun nouveau port). Deux extensions generiques apportees a
+  la gateway (aucune ne connait la semantique d'un agent en particulier) :
+  support d'un champ `collection` de type JSON (au-dela des seuls
+  scalaires/fichiers, necessaire a la commande `generer`) et execution du
+  worker dans un thread separe (`asyncio.to_thread`) pour qu'un appel
+  bloquant (la commande `recuperer` peut bloquer jusqu'a 5 minutes -
+  session Chrome interactive, 2FA manuelle) ne gele pas la gateway pour
+  les autres agents. Correction egalement d'un bug latent decouvert a
+  cette occasion dans `src/integrations/python-agent-runtime.ts` : le
+  cache fetch de Next.js servait une liste d'agents perimee (`cache:
+  "no-store"` ajoute sur les 3 appels). 29 tests du paquet fournisseur
+  verifies au passage (`pytest`, tous verts). Aucun tag de version cree
+  (pas de validation explicite d'environnement pour ce travail).
+- 2026-09-22 : integration de l'agent "Taches" (`/agents/taches`), coeur
+  Python installe sous `python/agents/taches/` derriere la gateway
+  partagee (`python/gateway/`, aucun nouveau port). Une premiere migration
+  (commit `43761b3`, 15/09) avait porte cet agent depuis l'ancienne
+  plateforme Flask (`agents/todos_transport`) entierement en TypeScript
+  (Prisma + client Ollama direct + regles de validation en TS) sur les
+  branches `main`/`test` - jamais mergee sur `dev`, et incompatible avec le
+  pattern coeur-Python-derriere-gateway etabli depuis pour Anonymisation et
+  Voyages. Rebatie ici en Python (validation, assemblage des prompts
+  Ollama depuis des fragments `.txt` copies tels quels, construction du
+  .ics) en reprenant la logique metier de cette premiere migration ;
+  persistance (creation/liste/statut, table `todos_transport`) et
+  historique (`ActionHistory`) restes cote plateforme (Prisma), jamais
+  dans le coeur. Extensions generiques mineures apportees a 2 composants
+  partages (deja presentes dans la premiere migration TS, reintroduites
+  ici) : `ActionButton` (variante `ghost`) et `Field` (bouton copier
+  optionnel `texteACopier`) - aucune n'est specifique a Taches. 14 tests du
+  coeur Python verifies (`pytest`, tous verts) ; non teste de bout en bout
+  cote plateforme (base de donnees et Ollama non verifies en conditions
+  reelles pour ce travail). Aucun tag de version cree (pas de validation
+  explicite d'environnement pour ce travail).
+- 2026-09-23 : merge `dev` -> `test` (cinquieme fusion, la plus importante :
+  remplace entierement l'ancienne architecture d'agents par la nouvelle).
+  L'utilisateur a explicitement change de principe pour les agents (retour
+  de `dev` a l'etat du tag `dev-v3.0` avant reconstruction) : abandon de
+  l'ancien agent Veille et de l'ancienne implementation TypeScript de
+  Taches/Voyages, remplaces par le pattern coeur-Python-derriere-gateway
+  (voir entrees precedentes et `docs/ARCHITECTURE.md` section 5bis).
+  Environ 140 fichiers de l'ancienne architecture supprimes de TEST (code
+  seulement - tables `veille_*` et ancienne structure `todos_transport`
+  non touchees en base, disponibles pour verification ulterieure si
+  besoin). Migration Prisma reconstituee en baseline sur DEV
+  (`20260923000000_init`, zero derive verifiee avant application) : les
+  modeles Veille restent dans schema.prisma (donnees reelles existantes,
+  a ne pas supprimer sans verification explicite) meme si l'application
+  ne les utilise plus. Corrige au passage : lien menu "Taches" sans `href`
+  (rendu inerte) ; affichage de l'heure de RDV a tort converti au fuseau
+  du navigateur (`toLocaleString` sur une heure murale flottante) ;
+  timeout par defaut du fetch Node (5 min, undici) pris a tort pour une
+  gateway injoignable sur les gros documents - bascule sur le
+  fetch/Agent d'undici avec timeout desactive pour cet appel local de
+  confiance. Logo et favicon EJAH mis a jour, `favicon.ico` regenere
+  (l'ancien etait corrompu).
+- 2026-09-23 : correctif d'un bug de build production sur l'agent Voyages,
+  decouvert lors de la verification de TEST (`npm run build` echouait -
+  jamais relance depuis l'ajout d'undici sur `dev`) : le composant client
+  `src/app/agents/voyages/page.tsx` importait une valeur (`TARGET_URL`)
+  depuis `core/agents/voyages.ts`, entrainant tout le module cote
+  navigateur (y compris `integrations/python-agent-runtime.ts` et son
+  dependance `undici`, incompatible avec le bundler webpack cote client).
+  Deplace vers `src/shared/voyages.ts` (sans dependance serveur). Corrige
+  sur `dev`, reporte sur `test` par un nouveau merge. Environnement TEST
+  entierement provisionne : venv Python dedie (`python/gateway/.venv`),
+  3 agents installes (anonymizer, voyages, taches), modele spaCy
+  `fr_core_news_lg` telecharge (613 Mo, accord explicite prealable).
+  Verifie de bout en bout dans le navigateur (port 3001 + gateway port
+  9011) : build production reussi, palette verte correcte, menu Toolkit
+  (Anonymisation)/Perso (Voyages, Taches) sans trace de Veille, les 3
+  pages d'agent chargent sans erreur console. Validation explicite de
+  l'utilisateur sur TEST, version majeure **9.0** creee et taguee :
+  `test-v9.0` - pousse sur `origin`.
+- 2026-09-23 : merge `test` -> `main` (deuxieme fusion depuis le nouveau
+  principe d'agents ; ajoute l'agent Taches et l'ensemble des correctifs
+  documentes ci-dessus - PROD avait deja recu l'essentiel de la nouvelle
+  architecture lors de la fusion du 18/09, un seul conflit reel cette fois
+  sur ce fichier). Environnement PROD entierement provisionne (venv Python
+  dedie, 3 agents, modele spaCy). Validation explicite de l'utilisateur
+  sur DEV, TEST et PROD - versions majeures **10.0** creees et taguees
+  sur les 3 environnements : `dev-v10.0`, `test-v10.0`, `prod-v10.0` -
+  pousses sur `origin` (numerotation alignee ; `dev-v8.0`/`dev-v9.0`
+  restent d'anciens points de rollback intermediaires, non fusionnes tels
+  quels).

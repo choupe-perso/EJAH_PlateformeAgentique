@@ -1,0 +1,188 @@
+[
+  {
+    "start": 101,
+    "end": 117,
+    "text": "Farida El Amrani",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 203,
+    "end": 218,
+    "text": "5 novembre 1975",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 221,
+    "end": 237,
+    "text": "Oran, en Algérie",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 264,
+    "end": 299,
+    "text": "9 impasse des Lilas, 92000 Nanterre",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 368,
+    "end": 382,
+    "text": "06 22 84 17 39",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 405,
+    "end": 434,
+    "text": "farida.elamrani75@laposte.net",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 564,
+    "end": 585,
+    "text": "2 75 11 93 217 044 61",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 658,
+    "end": 670,
+    "text": "441029873156",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 714,
+    "end": 730,
+    "text": "Malakoff Humanis",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 789,
+    "end": 822,
+    "text": "FR76 1751 5900 0008 0123 4567 892",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 835,
+    "end": 851,
+    "text": "Sophie Lindqvist",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 952,
+    "end": 978,
+    "text": "cancer du sein de stade II",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 991,
+    "end": 1047,
+    "text": "chimiothérapie néoadjuvante puis chirurgie conservatrice",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 1083,
+    "end": 1107,
+    "text": "groupe sanguin O négatif",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 1115,
+    "end": 1140,
+    "text": "allergie à la pénicilline",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 1298,
+    "end": 1332,
+    "text": "salaire net mensuel de 2 340 euros",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1429,
+    "end": 1456,
+    "text": "f.elamrani@ac-versailles.fr",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1497,
+    "end": 1522,
+    "text": "adhérente du syndicat FSU",
+    "macro_category": "SENSIBLE_JUDICIAIRE"
+  },
+  {
+    "start": 1717,
+    "end": 1738,
+    "text": "musulmane pratiquante",
+    "macro_category": "SENSIBLE_JUDICIAIRE"
+  },
+  {
+    "start": 1997,
+    "end": 2019,
+    "text": "une liste régionaliste",
+    "macro_category": "SENSIBLE_JUDICIAIRE"
+  },
+  {
+    "start": 2098,
+    "end": 2113,
+    "text": "Karim El Amrani",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 2293,
+    "end": 2302,
+    "text": "GC-204-YL",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2542,
+    "end": 2556,
+    "text": "PAT-2026-08841",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2915,
+    "end": 2936,
+    "text": "2 75 11 93 217 044 61",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2988,
+    "end": 3023,
+    "text": "9 impasse des Lilas, 92000 Nanterre",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 3081,
+    "end": 3098,
+    "text": "Yasmine El Amrani",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 3293,
+    "end": 3314,
+    "text": "2 12 05 93 217 099 12",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 3436,
+    "end": 3447,
+    "text": "Nora Benali",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 3597,
+    "end": 3613,
+    "text": "Malakoff Humanis",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 3641,
+    "end": 3655,
+    "text": "MH-2026-771034",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 3775,
+    "end": 3784,
+    "text": "DT-558-HP",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  }
+]

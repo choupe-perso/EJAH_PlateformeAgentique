@@ -1,0 +1,44 @@
+# Créé par Cédric HOUPE.
+# Usage ou reproduction à l'identique interdit sans autorisation.
+
+agent:
+  id: taches
+  name: Tâches - RDV, emails, prompts
+  version: 1.0.0
+  description: >
+    Gère trois types de tâches personnelles courtes (RDV, email à envoyer,
+    prompt à copier vers une IA) : validation des données saisies,
+    rédaction assistée (brouillon puis réécriture) des emails et prompts
+    via un serveur Ollama local, et export d'un RDV au format .ics
+    (RFC 5545). Rien n'est envoyé sur Internet en dehors de l'appel à
+    Ollama (local par défaut). Agent personnel (pas d'accès ADBI requis),
+    catégorie "Perso" de la plateforme EJAH. La persistance des tâches
+    (création, liste, statut) est gérée par la plateforme (base de
+    données), pas par ce cœur.
+
+entrypoint:
+  module: app.service
+  function: execute
+
+capabilities:
+  cli: false
+  web: false
+  api: false
+  mcp: false
+
+features:
+  streaming: false
+  files: false
+  images: false
+
+commands:
+  - id: valider
+    description: Vérifie les données saisies pour un type de tâche (rdv/email/prompt) sans rien persister.
+  - id: rediger_brouillon
+    description: Génère un premier brouillon (email ou prompt) via Ollama, à partir de notes libres.
+  - id: reecrire_brouillon
+    description: Réécrit un brouillon existant (email ou prompt) via Ollama, à partir de précisions.
+  - id: generer_ics
+    description: Construit le contenu d'un calendrier .ics pour un RDV (un événement + un rappel).
+
+exposures: {}

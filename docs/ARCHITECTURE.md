@@ -122,6 +122,64 @@ valeurs :
 Le fichier reel a utiliser dans chaque worktree est `.env.local` a la racine
 (charge automatiquement par Next.js), jamais commit (voir `.gitignore`).
 
+## 5bis. Gateway agents Python (`python/`)
+
+Decide le 2026-09-22 : certains agents (ex. anonymizer, livre par ADBI) ont
+un coeur ecrit en Python (spaCy, OCR, parseurs de documents) que Node.js ne
+peut pas importer directement. Plutot qu'un service par agent (ce qui
+donnerait un port de plus a chaque nouvel agent Python), un seul processus
+partage tous les agents Python derriere **un seul port par environnement** :
+
+```
+python/
+  gateway/          <- service FastAPI generique, jamais specifique a un agent
+    main.py           - endpoints /agents, /agents/{id}/execute, telechargement
+    registry.py        - decouverte des agents installes (manifest.yaml/contract.yaml)
+    worker_pool.py      - un sous-processus isole par agent, reutilise entre appels
+    worker_main.py       - point d'entree execute dans chaque sous-processus worker
+    run.py              - demarrage sur 127.0.0.1:GATEWAY_PORT
+    requirements.txt
+  agents/
+    <agent_id>/
+      app/ ...        <- coeur livre par le fournisseur, jamais modifie
+      contract.yaml    <- idem, source de verite des champs (entrees/sorties)
+      manifest.yaml    <- idem, metadonnees (nom, commandes, controle d'acces)
+      web_adapter.py   <- ECRIT PAR LA PLATEFORME (jamais synchronise avec le
+                          fournisseur) : traduit le contrat generique
+                          (fields/files) vers l'entrypoint propre a l'agent.
+```
+
+Un nouvel agent Python = un nouveau sous-dossier `python/agents/<id>/` avec
+son `web_adapter.py` - zero port supplementaire, zero modification de la
+gateway. Cote Next.js, point d'entree unique : `src/integrations/python-agent-runtime.ts`.
+
+**Isolation par agent** : chaque agent tourne dans son propre sous-processus
+Python (`worker_pool.py`/`worker_main.py`), lance par la gateway au premier
+appel et reutilise ensuite (pas relance a chaque requete, pour ne pas
+recharger spaCy a chaque fois). Communication par lignes JSON sur
+stdin/stdout - aucun port reseau supplementaire ouvert. Cette isolation
+memoire complete est necessaire car le gabarit de livraison ADBI utilise
+systematiquement un paquet top-level nomme `app` (voir `manifest.yaml` de
+chaque agent, `entrypoint.module: app.service`) : deux agents de ce gabarit
+charges dans un **meme** processus Python entreraient en collision
+(`sys.modules["app"]` ecrase par le second agent charge). Un sous-processus
+par agent elimine le probleme quel que soit le nombre d'agents installes.
+
+Port dedie (nouveau, distinct des ports web 3000/3001/3002 - variable
+`GATEWAY_PORT` / `PYTHON_AGENT_GATEWAY_URL` dans `config/.env.*.example`) :
+
+| Environnement | Port gateway Python |
+|----------------|----------------------|
+| DEV            | 9010                 |
+| TEST           | 9011                 |
+| PROD           | 9012                 |
+
+La gateway est liee a `127.0.0.1` uniquement (jamais exposee hors de la
+machine locale) et n'a pas de dependance a Internet une fois son
+environnement Python installe (`pip install`, telechargement du modele
+spaCy) - conforme a la contrainte de fonctionnement local hors ligne.
+
+
 ## 6. Cible reseau (non implementee)
 
 Voir la section "Fonctionnement local et serveur" de `CLAUDE.md`. Aucun

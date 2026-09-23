@@ -1,0 +1,200 @@
+[
+  {
+    "start": 95,
+    "end": 109,
+    "text": "Nathan Kouassi",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 117,
+    "end": 129,
+    "text": "29 août 1994",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 132,
+    "end": 157,
+    "text": "Abidjan, en Côte d'Ivoire",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 244,
+    "end": 280,
+    "text": "3 rue des Tanneurs, 67000 Strasbourg",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 295,
+    "end": 309,
+    "text": "06 15 73 28 44",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 324,
+    "end": 350,
+    "text": "nathan.kouassi94@proton.me",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 379,
+    "end": 393,
+    "text": "Élise Marchand",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 436,
+    "end": 448,
+    "text": "940817B67291",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 558,
+    "end": 570,
+    "text": "831045672290",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 620,
+    "end": 634,
+    "text": "Digital Vosges",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 663,
+    "end": 689,
+    "text": "développeur backend senior",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 695,
+    "end": 721,
+    "text": "44 500 euros bruts annuels",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 787,
+    "end": 833,
+    "text": "reconnaissance de travailleur handicapé (RQTH)",
+    "macro_category": "SENSIBLE_JUDICIAIRE"
+  },
+  {
+    "start": 861,
+    "end": 896,
+    "text": "épilepsie diagnostiquée à seize ans",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 928,
+    "end": 965,
+    "text": "traitement quotidien de lévétiracétam",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 1273,
+    "end": 1304,
+    "text": "chrétien évangélique pratiquant",
+    "macro_category": "SENSIBLE_JUDICIAIRE"
+  },
+  {
+    "start": 1367,
+    "end": 1395,
+    "text": "membre actif du syndicat SUD",
+    "macro_category": "SENSIBLE_JUDICIAIRE"
+  },
+  {
+    "start": 1565,
+    "end": 1599,
+    "text": "\"Nathan Kouassi — Backend & Cloud\"",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1665,
+    "end": 1693,
+    "text": "n.kouassi@vertex-software.fr",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1746,
+    "end": 1758,
+    "text": "194.51.88.23",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1965,
+    "end": 1981,
+    "text": "14 décembre 2026",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 2090,
+    "end": 2111,
+    "text": "1 94 08 67 108 552 37",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2305,
+    "end": 2326,
+    "text": "rh@vertex-software.fr",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 2381,
+    "end": 2396,
+    "text": "CAND-2026-05521",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2510,
+    "end": 2524,
+    "text": "Aïcha Benyahia",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 2533,
+    "end": 2544,
+    "text": "3 mars 1996",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 2655,
+    "end": 2669,
+    "text": "FIN-STR-208874",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2703,
+    "end": 2736,
+    "text": "FR76 3007 6021 0100 0234 5678 921",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2967,
+    "end": 2980,
+    "text": "MUT-77-204981",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 3014,
+    "end": 3050,
+    "text": "3 rue des Tanneurs, 67000 Strasbourg",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 3301,
+    "end": 3327,
+    "text": "Strasbourg Cyclo Solidaire",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 3523,
+    "end": 3533,
+    "text": "W673002145",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 3604,
+    "end": 3640,
+    "text": "3 rue des Tanneurs, 67000 Strasbourg",
+    "macro_category": "IDENTITE_CONTACT"
+  }
+]
