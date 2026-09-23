@@ -70,8 +70,13 @@ voyages SNCF a venir, meme gateway Python partagee, coeur sous
 `python/agents/voyages/`) est le second, accessible depuis
 `/agents/voyages` - voir avertissement dans `python/agents/voyages/README.md`
 sur la commande `recuperer` (session Chrome interactive locale, jusqu'a 5
-minutes, jamais appelee depuis un serveur distant). Taches reste une
-categorie sans agent reel pour le moment.
+minutes, jamais appelee depuis un serveur distant). "Taches" (agent
+personnel - RDV/Email/Prompt, validation et redaction assistee via Ollama
+local, export .ics d'un RDV - meme gateway Python partagee, coeur sous
+`python/agents/taches/`) est le troisieme, accessible depuis
+`/agents/taches` - persistance (creation, liste, statut) geree par la
+plateforme (PostgreSQL/Prisma, table `todos_transport`), jamais par le
+coeur Python (voir `python/agents/taches/README.md`).
 
 ## Environnements
 
@@ -304,3 +309,24 @@ explicitement avec l'utilisateur avant de la construire.
   "no-store"` ajoute sur les 3 appels). 29 tests du paquet fournisseur
   verifies au passage (`pytest`, tous verts). Aucun tag de version cree
   (pas de validation explicite d'environnement pour ce travail).
+- 2026-09-22 : integration de l'agent "Taches" (`/agents/taches`), coeur
+  Python installe sous `python/agents/taches/` derriere la gateway
+  partagee (`python/gateway/`, aucun nouveau port). Une premiere migration
+  (commit `43761b3`, 15/09) avait porte cet agent depuis l'ancienne
+  plateforme Flask (`agents/todos_transport`) entierement en TypeScript
+  (Prisma + client Ollama direct + regles de validation en TS) sur les
+  branches `main`/`test` - jamais mergee sur `dev`, et incompatible avec le
+  pattern coeur-Python-derriere-gateway etabli depuis pour Anonymisation et
+  Voyages. Rebatie ici en Python (validation, assemblage des prompts
+  Ollama depuis des fragments `.txt` copies tels quels, construction du
+  .ics) en reprenant la logique metier de cette premiere migration ;
+  persistance (creation/liste/statut, table `todos_transport`) et
+  historique (`ActionHistory`) restes cote plateforme (Prisma), jamais
+  dans le coeur. Extensions generiques mineures apportees a 2 composants
+  partages (deja presentes dans la premiere migration TS, reintroduites
+  ici) : `ActionButton` (variante `ghost`) et `Field` (bouton copier
+  optionnel `texteACopier`) - aucune n'est specifique a Taches. 14 tests du
+  coeur Python verifies (`pytest`, tous verts) ; non teste de bout en bout
+  cote plateforme (base de donnees et Ollama non verifies en conditions
+  reelles pour ce travail). Aucun tag de version cree (pas de validation
+  explicite d'environnement pour ce travail).

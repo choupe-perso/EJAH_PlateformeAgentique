@@ -7,6 +7,7 @@ procédure d'installation d'un nouvel agent.
 |---|---|---|
 | `anonymizer/` | ADBI (Cédric Houpe) | Propriété exclusive ADBI - usage réservé aux consultants ADBI dans le cadre de leurs missions. Ne jamais diffuser `app/` hors de ce cadre. |
 | `voyages/` | Cédric Houpe (agent personnel, catégorie "Perso") | Usage personnel - reproduction à l'identique interdite sans autorisation. Pas d'accès ADBI requis. Voir `python/agents/voyages/README.md` pour l'avertissement sur la commande `recuperer` (session Chrome interactive, jusqu'à 5 min, poste local avec utilisateur présent - jamais appelée depuis un serveur distant). |
+| `taches/` | Cédric Houpe (agent personnel, catégorie "Perso") | Usage personnel - reproduction à l'identique interdite sans autorisation. Pas d'accès ADBI requis. Rédaction assistée (email/prompt) via un serveur Ollama local - voir `python/agents/taches/README.md` pour la configuration (`OLLAMA_HOST`/`OLLAMA_MODEL`, variables du processus gateway). |
 
 **Rappel structure par agent** (voir `python/agents/anonymizer/README.md`
 pour le détail propre à cet agent) :

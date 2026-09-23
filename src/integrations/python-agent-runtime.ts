@@ -10,6 +10,19 @@
  * repli implicite vers un autre mécanisme (règle EJAH : pas de changement
  * implicite de moteur).
  */
+import { Agent, fetch, FormData } from "undici";
+
+type GatewayResponse = Awaited<ReturnType<typeof fetch>>;
+
+// Le fetch() global de Node (undici interne) coupe par defaut apres 5 min
+// sans reponse (headersTimeout/bodyTimeout) - un agent Python sur un gros
+// document (OCR/NER) ou une session longue (voyages/recuperer) peut
+// legitimement depasser ce delai, ce qui se traduisait par un
+// "TypeError: fetch failed" pris a tort pour une gateway injoignable
+// (constate : anonymisation de gros fichiers). La gateway est locale
+// (127.0.0.1) et de confiance - on desactive ces timeouts pour cet unique
+// point d'integration plutot que d'allonger arbitrairement un delai fixe.
+const GATEWAY_DISPATCHER = new Agent({ headersTimeout: 0, bodyTimeout: 0 });
 
 export interface PythonAgentAccessControl {
   gate_question: string;
@@ -66,7 +79,7 @@ function getGatewayBaseUrl(): string {
   return url.replace(/\/$/, "");
 }
 
-async function parseErrorDetail(response: Response): Promise<string> {
+async function parseErrorDetail(response: GatewayResponse): Promise<string> {
   try {
     const body = (await response.json()) as { detail?: string };
     if (body?.detail) return body.detail;
@@ -78,12 +91,12 @@ async function parseErrorDetail(response: Response): Promise<string> {
 
 export async function listPythonAgents(): Promise<PythonAgentSummary[]> {
   const base = getGatewayBaseUrl();
-  let response: Response;
+  let response: GatewayResponse;
   try {
     // no-store : la liste change dès qu'un agent est installé/retiré sous
     // python/agents/ - le cache fetch de Next.js (par défaut sur les
     // requêtes GET) ne doit jamais servir une liste périmée.
-    response = await fetch(`${base}/agents`, { cache: "no-store" });
+    response = await fetch(`${base}/agents`, { cache: "no-store", dispatcher: GATEWAY_DISPATCHER });
   } catch (cause) {
     throw new Error(
       `Gateway agents Python injoignable sur ${base} - est-elle demarree ?`,
@@ -120,12 +133,13 @@ export async function executePythonAgent<T = PythonAgentExecuteResult>(
     form.append(file.field, blob, file.filename);
   }
 
-  let response: Response;
+  let response: GatewayResponse;
   try {
     response = await fetch(`${base}/agents/${encodeURIComponent(agentId)}/execute`, {
       method: "POST",
       body: form,
       cache: "no-store",
+      dispatcher: GATEWAY_DISPATCHER,
     });
   } catch (cause) {
     throw new Error(
@@ -151,6 +165,7 @@ export async function getPythonAgentProgress(agentId: string): Promise<{ state: 
   try {
     const response = await fetch(`${base}/agents/${encodeURIComponent(agentId)}/progress`, {
       cache: "no-store",
+      dispatcher: GATEWAY_DISPATCHER,
     });
     if (!response.ok) return { state: null };
     return (await response.json()) as { state: string | null };
@@ -163,9 +178,9 @@ export async function getPythonAgentProgress(agentId: string): Promise<{ state: 
 export async function downloadPythonAgentArtifact(downloadUrl: string): Promise<Buffer> {
   const base = getGatewayBaseUrl();
   const url = downloadUrl.startsWith("http") ? downloadUrl : `${base}${downloadUrl}`;
-  let response: Response;
+  let response: GatewayResponse;
   try {
-    response = await fetch(url, { cache: "no-store" });
+    response = await fetch(url, { cache: "no-store", dispatcher: GATEWAY_DISPATCHER });
   } catch (cause) {
     throw new Error(`Gateway agents Python injoignable sur ${base} - est-elle demarree ?`, { cause });
   }

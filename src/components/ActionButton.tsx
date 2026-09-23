@@ -6,6 +6,7 @@ const VARIANT_CLASSES = {
   success: "bg-[var(--good)] text-white",
   error: "bg-[var(--critical)] text-white",
   pending: "border-[1.5px] border-[var(--line)] bg-white text-[var(--ink-soft)] cursor-not-allowed",
+  ghost: "border-[1.5px] border-[var(--line)] bg-white text-[var(--ink)]",
 } as const;
 
 export function ActionButton({

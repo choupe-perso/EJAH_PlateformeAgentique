@@ -1,0 +1,16 @@
+NIVEAU : COMPLET
+
+Construire un prompt complet et structuré.
+
+Prendre en compte lorsque pertinent :
+- le rôle ;
+- le contexte ;
+- l'objectif ;
+- les données disponibles ;
+- les actions attendues ;
+- les contraintes ;
+- les points de vigilance ;
+- le format de sortie ;
+- les critères de qualité.
+
+N'inclure que les éléments utiles à la demande.

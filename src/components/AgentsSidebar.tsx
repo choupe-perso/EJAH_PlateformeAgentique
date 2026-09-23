@@ -21,7 +21,7 @@ export function AgentsSidebar() {
       </SidebarCategory>
       <SidebarCategory label="Perso" color="var(--violet)" icon={<PersonIcon />}>
         <SidebarLeaf icon={<TrainIcon size={13} />} label="Voyages" href="/agents/voyages" />
-        <SidebarLeaf icon={<ChecklistIcon size={13} />} label="Tâches" />
+        <SidebarLeaf icon={<ChecklistIcon size={13} />} label="Tâches" href="/agents/taches" />
       </SidebarCategory>
     </Sidebar>
   );
