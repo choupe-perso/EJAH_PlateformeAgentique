@@ -373,4 +373,22 @@ explicitement avec l'utilisateur avant de la construire.
   gateway injoignable sur les gros documents - bascule sur le
   fetch/Agent d'undici avec timeout desactive pour cet appel local de
   confiance. Logo et favicon EJAH mis a jour, `favicon.ico` regenere
-  (l'ancien etait corrompu). Pas encore valide par l'utilisateur sur TEST.
+  (l'ancien etait corrompu).
+- 2026-09-23 : correctif d'un bug de build production sur l'agent Voyages,
+  decouvert lors de la verification de TEST (`npm run build` echouait -
+  jamais relance depuis l'ajout d'undici sur `dev`) : le composant client
+  `src/app/agents/voyages/page.tsx` importait une valeur (`TARGET_URL`)
+  depuis `core/agents/voyages.ts`, entrainant tout le module cote
+  navigateur (y compris `integrations/python-agent-runtime.ts` et son
+  dependance `undici`, incompatible avec le bundler webpack cote client).
+  Deplace vers `src/shared/voyages.ts` (sans dependance serveur). Corrige
+  sur `dev`, reporte sur `test` par un nouveau merge. Environnement TEST
+  entierement provisionne : venv Python dedie (`python/gateway/.venv`),
+  3 agents installes (anonymizer, voyages, taches), modele spaCy
+  `fr_core_news_lg` telecharge (613 Mo, accord explicite prealable).
+  Verifie de bout en bout dans le navigateur (port 3001 + gateway port
+  9011) : build production reussi, palette verte correcte, menu Toolkit
+  (Anonymisation)/Perso (Voyages, Taches) sans trace de Veille, les 3
+  pages d'agent chargent sans erreur console. Validation explicite de
+  l'utilisateur sur TEST, version majeure **9.0** creee et taguee :
+  `test-v9.0` - pousse sur `origin`.
