@@ -22,13 +22,12 @@ import {
   listPythonAgents,
   type PythonAgentSummary,
 } from "@/integrations/python-agent-runtime";
+import type { RecupererPhase, Voyage } from "@/shared/voyages";
+
+export { TARGET_URL, RECUPERER_WARNING } from "@/shared/voyages";
+export type { RecupererPhase, Voyage } from "@/shared/voyages";
 
 const AGENT_ID = "voyages";
-
-export const TARGET_URL = "https://www.tgvinoui.sncf/informations/voyages-futurs";
-
-export const RECUPERER_WARNING =
-  "Ouvre une fenêtre Chrome locale et peut bloquer jusqu'à 5 minutes si une double authentification manuelle est nécessaire. Restez devant votre écran.";
 
 export async function getVoyagesSummary(): Promise<PythonAgentSummary> {
   const agents = await listPythonAgents();
@@ -50,25 +49,6 @@ interface VoyagesRawResult {
   error: string | null;
   error_kind: "validation" | "configuration" | "integration" | "technique" | null;
 }
-
-export interface Voyage {
-  id: string;
-  dossier: string;
-  annee: number;
-  mois: number;
-  jour: number;
-  heure_depart: [number, number];
-  heure_arrivee: [number, number];
-  gare_depart: string;
-  gare_arrivee: string;
-  train_numero: string;
-  duree: string;
-}
-
-/** État réel remonté par scraping.py::recuperer_voyages pendant l'appel en
- * cours (voir python/agents/voyages/web_adapter.py) - "idle" est une valeur
- * locale (aucun appel en cours ou état non encore écrit). */
-export type RecupererPhase = "idle" | "authentification" | "scraping";
 
 export async function getRecupererProgress(): Promise<RecupererPhase> {
   const { state } = await getPythonAgentProgress(AGENT_ID);

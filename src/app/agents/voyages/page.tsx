@@ -6,7 +6,7 @@ import { SectionHead } from "@/components/SectionHead";
 import { ActionButton } from "@/components/ActionButton";
 import { TextInput } from "@/components/form/TextInput";
 import { SpinnerIcon, DownloadIcon, ErrorIcon, CopyIcon, CheckIcon } from "@/components/icons";
-import { TARGET_URL, type RecupererPhase, type Voyage } from "@/core/agents/voyages";
+import { TARGET_URL, type RecupererPhase, type Voyage } from "@/shared/voyages";
 
 interface AgentSummary {
   id: string;
