@@ -1,0 +1,49 @@
+# Créé par Cédric HOUPE.
+# Usage ou reproduction à l'identique interdit sans autorisation.
+
+agent:
+  id: anonymizer
+  name: Anonymisation de documents
+  version: 3.0.0
+  description: >
+    Détecte les données à caractère personnel dans des documents
+    (.txt, .docx, .pptx, .xlsx, .pdf) - y compris le texte lisible dans les
+    images embarquées - et les remplace par des jetons réversibles
+    ([PERSONNE_1], [EMAIL_2], ...). La correspondance jeton -> valeur
+    d'origine est conservée dans un coffre local chiffré (vault), protégé
+    par une passphrase choisie par l'utilisateur. Rien n'est envoyé sur
+    Internet.
+
+entrypoint:
+  module: app.service
+  function: execute
+
+capabilities:
+  cli: true
+  web: false
+  api: false
+  mcp: false
+
+features:
+  streaming: false
+  files: true
+  images: true
+
+commands:
+  - id: inspect
+    description: Détecte les entités sans modifier le document ni ouvrir de vault.
+  - id: anonymize
+    description: Anonymise un ou plusieurs documents, réversible (--vault) ou non (--irreversible).
+  - id: deanonymize
+    description: Restaure un ou plusieurs documents anonymisés à partir de leur vault.
+
+exposures:
+  cli:
+    artifacts:
+      delivery: local_file
+    images:
+      delivery: local_file
+
+access_control:
+  gate_question: "Êtes-vous un(e) consultant(e) ADBI ? [O/N]"
+  gate_required_answer: O

@@ -1,20 +1,19 @@
 import { NextResponse } from "next/server";
-import { genererIcsVoyages } from "@/core/voyages/useCases";
+import { genererIcs, type Voyage } from "@/core/agents/voyages";
 
 export const dynamic = "force-dynamic";
 
 export async function POST(request: Request) {
-  const corps = await request.json().catch(() => ({}));
-  const resultat = await genererIcsVoyages(corps.voyages);
+  const body = await request.json();
+  const voyages = Array.isArray(body.voyages) ? (body.voyages as Voyage[]) : [];
 
-  if (!resultat.ok) {
-    return NextResponse.json(resultat);
+  try {
+    const result = await genererIcs(voyages);
+    return NextResponse.json(result);
+  } catch (error) {
+    return NextResponse.json(
+      { error: error instanceof Error ? error.message : "Erreur inconnue" },
+      { status: 400 }
+    );
   }
-
-  return new Response(resultat.contenu, {
-    headers: {
-      "Content-Type": "text/calendar",
-      "Content-Disposition": 'attachment; filename="voyages_sncf.ics"',
-    },
-  });
 }

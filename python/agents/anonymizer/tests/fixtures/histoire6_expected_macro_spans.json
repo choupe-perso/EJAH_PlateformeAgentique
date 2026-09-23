@@ -1,0 +1,200 @@
+[
+  {
+    "start": 91,
+    "end": 106,
+    "text": "Louise Berthier",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 115,
+    "end": 127,
+    "text": "12 juin 1991",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 130,
+    "end": 151,
+    "text": "Annecy (Haute-Savoie)",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 275,
+    "end": 309,
+    "text": "21 chemin des Vignes, 74000 Annecy",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 324,
+    "end": 338,
+    "text": "06 47 92 18 55",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 353,
+    "end": 380,
+    "text": "louise.berthier91@gmail.com",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 429,
+    "end": 438,
+    "text": "17AN65280",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 469,
+    "end": 479,
+    "text": "PNR-6KQF2X",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 520,
+    "end": 533,
+    "text": "FB-8823471056",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 632,
+    "end": 636,
+    "text": "7734",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 724,
+    "end": 770,
+    "text": "handicap moteur nécessitant une assistance PMR",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 789,
+    "end": 844,
+    "text": "accident vasculaire cérébral survenu trois ans plus tôt",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 861,
+    "end": 890,
+    "text": "allergie sévère aux arachides",
+    "macro_category": "SANTE"
+  },
+  {
+    "start": 1099,
+    "end": 1114,
+    "text": "AVE-CA-30284471",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 1185,
+    "end": 1201,
+    "text": "Camille Berthier",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 1216,
+    "end": 1230,
+    "text": "06 81 24 33 09",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 1279,
+    "end": 1297,
+    "text": "Solenya Consulting",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1330,
+    "end": 1357,
+    "text": "consultante en stratégie RH",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1367,
+    "end": 1402,
+    "text": "salaire annuel brut de 61 000 euros",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 1478,
+    "end": 1492,
+    "text": "POL-VOY-994512",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 1649,
+    "end": 1662,
+    "text": "Yanis Berrada",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 1751,
+    "end": 1782,
+    "text": "renouvelé son adhésion à la CGT",
+    "macro_category": "SENSIBLE_JUDICIAIRE"
+  },
+  {
+    "start": 2061,
+    "end": 2064,
+    "text": "12C",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2323,
+    "end": 2336,
+    "text": "HTL-MTL-77245",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2418,
+    "end": 2422,
+    "text": "3391",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2532,
+    "end": 2552,
+    "text": "Marc-Antoine Fillion",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 2567,
+    "end": 2582,
+    "text": "+1 514 220 6693",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 2758,
+    "end": 2771,
+    "text": "CL-BNK-559812",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 2805,
+    "end": 2839,
+    "text": "21 chemin des Vignes, 74000 Annecy",
+    "macro_category": "IDENTITE_CONTACT"
+  },
+  {
+    "start": 3106,
+    "end": 3119,
+    "text": "HTL-MTL-77245",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 3186,
+    "end": 3202,
+    "text": "TAXI-MTL-9982104",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  },
+  {
+    "start": 3238,
+    "end": 3250,
+    "text": "MAT-SLC-4471",
+    "macro_category": "PRO_NUMERIQUE"
+  },
+  {
+    "start": 3373,
+    "end": 3411,
+    "text": "IBAN FR76 1670 6050 7600 0123 4567 812",
+    "macro_category": "IDENTIFIANTS_OFFICIELS"
+  }
+]

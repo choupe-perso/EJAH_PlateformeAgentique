@@ -1,0 +1,195 @@
+# Créé par Cédric HOUPE.
+# Usage ou reproduction à l'identique interdit sans autorisation.
+
+agent:
+  id: taches
+  version: 1.0.0
+
+input:
+  type: object
+
+  properties:
+    command:
+      type: scalar
+      scalar_type: string
+      enum:
+        - valider
+        - rediger_brouillon
+        - reecrire_brouillon
+        - generer_ics
+
+    type:
+      type: scalar
+      scalar_type: string
+      enum:
+        - rdv
+        - email
+        - prompt
+      description: Requis pour valider/rediger_brouillon/reecrire_brouillon.
+
+    id:
+      type: scalar
+      scalar_type: string
+      description: Pour generer_ics - identifiant de la tache (utilise dans l'UID de l'evenement), fourni par la plateforme qui persiste les taches.
+
+    titre:
+      type: scalar
+      scalar_type: string
+      description: Pour valider (rdv/prompt) et rediger_brouillon/reecrire_brouillon (prompt) - aussi utilise par generer_ics comme resume de l'evenement.
+
+    dateDebut:
+      type: scalar
+      scalar_type: string
+      description: Pour valider (rdv) - date/heure ISO 8601 locale.
+
+    dureeMinutes:
+      type: scalar
+      scalar_type: string
+      description: Pour valider et generer_ics (rdv) - duree en minutes.
+
+    alerteMinutes:
+      type: scalar
+      scalar_type: string
+      description: >
+        Pour valider et generer_ics (rdv) - minutes avant le RDV, doit
+        etre l'une des valeurs 5/10/30/60/120.
+
+    description:
+      type: scalar
+      scalar_type: string
+      description: Pour generer_ics (rdv) - description optionnelle de l'evenement.
+
+    destinataire:
+      type: scalar
+      scalar_type: string
+      description: Pour valider et rediger_brouillon/reecrire_brouillon (email).
+
+    ia:
+      type: scalar
+      scalar_type: string
+      description: Pour valider et rediger_brouillon/reecrire_brouillon (prompt) - doit etre l'une des valeurs chatgpt/copilot/gemini/claude.
+
+    projet:
+      type: scalar
+      scalar_type: string
+      description: Pour valider et rediger_brouillon/reecrire_brouillon (prompt).
+
+    texte:
+      type: scalar
+      scalar_type: string
+      description: Pour valider (email/prompt) - texte final de la tache.
+
+    notes:
+      type: scalar
+      scalar_type: string
+      description: Pour rediger_brouillon (email/prompt) - notes libres a transformer.
+
+    texteActuel:
+      type: scalar
+      scalar_type: string
+      description: Pour reecrire_brouillon (email/prompt) - texte du brouillon a reecrire.
+
+    titreActuel:
+      type: scalar
+      scalar_type: string
+      description: Pour reecrire_brouillon (email) - titre du brouillon a reecrire.
+
+    precisions:
+      type: scalar
+      scalar_type: string
+      description: Pour reecrire_brouillon (email/prompt) - consignes de reecriture.
+
+    registre:
+      type: scalar
+      scalar_type: string
+      enum:
+        - tutoiement
+        - vouvoiement
+      description: Pour rediger_brouillon/reecrire_brouillon (email).
+
+    ton:
+      type: scalar
+      scalar_type: string
+      enum:
+        - formel
+        - professionnel
+        - proche
+        - amical
+      description: Pour rediger_brouillon/reecrire_brouillon (email).
+
+    longueur:
+      type: scalar
+      scalar_type: string
+      enum:
+        - tres_court
+        - court
+        - developpe
+      description: Pour rediger_brouillon/reecrire_brouillon (email).
+
+    niveau:
+      type: scalar
+      scalar_type: string
+      enum:
+        - rapide
+        - structure
+        - complet
+        - expert
+      description: Pour rediger_brouillon/reecrire_brouillon (prompt).
+
+  required:
+    - command
+
+output:
+  type: object
+
+  properties:
+    message:
+      type: message
+
+    erreurs:
+      type: collection
+      items:
+        type: scalar
+        scalar_type: string
+      description: Pour valider - liste vide si les donnees sont exploitables.
+
+    titre:
+      type: scalar
+      scalar_type: string
+      description: Pour rediger_brouillon/reecrire_brouillon (email) - objet genere.
+
+    texte:
+      type: scalar
+      scalar_type: string
+      description: Pour rediger_brouillon/reecrire_brouillon - corps genere.
+
+    ics_contenu:
+      type: scalar
+      scalar_type: string
+      description: Pour generer_ics - contenu texte du fichier .ics.
+
+    error:
+      type: error
+
+    error_kind:
+      type: scalar
+      scalar_type: string
+      enum:
+        - validation
+        - configuration
+        - integration
+        - technique
+      description: >
+        Classification de l'erreur (référentiel §22), présente uniquement
+        si error est renseigné.
+
+  required:
+    - message
+
+errors:
+  - id: type_inconnu
+    description: Le champ "type" ne vaut ni rdv, ni email, ni prompt.
+  - id: donnees_invalides
+    description: Les donnees fournies a generer_ics ne permettent pas de construire un evenement (rdv incomplet).
+  - id: ollama_injoignable
+    description: Le serveur Ollama local n'a pas repondu (voir message pour le detail).

@@ -1,0 +1,54 @@
+LE VOL DE LOUISE BERTHIER
+=========================
+
+Récit fictif — jeu de données de test pour outil d'anonymisation
+
+Louise Berthier, née le 12 juin 1991 à Annecy (Haute-Savoie), se présenta au comptoir
+d'enregistrement de l'aéroport de Lyon-Saint-Exupéry pour son vol vers Montréal. Elle habitait au 21
+chemin des Vignes, 74000 Annecy, joignable au 06 47 92 18 55 ou par mail à
+louise.berthier91@gmail.com.
+
+L'agent d'escale vérifia son passeport, numéro 17AN65280, sa référence de réservation, PNR-6KQF2X,
+et son numéro de carte grand voyageur, FB-8823471056. Le paiement du billet avait été effectué avec
+une carte dont seuls les quatre derniers chiffres, 7734, figuraient sur le reçu.
+
+Louise signala, comme à chaque vol, qu'elle voyageait avec un handicap moteur nécessitant une
+assistance PMR, conséquence d'un accident vasculaire cérébral survenu trois ans plus tôt, et rappela
+une allergie sévère aux arachides pour le repas à bord. L'agent confirma la prise en compte de ces
+informations dans le dossier passager.
+
+Pour le visa nécessaire à l'entrée au Canada, Louise présenta son autorisation électronique,
+référencée AVE-CA-30284471, et donna, en cas d'urgence, le contact de sa sœur restée en France :
+Camille Berthier, joignable au 06 81 24 33 09.
+
+Ce déplacement était un voyage d'affaires pour Solenya Consulting, où Louise occupait un poste de
+consultante en stratégie RH, pour un salaire annuel brut de 61 000 euros. L'assurance voyage
+souscrite par l'entreprise portait le numéro de police POL-VOY-994512, et le service comptable lui
+avait rappelé de conserver ses justificatifs pour la note de frais.
+
+Pendant l'attente, Louise reçut un appel de son compagnon, Yanis Berrada, resté à Annecy avec leur
+fils. Il en profita pour lui rappeler qu'il avait, la veille, renouvelé son adhésion à la CGT sur
+son nouveau lieu de travail, une démarche qu'il tenait à lui annoncer de vive voix plutôt que par
+message.
+
+L'embarquement fut annoncé quelques minutes plus tard. Louise rangea son passeport, vérifia une
+dernière fois sa carte d'embarquement portant la mention de son siège, 12C, et rejoignit la file,
+pressée de retrouver, douze heures plus tard, le client qui l'attendait à Montréal.
+
+Une fois installée à bord, Louise reçut un dernier message de son entreprise confirmant la
+réservation de son hôtel à Montréal : numéro de réservation HTL-MTL-77245, à régler avec la carte
+professionnelle dont seuls les quatre derniers chiffres, 3391, figuraient sur la confirmation. Le
+mail rappelait aussi le nom du contact local à joindre en cas de besoin, Marc-Antoine Fillion,
+joignable au +1 514 220 6693.
+
+Le lendemain de son arrivée, Louise dut encore appeler l'assistance de sa banque pour signaler la
+perte de sa carte pendant le trajet : elle communiqua son numéro de client, CL-BNK-559812, confirma
+son adresse en France, 21 chemin des Vignes, 74000 Annecy, et demanda l'envoi d'une carte de
+remplacement directement à l'hôtel où elle résidait pour la semaine.
+
+À son retour, deux semaines plus tard, Louise dut transmettre à son entreprise la note de frais
+complète du déplacement : elle y joignit la facture de son hôtel, HTL-MTL-77245, le récapitulatif de
+ses trajets en taxi avec le numéro de course TAXI-MTL-9982104, et rappela son numéro d'employée,
+MAT-SLC-4471, pour le rattachement comptable. Le service financier confirma que le remboursement
+serait versé sur son compte habituel, IBAN FR76 1670 6050 7600 0123 4567 812, sous une dizaine de
+jours.

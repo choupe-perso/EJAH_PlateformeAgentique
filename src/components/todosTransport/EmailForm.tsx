@@ -6,7 +6,7 @@ import { Field } from "@/components/form/Field";
 import { TextInput, TextArea } from "@/components/form/TextInput";
 import { SelectChips } from "./SelectChips";
 import { useMinuteur } from "./useMinuteur";
-import type { LongueurMail, Registre, Ton } from "@/integrations/ollama/redactionTransport";
+import type { LongueurMail, Registre, Ton } from "@/core/agents/taches";
 
 export function EmailForm({ onCree }: { onCree: () => void }) {
   const [destinataire, setDestinataire] = useState("");
@@ -28,7 +28,7 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
     setRedaction(true);
     setErreurs([]);
     try {
-      const reponse = await fetch("/api/agents/todos-transport/brouillon", {
+      const reponse = await fetch("/api/agents/taches/brouillon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "email", destinataire, notes, registre, ton, longueur }),
@@ -49,7 +49,7 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
     setEnvoi(true);
     setErreurs([]);
     try {
-      const reponse = await fetch("/api/agents/todos-transport/taches", {
+      const reponse = await fetch("/api/agents/taches/items", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
@@ -100,7 +100,7 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
         <TextInput
           value={titreUtilisateur}
           onChange={(e) => setTitreUtilisateur(e.target.value)}
-          placeholder="Repris automatiquement du titre genere si laisse vide"
+          placeholder="Repris automatiquement du titre généré si laissé vide"
         />
       </Field>
 

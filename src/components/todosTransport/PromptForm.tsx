@@ -6,7 +6,7 @@ import { Field } from "@/components/form/Field";
 import { TextInput, TextArea } from "@/components/form/TextInput";
 import { SelectChips } from "./SelectChips";
 import { useMinuteur } from "./useMinuteur";
-import type { NiveauPrompt } from "@/integrations/ollama/redactionTransport";
+import type { NiveauPrompt } from "@/core/agents/taches";
 
 const IAS = ["chatgpt", "copilot", "gemini", "claude"] as const;
 
@@ -28,7 +28,7 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
     setRedaction(true);
     setErreurs([]);
     try {
-      const reponse = await fetch("/api/agents/todos-transport/brouillon", {
+      const reponse = await fetch("/api/agents/taches/brouillon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "prompt", ia, projet, titre, notes, niveau }),
@@ -48,7 +48,7 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
     setEnvoi(true);
     setErreurs([]);
     try {
-      const reponse = await fetch("/api/agents/todos-transport/taches", {
+      const reponse = await fetch("/api/agents/taches/items", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "prompt", titre, ia, projet, texte, notesBrutes: notes }),

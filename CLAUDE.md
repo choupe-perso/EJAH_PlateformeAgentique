@@ -52,26 +52,31 @@ Deux grands univers structurent la plateforme :
 Aucun indicateur n'est encore defini pour Cockpit (2026-09-13).
 
 Le menu de navigation d'Agents (`/agents`, barre laterale) a ete defini le
-2026-09-15, puis ajuste le meme jour (renommage Voyages -> Trajets SNCF,
-Taches -> TODO Offline, suppression de l'entree Generiques, ajout de
-l'agent Anonymisation puis de l'agent Veille sous Toolkit) :
+2026-09-15 :
 
 ```text
 Toolkit
   |_ Anonymisation
-  |_ Veille
 Perso
-  |_ Trajets SNCF
-  |_ TODO Offline
+  |_ Voyages
+  |_ Taches
 ```
 
-`Trajets SNCF` (agent Voyages / generateur_ics_sncf) et `TODO Offline`
-(agent Taches / todos_transport) sont des agents reels, migres depuis
-l'ancienne plateforme Flask. `Anonymisation` et `Veille` sont des agents
-reels (voir Etat d'avancement) - `Anonymisation` integre un moteur Python
-vendorise, `Veille` est un centre de veille informationnelle (qualification
-par dialogue IA, sources validees par l'utilisateur, execution avec
-deduplication).
+Mis a jour le 2026-09-22 : "Anonymisation" (agent livre par ADBI, coeur
+Python derriere `python/gateway/`, voir `docs/ARCHITECTURE.md` section
+5bis) est le premier agent reel du menu, accessible depuis
+`/agents/anonymizer`. "Voyages" (agent personnel - calendrier .ics des
+voyages SNCF a venir, meme gateway Python partagee, coeur sous
+`python/agents/voyages/`) est le second, accessible depuis
+`/agents/voyages` - voir avertissement dans `python/agents/voyages/README.md`
+sur la commande `recuperer` (session Chrome interactive locale, jusqu'a 5
+minutes, jamais appelee depuis un serveur distant). "Taches" (agent
+personnel - RDV/Email/Prompt, validation et redaction assistee via Ollama
+local, export .ics d'un RDV - meme gateway Python partagee, coeur sous
+`python/agents/taches/`) est le troisieme, accessible depuis
+`/agents/taches` - persistance (creation, liste, statut) geree par la
+plateforme (PostgreSQL/Prisma, table `todos_transport`), jamais par le
+coeur Python (voir `python/agents/taches/README.md`).
 
 ## Environnements
 
@@ -306,160 +311,66 @@ explicitement avec l'utilisateur avant de la construire.
 - 2026-09-14 : portage complet de `ejah-template-dev.html` sur la page
   cachee `/gabarit` (6 tranches : header, KPI, mini-graphiques,
   statuts/liste d'agents, galerie de formulaire, footer). Header egalement
-  integre au layout global (visible sur toutes les pages reelles).
-- 2026-09-15 : construction des vraies pages `/cockpit` et `/agents` avec
-  les composants valides sur `/gabarit` (etat vide, sans donnees de
-  demonstration). Menu `/agents` reel (Toolkit/Perso). Fix `/api/health`
-  (voir plus haut). Merge `dev` -> `test` le 2026-09-15.
-- 2026-09-15 : validation explicite de l'utilisateur sur TEST, merge
-  `test` -> `main`. Version majeure **2.0** creee et taguee : `test-v2.0`,
-  `prod-v2.0`.
-- 2026-09-15 : correctif de fidelite couleur (3 valeurs codees en dur
-  ratees lors du portage initial, decouvertes en diffant integralement
-  les 3 fichiers `ejah-template-*.html` plutot que seulement leurs jetons
-  `:root`) : `--topbar-mid` (couleur intermediaire du degrade du
-  bandeau), `--tint-active-bg` (fond actif clair), `--btn-action-bg`
-  (bouton d'action principal - fixe en orange sur TEST meme si le theme
-  est vert, particularite assumee de la maquette). Applique et verifie
-  sur les 3 environnements. Validation explicite de l'utilisateur,
-  version majeure **3.0** creee et taguee : `dev-v3.0`, `test-v3.0`,
-  `prod-v3.0` - pousses sur `origin`.
-- 2026-09-15 : agent Taches (todos_transport) migre depuis l'ancienne
-  plateforme Flask et valide de bout en bout (RDV, export .ics,
-  brouillons Ollama email/prompt, marquage traite). Nouveau logo et
-  favicon EJAH deployes sur les 3 environnements. Sur `/gabarit` :
-  liseret Utilisateur/Plateforme repositionne (incruste dans le champ
-  de saisie, pas a cote du libelle) et recolore en teintes fixes tres
-  contrastees (orange `#FF6A00` / bleu fonce `var(--util-ink)`),
-  independantes du theme d'environnement. Validation explicite de
-  l'utilisateur sur DEV, version majeure **4.0** creee et taguee :
-  `dev-v4.0` - pousse sur `origin`. Pas encore fusionne vers
-  `test`/`main`.
-- 2026-09-15 : agent Voyages (generateur_ics_sncf) migre depuis l'ancienne
-  plateforme Flask - recuperation des voyages SNCF Connect (Playwright sur
-  Chrome installe, authentification geree dans la fenetre ouverte) et
-  generation d'un calendrier .ics (2 VEVENT par voyage : trajet 1h avant +
-  train, alerte -1h sur chacun). La plateforme n'accepte plus jamais
-  d'identifiants SNCF Connect via HTTP, a la demande explicite de
-  l'utilisateur : nouveau script `deployment/enregistrer-identifiants-sncf.mjs`
-  (CLI autonome, a executer hors de la plateforme, ecrit directement dans le
-  Gestionnaire d'identifiants Windows) ; suppression du POST de
-  `/api/agents/voyages/identifiants` (GET seul subsiste) et du formulaire
-  email/mot de passe de `VoyagesManager`, remplaces par un etat "Valide"
-  (sans formulaire) une fois configure, sinon par les deux commandes a
-  executer (`cd "<racine>"` puis `node deployment/enregistrer-...mjs`),
-  chacune avec son propre bouton copier. Voyages trouves tries et
-  regroupes par mois. Validation explicite de l'utilisateur sur DEV,
-  version majeure **5.0** creee et taguee : `dev-v5.0` - pousse sur
-  `origin`.
-- 2026-09-15 : renommage du menu Agents (Voyages -> Trajets SNCF, Taches
-  -> TODO Offline) et suppression de l'entree Generiques (Toolkit reste
-  affiche, vide). Merge `dev` -> `test` le 2026-09-15 (deuxieme fusion,
-  inclut agents Voyages et Taches, flux d'identifiants SNCF sans HTTP,
-  regroupement des voyages par mois). Verifie sur TEST : migration
-  Prisma, build production et demarrage reussis (port 3001, palette verte
-  correcte). Corrige au passage : `next build`/`next start` ne doivent
-  jamais etre lances avec les variables de `.env.local` deja preinjectees
-  dans le shell (Next les charge lui-meme) - sinon `NODE_ENV` s'en trouve
-  fige a la valeur du fichier et casse le build production (erreur
-  `useContext` sur toutes les pages) ; `next start` ne lit pas non plus
-  `PORT` depuis `.env.local`, il faut le positionner explicitement avant
-  (voir `deployment/_run.bat`, deja correct). Pas encore tague/valide par
-  l'utilisateur sur TEST.
-- 2026-09-15 : agent Anonymisation ajoute sous Toolkit - moteur Python
-  vendorise (`python/anonymizer/`, voir son propre README) portant
-  detection (regex, dictionnaires, NER spaCy `fr_core_news_lg`, OCR local
-  ONNX) et pseudonymisation reversible (vault SQLite chiffre,
-  passphrase locale via `ANONYMIZER_PASSPHRASE` dans `.env.local`, jamais
-  saisie dans la plateforme) pour fichiers `.txt`/`.docx`/`.pptx`/`.xlsx` -
-  la restauration automatique n'est disponible que pour `.txt`. Invoque en
-  sous-processus par `src/integrations/anonymizer/cli.ts` (sortie `--json`
-  ajoutee au CLI Python pour un echange structure). Fonctionne
-  entierement en local, aucun appel reseau a l'execution (seul le
-  telechargement initial du modele linguistique en a necessite un, fait
-  une fois). Verifie de bout en bout sur DEV (inspection, anonymisation,
-  restauration - aller-retour exact confirme). Corrige au passage :
-  `ActionButton` n'avait aucun style visuel pour l'etat `disabled` hors
-  variant "loading" (bouton desactive identique a actif, donc semblait
-  inerte sans explication - visible surtout sur Anonymisation ou les 3
-  actions demarrent desactivees) ; ajout de `disabled:opacity-45
-  disabled:cursor-not-allowed`, applique partout. Ajout d'un bouton
-  "Reinitialiser" (variant "ghost", nouveau) sur la page Anonymisation.
-  Nom affiche du header personnalisable via `APP_DISPLAY_NAME` dans
-  `.env.local` (retombe sur "EJAH" si absent) - DEV configure avec "Mon
-  assistante Lucile" ; scope volontairement limite au header (titre de
-  page, footer, page d'accueil et gouvernance CLAUDE.md inchanges).
-  Validation explicite de l'utilisateur sur DEV, version majeure **6.0**
-  creee et taguee : `dev-v6.0` - pousse sur `origin`. Pas encore fusionne
-  vers `test`/`main`.
-- 2026-09-15 : agent Anonymisation - option pour inclure ou non les images
-  embarquees (OCR) dans la detection, de bout en bout (flag `--no-images`
-  sur le CLI Python, parametre `avecImages` sur l'adaptateur Node et les
-  routes API, case a cocher dans l'UI - cochee par defaut, desactivee
-  pour les `.txt`). Verifie avec un `.docx` contenant une image porteuse
-  de PII (nom + telephone) : detectes quand cochee, ignores sinon.
-  Validation explicite de l'utilisateur sur DEV, version majeure **7.0**
-  creee et taguee : `dev-v7.0` - pousse sur `origin`.
-- 2026-09-15 : merge `dev` -> `test` (troisieme fusion : agent
-  Anonymisation complet dont l'option images/OCR, correctif du style
-  `disabled` sur `ActionButton`, nom affiche du header personnalisable).
-  Necessite une installation du moteur Python sur TEST (venv dedie +
-  `ANONYMIZER_PASSPHRASE` dans `.env.local` - voir
-  `python/anonymizer/README.md`). Pas encore valide par l'utilisateur sur
-  TEST.
-- 2026-09-15/16 : corrections de retours utilisateur sur 3 agents.
-  `ActionButton` : le variant "loading" etait a la fois estompe et sans
-  animation visible (ancien style partage avec l'etat `disabled` generique) ;
-  ajout d'un spinner automatique pour "loading" et retrait de l'estompage
-  sur ce variant precis - seuls les AUTRES boutons (inactifs pendant
-  qu'une action tourne) restent estompes desormais. Corrige le
-  cross-disable manquant sur Anonymisation. `TachesManager` : date de
-  creation affichee sur les taches actives, section "Taches traitees"
-  repliee par defaut triee par date de traitement decroissante.
-  `EmailForm`/`PromptForm` : liserets Utilisateur/Plateforme (`Field`) sur
-  tous les champs, champs generes en lecture seule avec un bouton
-  "Recopier les champs dans espace utilisateur" pour les rendre editables,
-  minuteur en direct dans le bouton pendant la generation Ollama, bouton
-  copier par champ genere (`Field` accepte un `texteACopier` optionnel).
-  Regle "termine par Je te/vous remercie si une question est posee"
-  ajoutee aux fragments tutoiement/vouvoiement (pas a `regles.txt`,
-  independant du registre). Diagnostic en cours de route : le port 3000 de
-  DEV tournait par erreur en mode production (`next start`, sans watcher)
-  au lieu de `next dev` - explique une longue serie de faux symptomes
-  (modifications de code invisibles) ; a verifier systematiquement en cas
-  de comportement inexplicable (`curl -I` : `Cache-Control: no-store`
-  attendu en dev, `x-nextjs-cache: HIT` trahit un serveur de production).
-- 2026-09-16 : agent Veille ajoute sous Toolkit - centre de veille
-  informationnelle personnel (qualification d'un besoin par dialogue avec
-  un moteur au choix - Ollama local/Gemini/ChatGPT Web -, proposition de
-  sources validees par l'utilisateur, moteur d'analyse choisi separement,
-  execution avec deduplication deterministe et historique de versions,
-  dashboard KPI + historique tracable de bout en bout). Trois moteurs
-  branchables derriere un contrat commun (`ok`/`indisponible`, jamais de
-  bascule silencieuse vers un autre moteur). ChatGPT Web reutilise le
-  pattern Playwright + profil persistant deja etabli pour SNCF, sans
-  automatiser la connexion. Cles `GEMINI_API_KEY`/`GEMINI_MODEL`/
-  `VEILLE_RUN_TOKEN` ajoutees a `config/.env.dev.example`, sans valeurs.
-  Verifie de bout en bout dans le navigateur avec le moteur Ollama :
-  parcours complet de qualification (dialogue reel, question de
-  clarification, contrat final coherent), creation du sujet, execution
-  reelle - echoue proprement (sans crash) sur les 3 sources choisies pour
-  le test (page Samsung protegee/rendue en JS, hote injoignable, Twitter
-  bloque le fetch simple), comportement V1 attendu et documente pour des
-  sources non compatibles avec un simple fetch (pas de rendu JS par site
-  en V1). Corrige au passage : `FIELD_FAMILY_COLOR` extrait de `Field.tsx`
-  vers `fieldFamilyColor.ts` (un composant serveur ne peut pas importer
-  une constante depuis un module "use client") ; `TextInput`/`TextArea`
-  ignoraient silencieusement un `className` passe par l'appelant. Travail
-  initialement demarre par une session parallele sur le meme worktree DEV
-  (l'utilisateur a explicitement arrete de travailler en double session et
-  demande de reprendre Veille) ; aucun document de specification separe
-  trouve dans le depot malgre ~90 commentaires "EXG-0xx" - le code fait foi.
-  Pas encore valide par l'utilisateur.
-- 2026-09-18 : agent Anonymisation - support PDF (nouveau
-  `python/anonymizer/formats/pdf_handler.py`). Agent Veille - moteur
-  "ollama_leger" (nouvelle valeur enum `VeilleMoteur`, migration Prisma),
-  routes de saisie manuelle dialogue/prompt (`/api/veille/sujets/
-  dialogue-manuel`, `/prompt-manuel`) sans passer par le dialogue
-  qualificatif standard. Merge `dev` -> `test` (quatrieme fusion). Pas
-  encore valide par l'utilisateur sur TEST.
+  integre au layout global (visible sur toutes les pages reelles). Les
+  vraies pages `/cockpit` et `/agents` restent des placeholders - le
+  portage vers ces pages reelles n'a pas commence. Aucun tag de version
+  cree (pas de validation explicite d'environnement pour ce travail).
+- 2026-09-22 : integration de l'agent "Voyages" (`/agents/voyages`), coeur
+  Python de Cedric Houpe installe sous `python/agents/voyages/` derriere
+  la gateway partagee existante (`python/gateway/`, deja utilisee par
+  anonymizer - aucun nouveau port). Deux extensions generiques apportees a
+  la gateway (aucune ne connait la semantique d'un agent en particulier) :
+  support d'un champ `collection` de type JSON (au-dela des seuls
+  scalaires/fichiers, necessaire a la commande `generer`) et execution du
+  worker dans un thread separe (`asyncio.to_thread`) pour qu'un appel
+  bloquant (la commande `recuperer` peut bloquer jusqu'a 5 minutes -
+  session Chrome interactive, 2FA manuelle) ne gele pas la gateway pour
+  les autres agents. Correction egalement d'un bug latent decouvert a
+  cette occasion dans `src/integrations/python-agent-runtime.ts` : le
+  cache fetch de Next.js servait une liste d'agents perimee (`cache:
+  "no-store"` ajoute sur les 3 appels). 29 tests du paquet fournisseur
+  verifies au passage (`pytest`, tous verts). Aucun tag de version cree
+  (pas de validation explicite d'environnement pour ce travail).
+- 2026-09-22 : integration de l'agent "Taches" (`/agents/taches`), coeur
+  Python installe sous `python/agents/taches/` derriere la gateway
+  partagee (`python/gateway/`, aucun nouveau port). Une premiere migration
+  (commit `43761b3`, 15/09) avait porte cet agent depuis l'ancienne
+  plateforme Flask (`agents/todos_transport`) entierement en TypeScript
+  (Prisma + client Ollama direct + regles de validation en TS) sur les
+  branches `main`/`test` - jamais mergee sur `dev`, et incompatible avec le
+  pattern coeur-Python-derriere-gateway etabli depuis pour Anonymisation et
+  Voyages. Rebatie ici en Python (validation, assemblage des prompts
+  Ollama depuis des fragments `.txt` copies tels quels, construction du
+  .ics) en reprenant la logique metier de cette premiere migration ;
+  persistance (creation/liste/statut, table `todos_transport`) et
+  historique (`ActionHistory`) restes cote plateforme (Prisma), jamais
+  dans le coeur. Extensions generiques mineures apportees a 2 composants
+  partages (deja presentes dans la premiere migration TS, reintroduites
+  ici) : `ActionButton` (variante `ghost`) et `Field` (bouton copier
+  optionnel `texteACopier`) - aucune n'est specifique a Taches. 14 tests du
+  coeur Python verifies (`pytest`, tous verts) ; non teste de bout en bout
+  cote plateforme (base de donnees et Ollama non verifies en conditions
+  reelles pour ce travail). Aucun tag de version cree (pas de validation
+  explicite d'environnement pour ce travail).
+- 2026-09-23 : merge `dev` -> `test` (cinquieme fusion, la plus importante :
+  remplace entierement l'ancienne architecture d'agents par la nouvelle).
+  L'utilisateur a explicitement change de principe pour les agents (retour
+  de `dev` a l'etat du tag `dev-v3.0` avant reconstruction) : abandon de
+  l'ancien agent Veille et de l'ancienne implementation TypeScript de
+  Taches/Voyages, remplaces par le pattern coeur-Python-derriere-gateway
+  (voir entrees precedentes et `docs/ARCHITECTURE.md` section 5bis).
+  Environ 140 fichiers de l'ancienne architecture supprimes de TEST (code
+  seulement - tables `veille_*` et ancienne structure `todos_transport`
+  non touchees en base, disponibles pour verification ulterieure si
+  besoin). Migration Prisma reconstituee en baseline sur DEV
+  (`20260923000000_init`, zero derive verifiee avant application) : les
+  modeles Veille restent dans schema.prisma (donnees reelles existantes,
+  a ne pas supprimer sans verification explicite) meme si l'application
+  ne les utilise plus. Corrige au passage : lien menu "Taches" sans `href`
+  (rendu inerte) ; affichage de l'heure de RDV a tort converti au fuseau
+  du navigateur (`toLocaleString` sur une heure murale flottante) ;
+  timeout par defaut du fetch Node (5 min, undici) pris a tort pour une
+  gateway injoignable sur les gros documents - bascule sur le
+  fetch/Agent d'undici avec timeout desactive pour cet appel local de
+  confiance. Logo et favicon EJAH mis a jour, `favicon.ico` regenere
+  (l'ancien etait corrompu). Pas encore valide par l'utilisateur sur TEST.

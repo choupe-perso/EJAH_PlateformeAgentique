@@ -1,0 +1,104 @@
+# Créé par Cédric HOUPE.
+# Usage ou reproduction à l'identique interdit sans autorisation.
+
+agent:
+  id: voyages
+  version: 1.0.0
+
+input:
+  type: object
+
+  properties:
+    command:
+      type: scalar
+      scalar_type: string
+      enum:
+        - identifiants_statut
+        - identifiants_definir
+        - recuperer
+        - generer
+
+    email:
+      type: scalar
+      scalar_type: string
+      description: Adresse email du compte SNCF Connect - requis pour identifiants_definir.
+
+    mot_de_passe:
+      type: scalar
+      scalar_type: string
+      description: >
+        Jamais journalisé ni stocké en clair. Requis pour
+        identifiants_definir, saisi interactivement par l'adaptateur CLI
+        (jamais passé en argument de ligne de commande).
+
+    headless:
+      type: scalar
+      scalar_type: boolean
+      default: false
+      description: >
+        Pour recuperer - lance Chrome sans fenêtre visible. Déconseillé :
+        rend impossible une authentification à deux facteurs manuelle.
+
+    voyages:
+      type: collection
+      items:
+        type: object
+      description: >
+        Pour generer - liste de voyages tels que produits par recuperer
+        (id, dossier, annee, mois, jour, heure_depart, heure_arrivee,
+        gare_depart, gare_arrivee, train_numero, duree).
+
+  required:
+    - command
+
+output:
+  type: object
+
+  properties:
+    message:
+      type: message
+
+    configures:
+      type: scalar
+      scalar_type: boolean
+      description: Pour identifiants_statut/identifiants_definir - identifiants enregistrés ou non.
+
+    voyages:
+      type: collection
+      items:
+        type: object
+      description: Pour recuperer - voyages récupérés depuis SNCF Connect.
+
+    resultat:
+      type: artifact
+      artifact:
+        media_types:
+          - text/calendar
+        filename: voyages_sncf.ics
+      description: Pour generer - contenu du calendrier .ics.
+
+    error:
+      type: error
+
+    error_kind:
+      type: scalar
+      scalar_type: string
+      enum:
+        - validation
+        - configuration
+        - integration
+        - technique
+      description: >
+        Classification de l'erreur (référentiel §22), présente uniquement
+        si error est renseigné.
+
+  required:
+    - message
+
+errors:
+  - id: identifiants_non_configures
+    description: Aucun identifiant SNCF Connect enregistré - exécuter "identifiants set" au préalable.
+  - id: connexion_expiree
+    description: La connexion à SNCF Connect n'a pas été terminée dans le délai imparti (5 minutes).
+  - id: voyages_invalides
+    description: Les données de voyage fournies à "generer" ne contiennent pas tous les champs requis.

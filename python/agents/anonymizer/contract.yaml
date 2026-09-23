@@ -1,0 +1,112 @@
+# Créé par Cédric HOUPE.
+# Usage ou reproduction à l'identique interdit sans autorisation.
+
+agent:
+  id: anonymizer
+  version: 3.0.0
+
+input:
+  type: object
+
+  properties:
+    command:
+      type: scalar
+      scalar_type: string
+      enum:
+        - inspect
+        - anonymize
+        - deanonymize
+
+    documents:
+      type: collection
+      items:
+        type: artifact
+        artifact:
+          media_types:
+            - text/plain
+            - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+            - application/vnd.openxmlformats-officedocument.presentationml.presentation
+            - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+            - application/pdf
+
+    vault:
+      type: artifact
+      artifact:
+        media_types:
+          - application/octet-stream
+        filename: vault.db
+      description: >
+        Coffre chiffré (SQLite + Fernet) porteur de la correspondance
+        jeton <-> valeur d'origine. Requis pour anonymize (sauf mode
+        irreversible) et pour deanonymize.
+
+    passphrase:
+      type: scalar
+      scalar_type: string
+      description: >
+        Jamais journalisée ni stockée en clair. Ouvre ou crée le vault.
+
+    irreversible:
+      type: scalar
+      scalar_type: boolean
+      default: false
+      description: >
+        anonymize sans vault persistant : les jetons ne pourront plus
+        jamais être résolus vers leur valeur d'origine.
+
+    out:
+      type: scalar
+      scalar_type: string
+      description: Chemin de sortie explicite - uniquement valide avec un seul document en entrée.
+
+  required:
+    - command
+    - documents
+
+output:
+  type: object
+
+  properties:
+    message:
+      type: message
+
+    results:
+      type: collection
+      items:
+        type: object
+        properties:
+          input:
+            type: scalar
+            scalar_type: string
+          output:
+            type: artifact
+            artifact:
+              media_types:
+                - text/plain
+                - application/vnd.openxmlformats-officedocument.wordprocessingml.document
+                - application/vnd.openxmlformats-officedocument.presentationml.presentation
+                - application/vnd.openxmlformats-officedocument.spreadsheetml.sheet
+                - application/json
+          entities_count:
+            type: scalar
+            scalar_type: integer
+          error:
+            type: error
+
+  required:
+    - message
+    - results
+
+errors:
+  - id: wrong_passphrase
+    description: La passphrase fournie ne correspond pas au vault indiqué.
+  - id: unsupported_format
+    description: Extension de fichier non gérée par aucun handler de formats.
+  - id: deanonymize_not_supported
+    description: >
+      Le format du fichier (ex. .pdf, converti en .docx à l'anonymisation)
+      ne permet pas de restauration directe.
+  - id: file_not_found
+    description: Un fichier, dossier ou motif glob passé en entrée ne correspond à rien sur disque.
+  - id: out_with_multiple_inputs
+    description: Le paramètre out ne peut être utilisé qu'avec un seul document en entrée.

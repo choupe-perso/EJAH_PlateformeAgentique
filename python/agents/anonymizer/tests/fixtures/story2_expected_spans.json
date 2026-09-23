@@ -1,0 +1,284 @@
+[
+  {
+    "start": 100,
+    "end": 115,
+    "text": "Thomas Lefebvre",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 173,
+    "end": 187,
+    "text": "9 juillet 1982",
+    "category": "DATE_NAISSANCE"
+  },
+  {
+    "start": 190,
+    "end": 215,
+    "text": "Nantes (Loire-Atlantique)",
+    "category": "LIEU_NAISSANCE"
+  },
+  {
+    "start": 261,
+    "end": 292,
+    "text": "12 rue de la Paix, 44000 Nantes",
+    "category": "ADRESSE"
+  },
+  {
+    "start": 360,
+    "end": 374,
+    "text": "06 58 22 41 79",
+    "category": "TELEPHONE"
+  },
+  {
+    "start": 440,
+    "end": 468,
+    "text": "thomas.lefebvre82@outlook.fr",
+    "category": "EMAIL"
+  },
+  {
+    "start": 555,
+    "end": 568,
+    "text": "Marc Delannoy",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 590,
+    "end": 617,
+    "text": "Banque Populaire Atlantique",
+    "category": "BANQUE"
+  },
+  {
+    "start": 727,
+    "end": 760,
+    "text": "FR14 2004 1010 0505 0001 3M02 606",
+    "category": "IBAN"
+  },
+  {
+    "start": 803,
+    "end": 809,
+    "text": "Thomas",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 811,
+    "end": 832,
+    "text": "1 82 07 44 512 036 78",
+    "category": "NIR"
+  },
+  {
+    "start": 877,
+    "end": 889,
+    "text": "665847213099",
+    "category": "CNI"
+  },
+  {
+    "start": 976,
+    "end": 985,
+    "text": "14RN73820",
+    "category": "PASSEPORT"
+  },
+  {
+    "start": 1049,
+    "end": 1058,
+    "text": "EH-719-BM",
+    "category": "PLAQUE"
+  },
+  {
+    "start": 1130,
+    "end": 1136,
+    "text": "Thomas",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 1280,
+    "end": 1293,
+    "text": "Karim Belhadj",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 1364,
+    "end": 1381,
+    "text": "diabète de type 2",
+    "category": "SANTE"
+  },
+  {
+    "start": 1418,
+    "end": 1437,
+    "text": "traité par insuline",
+    "category": "SANTE"
+  },
+  {
+    "start": 1485,
+    "end": 1519,
+    "text": "allergie sévère aux fruits à coque",
+    "category": "SANTE"
+  },
+  {
+    "start": 1521,
+    "end": 1527,
+    "text": "Thomas",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 1663,
+    "end": 1681,
+    "text": "Solstice Numérique",
+    "category": "EMPLOYEUR"
+  },
+  {
+    "start": 1744,
+    "end": 1761,
+    "text": "consultant senior",
+    "category": "POSTE"
+  },
+  {
+    "start": 1794,
+    "end": 1806,
+    "text": "58 000 euros",
+    "category": "SALAIRE"
+  },
+  {
+    "start": 1845,
+    "end": 1855,
+    "text": "t.lefebvre",
+    "category": "IDENTIFIANT"
+  },
+  {
+    "start": 1890,
+    "end": 1905,
+    "text": "Rennes2026$Init",
+    "category": "MOT_DE_PASSE"
+  },
+  {
+    "start": 1973,
+    "end": 1986,
+    "text": "81.253.44.109",
+    "category": "IP"
+  },
+  {
+    "start": 2066,
+    "end": 2107,
+    "text": "Thomas Lefebvre — Cybersécurité & Risques",
+    "category": "RESEAU_SOCIAL"
+  },
+  {
+    "start": 2127,
+    "end": 2141,
+    "text": "@tlefebvre_sec",
+    "category": "RESEAU_SOCIAL"
+  },
+  {
+    "start": 2285,
+    "end": 2291,
+    "text": "Thomas",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 2335,
+    "end": 2353,
+    "text": "origine portugaise",
+    "category": "ORIGINE"
+  },
+  {
+    "start": 2368,
+    "end": 2381,
+    "text": "sans religion",
+    "category": "RELIGION"
+  },
+  {
+    "start": 2417,
+    "end": 2449,
+    "text": "sympathisant du parti socialiste",
+    "category": "OPINION_POLITIQUE"
+  },
+  {
+    "start": 2523,
+    "end": 2541,
+    "text": "adhérent de la CGT",
+    "category": "SYNDICAT"
+  },
+  {
+    "start": 2664,
+    "end": 2679,
+    "text": "Nadia Cherkaoui",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 2688,
+    "end": 2698,
+    "text": "3 mai 1986",
+    "category": "DATE_NAISSANCE"
+  },
+  {
+    "start": 2701,
+    "end": 2709,
+    "text": "Bordeaux",
+    "category": "LIEU_NAISSANCE"
+  },
+  {
+    "start": 2811,
+    "end": 2843,
+    "text": "45 avenue Thiers, 33000 Bordeaux",
+    "category": "ADRESSE"
+  },
+  {
+    "start": 2896,
+    "end": 2910,
+    "text": "06 40 17 58 22",
+    "category": "TELEPHONE"
+  },
+  {
+    "start": 2940,
+    "end": 2965,
+    "text": "nadia.cherkaoui@gmail.com",
+    "category": "EMAIL"
+  },
+  {
+    "start": 3005,
+    "end": 3009,
+    "text": "Hugo",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 3011,
+    "end": 3027,
+    "text": "marié à un homme",
+    "category": "ORIENTATION_SEXUELLE"
+  },
+  {
+    "start": 3029,
+    "end": 3036,
+    "text": "Nicolas",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 3139,
+    "end": 3145,
+    "text": "Thomas",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 3246,
+    "end": 3280,
+    "text": "suspension de permis de trois mois",
+    "category": "CASIER_JUDICIAIRE"
+  },
+  {
+    "start": 3324,
+    "end": 3350,
+    "text": "conduite en état d'ivresse",
+    "category": "CASIER_JUDICIAIRE"
+  },
+  {
+    "start": 3530,
+    "end": 3548,
+    "text": "Solstice Numérique",
+    "category": "EMPLOYEUR"
+  },
+  {
+    "start": 3590,
+    "end": 3600,
+    "text": "t.lefebvre",
+    "category": "IDENTIFIANT"
+  }
+]

@@ -39,6 +39,21 @@ function formaterDate(iso: string): string {
   return new Date(iso).toLocaleString("fr-FR");
 }
 
+function formaterDateRdv(iso: string): string {
+  // rdv_date_debut est une heure murale flottante (sans fuseau, voir
+  // prisma/schema.prisma - meme convention que l'agent Voyages) : on
+  // formate a partir des composantes UTC pour eviter que toLocaleString
+  // ne la convertisse vers le fuseau du navigateur (le suffixe "Z" du
+  // JSON ne designe pas un instant reel, contrairement a creeLe/traiteLe).
+  const date = new Date(iso);
+  const jour = String(date.getUTCDate()).padStart(2, "0");
+  const mois = String(date.getUTCMonth() + 1).padStart(2, "0");
+  const annee = date.getUTCFullYear();
+  const heures = String(date.getUTCHours()).padStart(2, "0");
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+  return `${jour}/${mois}/${annee} ${heures}:${minutes}`;
+}
+
 function BoutonCopier({ texte, label }: { texte: string; label: string }) {
   const [copie, setCopie] = useState(false);
 
@@ -70,7 +85,7 @@ function DetailTache({ tache }: { tache: Tache }) {
     <>
       {tache.type === "rdv" && tache.rdvDateDebut && (
         <div className="mt-1 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft)]">
-          {formaterDate(tache.rdvDateDebut)}
+          {formaterDateRdv(tache.rdvDateDebut)}
         </div>
       )}
       {tache.type === "email" && (
@@ -97,8 +112,8 @@ export function TachesManager() {
     setErreur(null);
     try {
       const [reponseActives, reponseTraitees] = await Promise.all([
-        fetch("/api/agents/todos-transport/taches?statut=active"),
-        fetch("/api/agents/todos-transport/taches?statut=archivee"),
+        fetch("/api/agents/taches/items?statut=active"),
+        fetch("/api/agents/taches/items?statut=archivee"),
       ]);
       const [donneesActives, donneesTraitees] = await Promise.all([
         reponseActives.json(),
@@ -129,7 +144,7 @@ export function TachesManager() {
   }, [rafraichir]);
 
   async function marquerTraite(id: string) {
-    await fetch(`/api/agents/todos-transport/taches/${id}/traiter`, { method: "POST" });
+    await fetch(`/api/agents/taches/items/${id}/traiter`, { method: "POST" });
     rafraichir();
   }
 
@@ -186,7 +201,7 @@ export function TachesManager() {
                 <div className="flex flex-none gap-1.5">
                   {tache.type === "rdv" && (
                     <a
-                      href={`/api/agents/todos-transport/taches/${tache.id}/ics`}
+                      href={`/api/agents/taches/items/${tache.id}/ics`}
                       className="flex h-8 w-8 items-center justify-center rounded-[9px] bg-[var(--util-bg)] text-[var(--util-ink)]"
                       title="Télécharger le .ics"
                     >

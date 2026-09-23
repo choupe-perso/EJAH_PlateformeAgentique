@@ -18,24 +18,29 @@ export function SidebarLeaf({
   const pathname = usePathname();
   if (collapsed) return null;
 
-  const actif = href ? pathname?.startsWith(href) : false;
-  const classe =
+  const active = href !== undefined && pathname === href;
+  const className =
     "flex cursor-pointer items-center gap-[7px] rounded-md py-1.5 pl-6 pr-2 text-xs hover:bg-[var(--canvas)] " +
-    (actif ? "bg-[var(--tint-active-bg)] font-semibold text-[var(--orange-deep)]" : "text-[#5C4F49]");
+    (active
+      ? "bg-[var(--canvas)] font-semibold text-[var(--ink)]"
+      : "text-[#5C4F49]");
 
-  const contenu = (
+  const content = (
     <>
-      <span className="flex h-[18px] w-[18px] flex-none items-center justify-center">{icon}</span>
+      <span className="flex h-[18px] w-[18px] flex-none items-center justify-center">
+        {icon}
+      </span>
       {label}
     </>
   );
 
-  if (href) {
-    return (
-      <Link href={href} className={classe}>
-        {contenu}
-      </Link>
-    );
+  if (!href) {
+    return <span className={className + " cursor-default opacity-60"}>{content}</span>;
   }
-  return <a className={classe}>{contenu}</a>;
+
+  return (
+    <Link href={href} className={className}>
+      {content}
+    </Link>
+  );
 }

@@ -1,0 +1,374 @@
+[
+  {
+    "start": 13,
+    "end": 27,
+    "text": "Élodie Vasseur",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 97,
+    "end": 111,
+    "text": "Élodie Vasseur",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 163,
+    "end": 175,
+    "text": "14 mars 1987",
+    "category": "DATE_NAISSANCE"
+  },
+  {
+    "start": 178,
+    "end": 208,
+    "text": "Clermont-Ferrand (Puy-de-Dôme)",
+    "category": "LIEU_NAISSANCE"
+  },
+  {
+    "start": 242,
+    "end": 291,
+    "text": "27 rue des Frères Lumière, 63100 Clermont-Ferrand",
+    "category": "ADRESSE"
+  },
+  {
+    "start": 379,
+    "end": 393,
+    "text": "04 73 92 15 08",
+    "category": "TELEPHONE"
+  },
+  {
+    "start": 441,
+    "end": 455,
+    "text": "06 71 44 29 53",
+    "category": "TELEPHONE"
+  },
+  {
+    "start": 516,
+    "end": 544,
+    "text": "elodie.vasseur1987@gmail.com",
+    "category": "EMAIL"
+  },
+  {
+    "start": 580,
+    "end": 586,
+    "text": "Julien",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 662,
+    "end": 668,
+    "text": "Élodie",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 696,
+    "end": 715,
+    "text": "Anne-Sophie Rambert",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 809,
+    "end": 828,
+    "text": "sclérose en plaques",
+    "category": "SANTE"
+  },
+  {
+    "start": 872,
+    "end": 887,
+    "text": "interféron bêta",
+    "category": "SANTE"
+  },
+  {
+    "start": 970,
+    "end": 976,
+    "text": "Julien",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 1097,
+    "end": 1138,
+    "text": "psychothérapie de soutien tous les jeudis",
+    "category": "SANTE"
+  },
+  {
+    "start": 1487,
+    "end": 1508,
+    "text": "2 87 03 63 231 087 42",
+    "category": "NIR"
+  },
+  {
+    "start": 1554,
+    "end": 1566,
+    "text": "998134672541",
+    "category": "CNI"
+  },
+  {
+    "start": 1618,
+    "end": 1627,
+    "text": "19FR84512",
+    "category": "PASSEPORT"
+  },
+  {
+    "start": 1705,
+    "end": 1738,
+    "text": "FR76 3000 4008 2800 0123 4567 890",
+    "category": "IBAN"
+  },
+  {
+    "start": 1753,
+    "end": 1782,
+    "text": "Crédit Agricole Centre France",
+    "category": "BANQUE"
+  },
+  {
+    "start": 1886,
+    "end": 1895,
+    "text": "FX-482-QT",
+    "category": "PLAQUE"
+  },
+  {
+    "start": 1952,
+    "end": 1958,
+    "text": "Élodie",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 1977,
+    "end": 1998,
+    "text": "responsable comptable",
+    "category": "POSTE"
+  },
+  {
+    "start": 2004,
+    "end": 2028,
+    "text": "Auvergne Ingénierie Data",
+    "category": "EMPLOYEUR"
+  },
+  {
+    "start": 2138,
+    "end": 2150,
+    "text": "46 500 euros",
+    "category": "SALAIRE"
+  },
+  {
+    "start": 2229,
+    "end": 2238,
+    "text": "e.vasseur",
+    "category": "IDENTIFIANT"
+  },
+  {
+    "start": 2366,
+    "end": 2380,
+    "text": "Aug2026!Temp92",
+    "category": "MOT_DE_PASSE"
+  },
+  {
+    "start": 2488,
+    "end": 2501,
+    "text": "92.184.113.47",
+    "category": "IP"
+  },
+  {
+    "start": 2544,
+    "end": 2574,
+    "text": "Élodie Vasseur — Finance & RSE",
+    "category": "RESEAU_SOCIAL"
+  },
+  {
+    "start": 2633,
+    "end": 2652,
+    "text": "@elovasseur_running",
+    "category": "RESEAU_SOCIAL"
+  },
+  {
+    "start": 2905,
+    "end": 2911,
+    "text": "Élodie",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 2985,
+    "end": 3006,
+    "text": "origine martiniquaise",
+    "category": "ORIGINE"
+  },
+  {
+    "start": 3032,
+    "end": 3057,
+    "text": "catholique non observante",
+    "category": "RELIGION"
+  },
+  {
+    "start": 3087,
+    "end": 3111,
+    "text": "en couple avec une femme",
+    "category": "ORIENTATION_SEXUELLE"
+  },
+  {
+    "start": 3113,
+    "end": 3120,
+    "text": "Camille",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 3352,
+    "end": 3356,
+    "text": "CFDT",
+    "category": "SYNDICAT"
+  },
+  {
+    "start": 3484,
+    "end": 3506,
+    "text": "parti écologiste local",
+    "category": "OPINION_POLITIQUE"
+  },
+  {
+    "start": 3621,
+    "end": 3627,
+    "text": "Julien",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 3689,
+    "end": 3705,
+    "text": "2 septembre 1990",
+    "category": "DATE_NAISSANCE"
+  },
+  {
+    "start": 3708,
+    "end": 3712,
+    "text": "Riom",
+    "category": "LIEU_NAISSANCE"
+  },
+  {
+    "start": 3735,
+    "end": 3770,
+    "text": "14 bis avenue Berthelot, 69007 Lyon",
+    "category": "ADRESSE"
+  },
+  {
+    "start": 3930,
+    "end": 3946,
+    "text": "maladie de Crohn",
+    "category": "SANTE"
+  },
+  {
+    "start": 4036,
+    "end": 4057,
+    "text": "1 90 09 69 155 093 18",
+    "category": "NIR"
+  },
+  {
+    "start": 4134,
+    "end": 4146,
+    "text": "774125390612",
+    "category": "CNI"
+  },
+  {
+    "start": 4148,
+    "end": 4154,
+    "text": "Julien",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 4203,
+    "end": 4242,
+    "text": "une amende pour conduite sans assurance",
+    "category": "CASIER_JUDICIAIRE"
+  },
+  {
+    "start": 4427,
+    "end": 4433,
+    "text": "Élodie",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 4487,
+    "end": 4502,
+    "text": "Sabine Oliveira",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 4506,
+    "end": 4530,
+    "text": "Auvergne Ingénierie Data",
+    "category": "EMPLOYEUR"
+  },
+  {
+    "start": 4736,
+    "end": 4746,
+    "text": "6X3K9P2LFR",
+    "category": "COLIS"
+  },
+  {
+    "start": 4787,
+    "end": 4812,
+    "text": "27 rue des Frères Lumière",
+    "category": "ADRESSE"
+  },
+  {
+    "start": 4998,
+    "end": 5002,
+    "text": "4512",
+    "category": "CARTE_BANCAIRE_PARTIELLE"
+  },
+  {
+    "start": 5070,
+    "end": 5080,
+    "text": "CL-8847213",
+    "category": "NUMERO_CLIENT"
+  },
+  {
+    "start": 5124,
+    "end": 5131,
+    "text": "Camille",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 5147,
+    "end": 5164,
+    "text": "Camille Dubuisson",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 5173,
+    "end": 5188,
+    "text": "21 janvier 1985",
+    "category": "DATE_NAISSANCE"
+  },
+  {
+    "start": 5191,
+    "end": 5209,
+    "text": "Liège, en Belgique",
+    "category": "LIEU_NAISSANCE"
+  },
+  {
+    "start": 5274,
+    "end": 5280,
+    "text": "Élodie",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 5374,
+    "end": 5400,
+    "text": "8 quai Rambaud, 69002 Lyon",
+    "category": "ADRESSE"
+  },
+  {
+    "start": 5494,
+    "end": 5506,
+    "text": "692113045578",
+    "category": "TITRE_SEJOUR"
+  },
+  {
+    "start": 5636,
+    "end": 5642,
+    "text": "Élodie",
+    "category": "PERSONNE"
+  },
+  {
+    "start": 5975,
+    "end": 5984,
+    "text": "e.vasseur",
+    "category": "IDENTIFIANT"
+  }
+]

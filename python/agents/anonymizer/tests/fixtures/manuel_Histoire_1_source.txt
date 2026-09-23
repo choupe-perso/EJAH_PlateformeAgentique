@@ -1,0 +1,53 @@
+LE PRÊT PERSONNEL DE SANDRINE MICHAUD
+=====================================
+
+Récit fictif — jeu de données de test pour outil d'anonymisation
+
+Sandrine Michaud, née le 22 octobre 1983 à Besançon (Doubs), poussa la porte de son agence Cofidis
+pour finaliser sa demande de prêt personnel. Elle vivait au 5 rue Battant, 25000 Besançon, joignable
+au 06 71 34 58 12 ou par mail à sandrine.michaud83@orange.fr.
+
+Le conseiller, Frédéric Nguyen, vérifia son dossier : numéro de sécurité sociale 2 83 10 25 093 118
+47, carte nationale d'identité 337091845266, et IBAN pour le versement des fonds, FR76 3005 6009
+5809 5809 1234 567. Il nota aussi le numéro du dossier de crédit en cours d'instruction,
+CRED-2026-771402.
+
+En parcourant le questionnaire santé lié à l'assurance emprunteur, Sandrine dut préciser son asthme
+sévère traité par corticoïdes inhalés, diagnostiqué à l'adolescence, ainsi qu'une hospitalisation
+pour une crise d'asthme aiguë deux ans plus tôt. Le conseiller lui rappela que ces éléments
+pouvaient influencer le taux de la garantie.
+
+Sandrine travaillait comme responsable logistique chez Fluvia Distribution, pour un salaire annuel
+brut de 34 200 euros, une information nécessaire pour valider sa capacité de remboursement. Elle
+glissa aussi qu'elle était déléguée du personnel CFDT dans son entreprise, un mandat qui lui
+prenait, disait-elle, presque une journée par semaine.
+
+Le conseiller consulta ensuite l'historique bancaire de Sandrine et remarqua une ancienne
+inscription au fichier des incidents de remboursement des crédits (FICP), radiée l'année précédente
+après régularisation. Sandrine expliqua que cet épisode remontait à une période difficile après une
+rupture, et qu'elle avait depuis assaini l'ensemble de sa situation.
+
+Sur la page consacrée aux convictions personnelles, incluse dans le questionnaire interne de
+satisfaction client, Sandrine indiqua être sans religion, et avoir voté, par le passé, pour un parti
+de centre-droit aux élections locales. Elle précisa que ces informations ne devaient en aucun cas
+influencer l'octroi de son prêt, ce que le conseiller confirma.
+
+Avant de partir, Sandrine confirma son accord pour la signature électronique et reçut un code de
+vérification sur son téléphone, le 06 71 34 58 12 déjà communiqué. Le conseiller lui indiqua que les
+fonds seraient débloqués sous 48 heures sur le compte FR76 3005 6009 5809 5809 1234 567, une fois le
+dossier CRED-2026-771402 validé par le siège.
+
+En sortant de l'agence, Sandrine reçut un appel de son assureur habitation pour une question annexe
+: il lui demanda de confirmer son adresse, 5 rue Battant, 25000 Besançon, et son numéro de contrat,
+HAB-BES-552031, avant de clore l'appel en lui souhaitant bonne chance pour ses travaux de
+rénovation.
+
+Le même jour, Sandrine reçut un appel de sa banque principale pour l'informer d'une alerte de
+sécurité sur sa carte bancaire : elle dut confirmer son identité en donnant les quatre derniers
+chiffres de sa carte, 6047, et son adresse, 5 rue Battant, 25000 Besançon, avant que le conseiller
+ne débloque l'opération suspecte.
+
+Quelques jours plus tard, Sandrine reçut la confirmation définitive de son prêt par courrier,
+rappelant l'ensemble des références du dossier, CRED-2026-771402, le montant emprunté, et les
+coordonnées de son conseiller, Frédéric Nguyen, joignable directement au 03 81 52 40 17 pour toute
+question ultérieure sur le remboursement.

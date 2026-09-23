@@ -20,7 +20,7 @@ export function RdvForm({ onCree }: { onCree: () => void }) {
     setEnvoi(true);
     setErreurs([]);
     try {
-      const reponse = await fetch("/api/agents/todos-transport/taches", {
+      const reponse = await fetch("/api/agents/taches/items", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ type: "rdv", titre, dateDebut, dureeMinutes, alerteMinutes, description }),

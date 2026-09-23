@@ -1,0 +1,56 @@
+LA CONSULTATION DE FARIDA EL AMRANI
+===================================
+
+Récit fictif — jeu de données de test pour outil d'anonymisation
+
+Farida El Amrani entra dans le hall de la clinique Sainte-Marguerite un peu avant huit heures. Née
+le 5 novembre 1975 à Oran, en Algérie, elle vivait désormais au 9 impasse des Lilas, 92000 Nanterre.
+La secrétaire lui demanda de confirmer son numéro de téléphone, le 06 22 84 17 39, et son adresse
+mail, farida.elamrani75@laposte.net, avant de la faire patienter.
+
+L'infirmière d'accueil réclama sa carte Vitale pour ouvrir le dossier : numéro de sécurité sociale 2
+75 11 93 217 044 61, et une pièce d'identité — Farida tendit sa carte nationale d'identité,
+441029873156. Elle glissa aussi le RIB que sa mutuelle, Malakoff Humanis, lui avait demandé pour le
+remboursement des soins : IBAN FR76 1751 5900 0008 0123 4567 892.
+
+Le docteur Sophie Lindqvist, son oncologue, la reçut peu après. Le dossier rappelait le diagnostic
+posé huit mois plus tôt : un cancer du sein de stade II, traité par chimiothérapie néoadjuvante puis
+chirurgie conservatrice. Farida devait encore signaler son groupe sanguin O négatif et une allergie
+à la pénicilline avant chaque nouvelle prescription.
+
+Le médecin évoqua aussi l'arrêt de travail à prolonger. Farida enseignait les mathématiques au
+collège Jean-Zay, pour un salaire net mensuel de 2 340 euros ; son établissement demandait une
+attestation à transmettre depuis son adresse professionnelle, f.elamrani@ac-versailles.fr, avant la
+fin de la semaine. Elle était adhérente du syndicat FSU depuis ses débuts dans l'enseignement, une
+affiliation qu'elle mentionnait volontiers.
+
+Farida profita d'un moment avec l'infirmière pour évoquer, comme à chaque visite, sa pratique
+religieuse : musulmane pratiquante, elle demandait toujours si les repas proposés pendant une
+éventuelle hospitalisation seraient compatibles, et rappelait qu'elle portait le foulard même sous
+le bonnet de bloc opératoire. Elle glissa aussi qu'elle avait voté, aux dernières municipales, pour
+une liste régionaliste, sujet qui revenait souvent dans ses discussions avec le personnel.
+
+Son mari, Karim El Amrani, l'appela pendant qu'elle patientait pour ses résultats. Il vivait avec
+elle à Nanterre et donna, pour la carte de stationnement de l'hôpital, sa propre plaque
+d'immatriculation, GC-204-YL. Il rappela aussi qu'il ne fallait pas oublier de prévenir sa sœur,
+restée à Oran, du résultat des examens.
+
+En sortant, Farida reçut un message de la clinique confirmant son prochain rendez-vous et rappelant
+son numéro de dossier patient, PAT-2026-08841. Elle rangea sa carte de mutuelle, jeta un œil à
+l'heure, et reprit la direction du collège, où l'attendait encore une classe de troisième avant la
+fin de la journée.
+
+En fin de journée, Farida reçut encore un appel de la CPAM au sujet de ses indemnités journalières :
+l'agent confirma le versement sur le compte déjà communiqué, rappela son numéro d'assurée 2 75 11 93
+217 044 61, et annonça l'envoi d'un courrier à son adresse du 9 impasse des Lilas, 92000 Nanterre.
+Elle en profita pour signaler un changement : sa fille, Yasmine El Amrani, venait de rejoindre le
+même collège où elle enseignait, une coïncidence qui amusait toute l'équipe pédagogique. Pour
+l'inscription, Farida communiqua le numéro de sécurité sociale de sa fille, 2 12 05 93 217 099 12,
+encore rattaché au sien.
+
+Avant de reprendre la route, Farida échangea encore quelques mots avec la secrétaire médicale, Nora
+Benali, qui lui remit un double de son compte rendu de consultation et confirma que le prochain
+contrôle serait pris en charge par sa complémentaire santé, Malakoff Humanis, sous le numéro
+d'adhérent MH-2026-771034. Elle nota également, pour le registre de l'établissement, la plaque
+d'immatriculation du véhicule utilisé ce jour-là, DT-558-HP, prêté par son mari le temps que la
+sienne soit réparée.

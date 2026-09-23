@@ -1,0 +1,43 @@
+# Créé par Cédric HOUPE.
+# Usage ou reproduction à l'identique interdit sans autorisation.
+
+agent:
+  id: voyages
+  name: Voyages - calendrier SNCF
+  version: 1.0.0
+  description: >
+    Récupère les voyages à venir depuis SNCF Connect (session Chrome
+    automatisée, identifiants stockés dans le Gestionnaire d'identifiants
+    Windows) et génère un fichier .ics (RFC 5545) importable dans un
+    agenda, avec un créneau "Trajet" avant chaque train et un rappel 1h
+    avant chaque créneau. Rien n'est envoyé sur Internet en dehors de la
+    connexion à SNCF Connect elle-même. Agent personnel (pas d'accès ADBI
+    requis), catégorie "Perso" de la plateforme EJAH.
+
+entrypoint:
+  module: app.service
+  function: execute
+
+capabilities:
+  cli: true
+  web: false
+  api: false
+  mcp: false
+
+features:
+  streaming: false
+  files: true
+  images: false
+
+commands:
+  - id: identifiants
+    description: Enregistre (set) ou vérifie (status) les identifiants SNCF Connect, stockés dans le Gestionnaire d'identifiants Windows.
+  - id: recuperer
+    description: Ouvre une session Chrome, se connecte à SNCF Connect et écrit les voyages à venir dans un fichier JSON local.
+  - id: generer
+    description: Génère un calendrier .ics à partir d'un fichier JSON de voyages (issu de "recuperer", éventuellement filtré à la main).
+
+exposures:
+  cli:
+    artifacts:
+      delivery: local_file
