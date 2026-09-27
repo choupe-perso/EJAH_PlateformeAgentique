@@ -153,11 +153,11 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
       </ActionButton>
 
       <Field label="Titre" family="platform" texteACopier={champsGeneres ? titre : undefined}>
-        <TextInput value={titre} onChange={(e) => setTitre(e.target.value)} readOnly />
+        <TextInput value={titre} onChange={(e) => setTitre(e.target.value)} />
       </Field>
 
       <Field label="Texte" family="platform" texteACopier={champsGeneres ? texte : undefined}>
-        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} readOnly />
+        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} />
       </Field>
 
       {champsGeneres && (

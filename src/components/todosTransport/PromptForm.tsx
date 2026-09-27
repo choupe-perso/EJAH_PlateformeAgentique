@@ -114,7 +114,7 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
       </ActionButton>
 
       <Field label="Texte du prompt" family="platform" texteACopier={champsGeneres ? texte : undefined}>
-        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} readOnly />
+        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} />
       </Field>
 
       {champsGeneres && (
