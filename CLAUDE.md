@@ -107,19 +107,16 @@ Chaque worktree possede son propre `node_modules`, son propre fichier
 `config/.env.dev.example`, `config/.env.test.example`, `config/.env.prod.example`
 pour la liste des cles attendues (sans valeurs).
 
-**Piege connu (outillage IA)** : les 3 worktrees ont chacun un
-`.claude/launch.json` avec une configuration nommee `"ejah"` sur le port
-3000 (meme nom partout - seul le port differe pour test/prod). Un outil de
-preview qui resout cette config par nom sans repertoire explicite peut donc
-demarrer le **mauvais** worktree (ex. PROD au lieu de DEV) sans erreur
-visible - la page se charge, juste avec l'ancien code/l'ancienne palette
-d'un autre environnement, ce qui peut se faire passer pour des symptomes
-totalement differents (fonctionnalite absente, bouton inerte, etc.). Demarrer
-le serveur du bon worktree explicitement (`cd` dans le bon dossier avant
-`npm run dev`/`npm run start`) plutot que de se fier a une resolution par
-nom seul ; en cas de comportement inexplicable dans le navigateur de
-previsualisation, verifier en premier lieu quel repertoire (`cwd`) sert
-reellement la page.
+**Piege connu (outillage IA), corrige le 2026-09-27** : les 3 worktrees
+avaient chacun un `.claude/launch.json` identique (config `"ejah"` sur le
+port 3000, executable `scripts\dev-with-node-path.cmd` - mode
+developpement). Un outil de preview resolvant cette config par nom sans
+repertoire explicite pouvait donc demarrer PROD/TEST en mode dev sur le
+mauvais port sans erreur visible. Corrige : chaque worktree a desormais
+son propre port (3000/3001/3002) et TEST/PROD pointent vers
+`deployment/_run.bat` (build + `npm run start`) au lieu du script de mode
+dev, reserve a DEV. `.claude/launch.json` rejoint donc l'exception
+assumee de divergence intentionnelle par branche (voir section Git).
 
 ## Git
 
@@ -135,15 +132,15 @@ reellement la page.
   correspondant, pour permettre un rollback a tout moment. Ne jamais tagger
   automatiquement sans validation explicite de l'utilisateur.
 - **Exception assumee** : `deployment/restart.bat`, `deployment/stop.bat`,
-  `deployment/_run.bat` et `src/styles/globals.css` (jetons de couleur
-  `:root`) different intentionnellement de contenu entre les 3 branches
-  (port/commande, et palette d'accent propres a chaque environnement -
-  voir `UIDesigner/ejah-template-{dev,test,prod}.html`, qui ont chacun
-  leur propre palette : DEV cyan/jaune, TEST vert/citron, PROD
-  orange/rose/violet). Un futur merge `dev` -> `test` -> `main` produira
-  normalement un conflit sur ces fichiers : c'est attendu, toujours garder
-  la version de la branche cible, ne jamais ecraser avec celle de la
-  branche source.
+  `deployment/_run.bat`, `.claude/launch.json` et `src/styles/globals.css`
+  (jetons de couleur `:root`) different intentionnellement de contenu
+  entre les 3 branches (port/commande, et palette d'accent propres a
+  chaque environnement - voir `UIDesigner/ejah-template-{dev,test,prod}.html`,
+  qui ont chacun leur propre palette : DEV cyan/jaune, TEST vert/citron,
+  PROD orange/rose/violet). Un futur merge `dev` -> `test` -> `main`
+  produira normalement un conflit sur ces fichiers : c'est attendu,
+  toujours garder la version de la branche cible, ne jamais ecraser avec
+  celle de la branche source.
 - Les fichiers de configuration contenant des comptes d'authentification sont
   suivis sous git **sans valeurs** (uniquement les cles). Les fichiers reels
   contenant des valeurs sont dans `.gitignore` et ne doivent jamais etre
