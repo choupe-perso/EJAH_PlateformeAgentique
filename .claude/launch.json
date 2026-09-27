@@ -3,9 +3,9 @@
   "configurations": [
     {
       "name": "ejah",
-      "runtimeExecutable": "scripts\\dev-with-node-path.cmd",
+      "runtimeExecutable": "deployment\\_run.bat",
       "runtimeArgs": [],
-      "port": 3000
+      "port": 3001
     }
   ]
 }

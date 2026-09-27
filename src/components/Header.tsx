@@ -13,9 +13,11 @@ const NAV_ITEMS = [
 export function Header({
   environment,
   nomAffiche,
+  version,
 }: {
   environment: AppEnvironment | null;
   nomAffiche: string;
+  version: string | null;
 }) {
   const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
@@ -25,9 +27,7 @@ export function Header({
   return (
     <header className="sticky top-0 z-20">
       <div className="flex items-center justify-between border-b border-[var(--line)] bg-[var(--canvas)] px-4 py-1.5 font-[var(--font-ibm-plex-mono)] text-[11px] text-[var(--ink-soft)] max-[720px]:px-4 sm:px-7">
-        <span>
-          Site v1.0 <span className="text-[var(--violet)]">· socle</span>
-        </span>
+        <span>Site v{version ?? "?"}</span>
         <span className="max-[720px]:hidden">Donnees non chargees</span>
       </div>
 

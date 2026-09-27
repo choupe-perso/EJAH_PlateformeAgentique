@@ -36,3 +36,9 @@ export const nomAffiche = (): string => process.env.APP_DISPLAY_NAME?.trim() || 
 // - null si non configure, auquel cas la route doit refuser toute requete
 // plutot que d'accepter un jeton vide.
 export const veilleRunToken = (): string | null => process.env.VEILLE_RUN_TOKEN?.trim() || null;
+
+// Version majeure affichee dans le header (ex. "10.0") - mise a jour
+// manuellement dans .env.local a chaque tag de version majeure (dev-vX.0/
+// test-vX.0/prod-vX.0), jamais deduite automatiquement d'un numero de
+// build : la creation d'un tag reste un acte explicite de l'utilisateur.
+export const appVersion = (): string | null => process.env.APP_VERSION?.trim() || null;
