@@ -10,12 +10,6 @@ import type { LongueurMail, Registre, Ton } from "@/core/agents/taches";
 
 type ActionIa = "aucune" | "ameliorer" | "generer";
 
-// Consigne fixe envoyee au coeur pour le mode "Ameliorer" (voir
-// python/agents/taches/app/integrations/ollama/redaction.py::reecrire_email) -
-// pas de champ libre expose ici, le mode lui-meme porte l'intention.
-const PRECISIONS_AMELIORATION =
-  "Corrige les fautes et ameliore la fluidite des phrases et de la syntaxe. Ne change ni le fond, ni le sens, ni les informations.";
-
 export function EmailForm({ onCree }: { onCree: () => void }) {
   const [destinataire, setDestinataire] = useState("");
   const [notes, setNotes] = useState("");
@@ -43,17 +37,8 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
     try {
       const corps =
         action === "ameliorer"
-          ? {
-              type: "email",
-              destinataire,
-              titreActuel: titreUtilisateur || titre,
-              texteActuel: texte,
-              precisions: PRECISIONS_AMELIORATION,
-              registre,
-              ton,
-              longueur,
-            }
-          : { type: "email", destinataire, notes, registre, ton, longueur };
+          ? { type: "email", mode: "ameliorer", titreActuel: titreUtilisateur || titre, texteActuel: texte }
+          : { type: "email", mode: "generer", destinataire, notes, registre, ton, longueur };
       const reponse = await fetch("/api/agents/taches/brouillon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

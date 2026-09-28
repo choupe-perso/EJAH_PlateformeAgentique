@@ -12,12 +12,6 @@ const IAS = ["chatgpt", "copilot", "gemini", "claude"] as const;
 
 type ActionIa = "aucune" | "ameliorer" | "generer";
 
-// Consigne fixe envoyee au coeur pour le mode "Ameliorer" (voir
-// python/agents/taches/app/integrations/ollama/redaction.py::reecrire_prompt) -
-// pas de champ libre expose ici, le mode lui-meme porte l'intention.
-const PRECISIONS_AMELIORATION =
-  "Corrige les fautes et ameliore la fluidite des phrases et de la syntaxe. Ne change ni le fond, ni le sens, ni les informations.";
-
 export function PromptForm({ onCree }: { onCree: () => void }) {
   const [ia, setIa] = useState<(typeof IAS)[number]>("claude");
   const [projet, setProjet] = useState("");
@@ -43,8 +37,8 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
     try {
       const corps =
         action === "ameliorer"
-          ? { type: "prompt", ia, projet, titre, texteActuel: texte, precisions: PRECISIONS_AMELIORATION, niveau }
-          : { type: "prompt", ia, projet, titre, notes, niveau };
+          ? { type: "prompt", mode: "ameliorer", texteActuel: texte }
+          : { type: "prompt", mode: "generer", ia, projet, titre, notes, niveau };
       const reponse = await fetch("/api/agents/taches/brouillon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
