@@ -28,6 +28,33 @@ function voyageKey(v: Voyage): string {
   return v.id;
 }
 
+const MOIS_LABELS = [
+  "Janvier", "Février", "Mars", "Avril", "Mai", "Juin",
+  "Juillet", "Août", "Septembre", "Octobre", "Novembre", "Décembre",
+];
+
+interface MoisGroupe {
+  key: string;
+  label: string;
+  voyages: Voyage[];
+}
+
+/** Regroupe les voyages par mois (année + mois), groupes triés
+ * chronologiquement ; l'ordre d'origine est conservé dans chaque groupe. */
+function groupByMois(voyages: Voyage[]): MoisGroupe[] {
+  const groupes = new Map<string, MoisGroupe>();
+  for (const v of voyages) {
+    const key = `${v.annee}-${String(v.mois).padStart(2, "0")}`;
+    let g = groupes.get(key);
+    if (!g) {
+      g = { key, label: `${MOIS_LABELS[v.mois - 1] ?? v.mois} ${v.annee}`, voyages: [] };
+      groupes.set(key, g);
+    }
+    g.voyages.push(v);
+  }
+  return [...groupes.values()].sort((a, b) => a.key.localeCompare(b.key));
+}
+
 type StepState = "pending" | "active" | "done" | "error";
 
 type TrackedPhase = Exclude<RecupererPhase, "idle">;
@@ -155,6 +182,20 @@ export default function VoyagesPage() {
       const next = new Set(prev);
       if (next.has(key)) next.delete(key);
       else next.add(key);
+      return next;
+    });
+  }
+
+  /** Coche toutes les clés données si au moins une ne l'est pas, sinon les
+   * décoche toutes (utilisé pour un mois ou pour l'ensemble des voyages). */
+  function toggleMany(keys: string[]) {
+    setSelected((prev) => {
+      const next = new Set(prev);
+      const allChecked = keys.every((k) => next.has(k));
+      for (const k of keys) {
+        if (allChecked) next.delete(k);
+        else next.add(k);
+      }
       return next;
     });
   }
@@ -299,31 +340,69 @@ export default function VoyagesPage() {
                   <p className="text-[13px] text-[var(--ink-soft)]">Aucun voyage à venir.</p>
                 ) : (
                   <>
-                    <ul className="mb-4 flex flex-col gap-2">
-                      {voyages.map((v) => (
-                        <li
-                          key={voyageKey(v)}
-                          className="flex items-start gap-2.5 rounded-xl bg-[var(--canvas)] px-3 py-2 text-[13px]"
-                        >
-                          <input
-                            type="checkbox"
-                            className="mt-1"
-                            checked={selected.has(voyageKey(v))}
-                            onChange={() => toggleSelected(voyageKey(v))}
-                          />
-                          <div>
-                            <div className="font-medium">
-                              {formatDate(v)} — {formatHeure(v.heure_depart)} →{" "}
-                              {formatHeure(v.heure_arrivee)}
-                            </div>
-                            <div className="text-[var(--ink-soft)]">
-                              {v.gare_depart} → {v.gare_arrivee} · {v.train_numero} ·{" "}
-                              {v.duree} · dossier {v.dossier}
-                            </div>
-                          </div>
-                        </li>
-                      ))}
-                    </ul>
+                    <div className="mb-3">
+                      <ActionButton
+                        variant="ghost"
+                        onClick={() => toggleMany(voyages.map(voyageKey))}
+                      >
+                        {selected.size === voyages.length ? "Tout décocher" : "Tout cocher"}
+                      </ActionButton>
+                    </div>
+
+                    <div className="mb-4 flex flex-col gap-4">
+                      {groupByMois(voyages).map((g) => {
+                        const keys = g.voyages.map(voyageKey);
+                        const nbCoches = keys.filter((k) => selected.has(k)).length;
+                        const inputId = `mois-${g.key}`;
+                        return (
+                          <section key={g.key}>
+                            <label
+                              htmlFor={inputId}
+                              className="mb-2 flex cursor-pointer items-center gap-2.5 px-1 text-[13px] font-semibold text-[var(--ink)]"
+                            >
+                              <input
+                                id={inputId}
+                                type="checkbox"
+                                checked={nbCoches === keys.length}
+                                ref={(el) => {
+                                  if (el) el.indeterminate = nbCoches > 0 && nbCoches < keys.length;
+                                }}
+                                onChange={() => toggleMany(keys)}
+                              />
+                              <span>{g.label}</span>
+                              <span className="font-normal text-[var(--ink-soft)]">
+                                ({nbCoches}/{keys.length})
+                              </span>
+                            </label>
+                            <ul className="flex flex-col gap-2">
+                              {g.voyages.map((v) => (
+                                <li
+                                  key={voyageKey(v)}
+                                  className="flex items-start gap-2.5 rounded-xl bg-[var(--canvas)] px-3 py-2 text-[13px]"
+                                >
+                                  <input
+                                    type="checkbox"
+                                    className="mt-1"
+                                    checked={selected.has(voyageKey(v))}
+                                    onChange={() => toggleSelected(voyageKey(v))}
+                                  />
+                                  <div>
+                                    <div className="font-medium">
+                                      {formatDate(v)} — {formatHeure(v.heure_depart)} →{" "}
+                                      {formatHeure(v.heure_arrivee)}
+                                    </div>
+                                    <div className="text-[var(--ink-soft)]">
+                                      {v.gare_depart} → {v.gare_arrivee} · {v.train_numero} ·{" "}
+                                      {v.duree} · dossier {v.dossier}
+                                    </div>
+                                  </div>
+                                </li>
+                              ))}
+                            </ul>
+                          </section>
+                        );
+                      })}
+                    </div>
 
                     <ActionButton
                       variant={generating ? "loading" : "primary"}
