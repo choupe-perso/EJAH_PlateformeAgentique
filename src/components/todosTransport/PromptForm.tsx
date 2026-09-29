@@ -10,12 +10,15 @@ import type { NiveauPrompt } from "@/core/agents/taches";
 
 const IAS = ["chatgpt", "copilot", "gemini", "claude"] as const;
 
+type ActionIa = "aucune" | "ameliorer" | "generer";
+
 export function PromptForm({ onCree }: { onCree: () => void }) {
   const [ia, setIa] = useState<(typeof IAS)[number]>("claude");
   const [projet, setProjet] = useState("");
   const [titre, setTitre] = useState("");
   const [notes, setNotes] = useState("");
   const [niveau, setNiveau] = useState<NiveauPrompt>("structure");
+  const [action, setAction] = useState<ActionIa>("generer");
   const [texte, setTexte] = useState("");
   const [erreurs, setErreurs] = useState<string[]>([]);
   const [redaction, setRedaction] = useState(false);
@@ -24,14 +27,22 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
   const enCours = redaction || envoi;
   const dureeGeneration = useMinuteur(redaction);
 
-  async function genererBrouillon() {
+  async function lancerIa() {
+    if (action === "ameliorer" && !texte.trim()) {
+      setErreurs(["Il n'y a rien à améliorer : renseigne d'abord le champ Texte du prompt (plateforme)."]);
+      return;
+    }
     setRedaction(true);
     setErreurs([]);
     try {
+      const corps =
+        action === "ameliorer"
+          ? { type: "prompt", mode: "ameliorer", texteActuel: texte }
+          : { type: "prompt", mode: "generer", ia, projet, titre, notes, niveau };
       const reponse = await fetch("/api/agents/taches/brouillon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "prompt", ia, projet, titre, notes, niveau }),
+        body: JSON.stringify(corps),
       });
       const donnees = await reponse.json();
       if (!donnees.ok) {
@@ -109,12 +120,30 @@ export function PromptForm({ onCree }: { onCree: () => void }) {
         />
       </Field>
 
-      <ActionButton variant={redaction ? "loading" : "primary"} disabled={enCours} onClick={genererBrouillon}>
-        {redaction ? `Génération en cours… (${dureeGeneration})` : "Générer un brouillon"}
-      </ActionButton>
+      <Field label="Action IA" family="user">
+        <SelectChips
+          value={action}
+          onChange={setAction}
+          options={[
+            { value: "aucune", label: "Aucune" },
+            { value: "ameliorer", label: "Améliorer" },
+            { value: "generer", label: "Générer" },
+          ]}
+        />
+      </Field>
+
+      {action !== "aucune" && (
+        <ActionButton variant={redaction ? "loading" : "primary"} disabled={enCours} onClick={lancerIa}>
+          {redaction
+            ? `Génération en cours… (${dureeGeneration})`
+            : action === "ameliorer"
+              ? "Améliorer le brouillon"
+              : "Générer un brouillon"}
+        </ActionButton>
+      )}
 
       <Field label="Texte du prompt" family="platform" texteACopier={champsGeneres ? texte : undefined}>
-        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} readOnly />
+        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} />
       </Field>
 
       {champsGeneres && (

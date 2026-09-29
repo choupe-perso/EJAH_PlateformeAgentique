@@ -72,6 +72,16 @@ copiés tels quels depuis l'ancienne plateforme Flask
 reformulé. Modifier le ton, le style ou les règles se fait en éditant ces
 `.txt`, jamais en touchant au code Python.
 
+Deux modes bien distincts derrière `rediger_brouillon`/`reecrire_brouillon` :
+- **Générer** (`rediger_brouillon`) : transforme des notes libres (`notes`)
+  en message/prompt complet - utilise `mail/`/`prompt/` (rôle, règles,
+  style, paramètres registre/ton/longueur/niveau).
+- **Améliorer** (`reecrire_brouillon`) : corrige/fluidifie un texte déjà
+  quasi final (`texteActuel`) sans en changer le fond - utilise
+  `ameliorer/instructions.txt` uniquement, un prompt générique indépendant
+  du type de tâche (email/prompt) et des paramètres de registre/ton/longueur
+  (le tutoiement/vouvoiement est déduit du texte fourni, jamais imposé).
+
 ---
 
 ## 3. Contrôle d'accès et avertissement légal

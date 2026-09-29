@@ -15,19 +15,14 @@ export const maxDuration = 300;
 export async function POST(request: Request) {
   const corps = await request.json().catch(() => ({}));
   const typeTache = corps.type;
+  const ameliorer = corps.mode === "ameliorer";
 
   try {
     if (typeTache === "email") {
-      const precisions = (corps.precisions ?? "").trim();
-      const resultat = precisions
+      const resultat = ameliorer
         ? await reecrireBrouillonEmail({
-            destinataire: corps.destinataire ?? "",
             titreActuel: corps.titreActuel ?? "",
             texteActuel: corps.texteActuel ?? "",
-            precisions,
-            registre: corps.registre,
-            ton: corps.ton,
-            longueur: corps.longueur,
           })
         : await redigerBrouillonEmail({
             destinataire: corps.destinataire ?? "",
@@ -40,16 +35,8 @@ export async function POST(request: Request) {
     }
 
     if (typeTache === "prompt") {
-      const precisions = (corps.precisions ?? "").trim();
-      const resultat = precisions
-        ? await reecrireBrouillonPrompt({
-            ia: corps.ia ?? "",
-            projet: corps.projet ?? "",
-            titre: corps.titre ?? "",
-            texteActuel: corps.texteActuel ?? "",
-            precisions,
-            niveau: corps.niveau,
-          })
+      const resultat = ameliorer
+        ? await reecrireBrouillonPrompt({ texteActuel: corps.texteActuel ?? "" })
         : await redigerBrouillonPrompt({
             ia: corps.ia ?? "",
             projet: corps.projet ?? "",
