@@ -62,17 +62,17 @@ input:
     destinataire:
       type: scalar
       scalar_type: string
-      description: Pour valider et rediger_brouillon/reecrire_brouillon (email).
+      description: Pour valider et rediger_brouillon (email).
 
     ia:
       type: scalar
       scalar_type: string
-      description: Pour valider et rediger_brouillon/reecrire_brouillon (prompt) - doit etre l'une des valeurs chatgpt/copilot/gemini/claude.
+      description: Pour valider et rediger_brouillon (prompt) - doit etre l'une des valeurs chatgpt/copilot/gemini/claude.
 
     projet:
       type: scalar
       scalar_type: string
-      description: Pour valider et rediger_brouillon/reecrire_brouillon (prompt).
+      description: Pour valider et rediger_brouillon (prompt).
 
     texte:
       type: scalar
@@ -87,17 +87,17 @@ input:
     texteActuel:
       type: scalar
       scalar_type: string
-      description: Pour reecrire_brouillon (email/prompt) - texte du brouillon a reecrire.
+      description: >
+        Pour reecrire_brouillon (email/prompt) - texte du brouillon
+        (quasi final) a corriger/fluidifier, independamment du type de
+        tache (voir ameliorer_texte).
 
     titreActuel:
       type: scalar
       scalar_type: string
-      description: Pour reecrire_brouillon (email) - titre du brouillon a reecrire.
-
-    precisions:
-      type: scalar
-      scalar_type: string
-      description: Pour reecrire_brouillon (email/prompt) - consignes de reecriture.
+      description: >
+        Pour reecrire_brouillon (email) - titre du brouillon, renvoye tel
+        quel en sortie (non retouche par ce mode).
 
     registre:
       type: scalar
@@ -105,7 +105,7 @@ input:
       enum:
         - tutoiement
         - vouvoiement
-      description: Pour rediger_brouillon/reecrire_brouillon (email).
+      description: Pour rediger_brouillon (email).
 
     ton:
       type: scalar
@@ -115,7 +115,7 @@ input:
         - professionnel
         - proche
         - amical
-      description: Pour rediger_brouillon/reecrire_brouillon (email).
+      description: Pour rediger_brouillon (email).
 
     longueur:
       type: scalar
@@ -124,7 +124,7 @@ input:
         - tres_court
         - court
         - developpe
-      description: Pour rediger_brouillon/reecrire_brouillon (email).
+      description: Pour rediger_brouillon (email).
 
     niveau:
       type: scalar
@@ -134,7 +134,7 @@ input:
         - structure
         - complet
         - expert
-      description: Pour rediger_brouillon/reecrire_brouillon (prompt).
+      description: Pour rediger_brouillon (prompt).
 
   required:
     - command

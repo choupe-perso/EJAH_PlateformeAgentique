@@ -34,7 +34,6 @@ def run(command: str, fields: dict[str, Any], files: dict[str, list[Path]]) -> d
         notes=fields.get("notes") or None,
         texte_actuel=fields.get("texteActuel") or None,
         titre_actuel=fields.get("titreActuel") or None,
-        precisions=fields.get("precisions") or None,
         registre=fields.get("registre") or None,
         ton=fields.get("ton") or None,
         longueur=fields.get("longueur") or None,

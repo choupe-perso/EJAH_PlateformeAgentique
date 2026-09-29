@@ -8,12 +8,15 @@ import { SelectChips } from "./SelectChips";
 import { useMinuteur } from "./useMinuteur";
 import type { LongueurMail, Registre, Ton } from "@/core/agents/taches";
 
+type ActionIa = "aucune" | "ameliorer" | "generer";
+
 export function EmailForm({ onCree }: { onCree: () => void }) {
   const [destinataire, setDestinataire] = useState("");
   const [notes, setNotes] = useState("");
   const [registre, setRegistre] = useState<Registre>("tutoiement");
   const [ton, setTon] = useState<Ton>("professionnel");
   const [longueur, setLongueur] = useState<LongueurMail>("court");
+  const [action, setAction] = useState<ActionIa>("generer");
   const [titre, setTitre] = useState("");
   const [texte, setTexte] = useState("");
   const [titreUtilisateur, setTitreUtilisateur] = useState("");
@@ -24,14 +27,22 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
   const enCours = redaction || envoi;
   const dureeGeneration = useMinuteur(redaction);
 
-  async function genererBrouillon() {
+  async function lancerIa() {
+    if (action === "ameliorer" && !texte.trim()) {
+      setErreurs(["Il n'y a rien à améliorer : renseigne d'abord le champ Texte (plateforme)."]);
+      return;
+    }
     setRedaction(true);
     setErreurs([]);
     try {
+      const corps =
+        action === "ameliorer"
+          ? { type: "email", mode: "ameliorer", titreActuel: titreUtilisateur || titre, texteActuel: texte }
+          : { type: "email", mode: "generer", destinataire, notes, registre, ton, longueur };
       const reponse = await fetch("/api/agents/taches/brouillon", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: "email", destinataire, notes, registre, ton, longueur }),
+        body: JSON.stringify(corps),
       });
       const donnees = await reponse.json();
       if (!donnees.ok) {
@@ -144,20 +155,38 @@ export function EmailForm({ onCree }: { onCree: () => void }) {
         />
       </Field>
 
-      <ActionButton
-        variant={redaction ? "loading" : "primary"}
-        disabled={enCours}
-        onClick={genererBrouillon}
-      >
-        {redaction ? `Génération en cours… (${dureeGeneration})` : "Générer un brouillon"}
-      </ActionButton>
+      <Field label="Action IA" family="user">
+        <SelectChips
+          value={action}
+          onChange={setAction}
+          options={[
+            { value: "aucune", label: "Aucune" },
+            { value: "ameliorer", label: "Améliorer" },
+            { value: "generer", label: "Générer" },
+          ]}
+        />
+      </Field>
+
+      {action !== "aucune" && (
+        <ActionButton
+          variant={redaction ? "loading" : "primary"}
+          disabled={enCours}
+          onClick={lancerIa}
+        >
+          {redaction
+            ? `Génération en cours… (${dureeGeneration})`
+            : action === "ameliorer"
+              ? "Améliorer le brouillon"
+              : "Générer un brouillon"}
+        </ActionButton>
+      )}
 
       <Field label="Titre" family="platform" texteACopier={champsGeneres ? titre : undefined}>
-        <TextInput value={titre} onChange={(e) => setTitre(e.target.value)} readOnly />
+        <TextInput value={titre} onChange={(e) => setTitre(e.target.value)} />
       </Field>
 
       <Field label="Texte" family="platform" texteACopier={champsGeneres ? texte : undefined}>
-        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} readOnly />
+        <TextArea rows={5} value={texte} onChange={(e) => setTexte(e.target.value)} />
       </Field>
 
       {champsGeneres && (

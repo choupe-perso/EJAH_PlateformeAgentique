@@ -18,12 +18,7 @@ from typing import Literal
 from app.domain.entities import valider_tache
 from app.domain.ics import construire_ics_rdv
 from app.integrations.ollama.client import OllamaError
-from app.integrations.ollama.redaction import (
-    rediger_email,
-    rediger_prompt,
-    reecrire_email,
-    reecrire_prompt,
-)
+from app.integrations.ollama.redaction import ameliorer_texte, rediger_email, rediger_prompt
 
 Command = Literal["valider", "rediger_brouillon", "reecrire_brouillon", "generer_ics"]
 TypeTache = Literal["rdv", "email", "prompt"]
@@ -47,7 +42,6 @@ class AgentRequest:
     notes: str | None = None
     texte_actuel: str | None = None
     titre_actuel: str | None = None
-    precisions: str | None = None
     registre: str | None = None
     ton: str | None = None
     longueur: str | None = None
@@ -92,45 +86,45 @@ def execute(request: AgentRequest) -> AgentResponse:
     if request.command in ("rediger_brouillon", "reecrire_brouillon"):
         reecriture = request.command == "reecrire_brouillon"
         try:
+            if reecriture:
+                # Mode "Ameliorer" : un seul prompt generique agissant sur un
+                # texte brut, quel que soit le type de tache (email/prompt) -
+                # voir ameliorer_texte. Le titre (email) n'est pas retouche.
+                texte = ameliorer_texte(request.texte_actuel or "")
+                if request.type == "email":
+                    return AgentResponse(
+                        command=request.command,
+                        message="Brouillon d'email amélioré.",
+                        titre=request.titre_actuel,
+                        texte=texte,
+                    )
+                if request.type == "prompt":
+                    return AgentResponse(command=request.command, message="Brouillon de prompt amélioré.", texte=texte)
+                return AgentResponse(
+                    command=request.command,
+                    message="Amélioration du brouillon interrompue.",
+                    error=f"Type de tâche inconnu pour un brouillon : {request.type!r}.",
+                    error_kind="validation",
+                )
+
             if request.type == "email":
-                if reecriture:
-                    titre, texte = reecrire_email(
-                        destinataire=request.destinataire or "",
-                        titre_actuel=request.titre_actuel or "",
-                        texte_actuel=request.texte_actuel or "",
-                        precisions=request.precisions or "",
-                        registre=request.registre or "tutoiement",
-                        ton=request.ton or "professionnel",
-                        longueur=request.longueur or "court",
-                    )
-                else:
-                    titre, texte = rediger_email(
-                        destinataire=request.destinataire or "",
-                        notes=request.notes or "",
-                        registre=request.registre or "tutoiement",
-                        ton=request.ton or "professionnel",
-                        longueur=request.longueur or "court",
-                    )
+                titre, texte = rediger_email(
+                    destinataire=request.destinataire or "",
+                    notes=request.notes or "",
+                    registre=request.registre or "tutoiement",
+                    ton=request.ton or "professionnel",
+                    longueur=request.longueur or "court",
+                )
                 return AgentResponse(command=request.command, message="Brouillon d'email généré.", titre=titre, texte=texte)
 
             if request.type == "prompt":
-                if reecriture:
-                    texte = reecrire_prompt(
-                        ia=request.ia or "",
-                        projet=request.projet or "",
-                        titre=request.titre or "",
-                        texte_actuel=request.texte_actuel or "",
-                        precisions=request.precisions or "",
-                        niveau=request.niveau or "structure",
-                    )
-                else:
-                    texte = rediger_prompt(
-                        ia=request.ia or "",
-                        projet=request.projet or "",
-                        titre=request.titre or "",
-                        notes=request.notes or "",
-                        niveau=request.niveau or "structure",
-                    )
+                texte = rediger_prompt(
+                    ia=request.ia or "",
+                    projet=request.projet or "",
+                    titre=request.titre or "",
+                    notes=request.notes or "",
+                    niveau=request.niveau or "structure",
+                )
                 return AgentResponse(command=request.command, message="Brouillon de prompt généré.", texte=texte)
 
             return AgentResponse(

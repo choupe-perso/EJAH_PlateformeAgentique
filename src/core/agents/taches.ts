@@ -217,13 +217,8 @@ export async function redigerBrouillonEmail(params: {
 }
 
 export async function reecrireBrouillonEmail(params: {
-  destinataire: string;
   titreActuel: string;
   texteActuel: string;
-  precisions: string;
-  registre: Registre;
-  ton: Ton;
-  longueur: LongueurMail;
 }): Promise<BrouillonEmail> {
   const raw = await executePythonAgent<TachesRawResult>(AGENT_ID, {
     command: "reecrire_brouillon",
@@ -249,12 +244,7 @@ export async function redigerBrouillonPrompt(params: {
 }
 
 export async function reecrireBrouillonPrompt(params: {
-  ia: string;
-  projet: string;
-  titre: string;
   texteActuel: string;
-  precisions: string;
-  niveau: NiveauPrompt;
 }): Promise<{ texte: string }> {
   const raw = await executePythonAgent<TachesRawResult>(AGENT_ID, {
     command: "reecrire_brouillon",

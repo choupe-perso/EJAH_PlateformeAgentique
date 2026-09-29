@@ -73,25 +73,17 @@ def rediger_email(destinataire: str, notes: str, registre: str, ton: str, longue
     return extraire_titre_texte(appel_ollama(prompt))
 
 
-def reecrire_email(
-    destinataire: str,
-    titre_actuel: str,
-    texte_actuel: str,
-    precisions: str,
-    registre: str,
-    ton: str,
-    longueur: str,
-) -> tuple[str, str]:
-    """Retourne (titre, texte) d'un brouillon d'email réécrit à partir de précisions."""
-    demande = _section(
-        "DEMANDE UTILISATEUR",
-        f"<<<\nDestinataire : {destinataire}\n"
-        f"Brouillon actuel — titre : {titre_actuel}\n"
-        f"Brouillon actuel — texte :\n{texte_actuel}\n\n"
-        f"Precisions pour la reecriture : {precisions}\n>>>",
-    )
-    prompt = _assembler(_preambule_mail(registre, ton, longueur), demande, FORMAT_EMAIL)
-    return extraire_titre_texte(appel_ollama(prompt))
+def ameliorer_texte(texte: str) -> str:
+    """Retourne un texte corrige/fluidifie a partir d'un brouillon quasi final
+    (mode "Ameliorer" - par opposition a "Generer" depuis de simples notes) :
+    ne modifie que l'orthographe, la grammaire, la ponctuation, la syntaxe et
+    les formulations maladroites - ne change jamais le fond, le sens, les
+    informations ni le ton (voir prompts/ameliorer/instructions.txt).
+    Independant du type de tache (email/prompt) : agit sur un texte brut."""
+    instructions = _charger_fragment("ameliorer/instructions.txt")
+    demande = f"[TEXTE]\n\n<<<\n{texte}\n>>>"
+    prompt = _assembler(instructions, demande)
+    return appel_ollama(prompt).strip()
 
 
 def rediger_prompt(ia: str, projet: str, titre: str, notes: str, niveau: str) -> str:
@@ -104,14 +96,3 @@ def rediger_prompt(ia: str, projet: str, titre: str, notes: str, niveau: str) ->
     prompt = _assembler(_preambule_prompt(niveau), demande, FORMAT_PROMPT)
     return appel_ollama(prompt).strip()
 
-
-def reecrire_prompt(ia: str, projet: str, titre: str, texte_actuel: str, precisions: str, niveau: str) -> str:
-    """Retourne le texte d'un prompt réécrit à partir de précisions."""
-    demande = _section(
-        "DEMANDE UTILISATEUR",
-        f"<<<\nIA cible : {ia}\nProjet : {projet}\nTitre : {titre}\n"
-        f"Prompt actuel :\n{texte_actuel}\n\n"
-        f"Precisions pour la reecriture : {precisions}\n>>>",
-    )
-    prompt = _assembler(_preambule_prompt(niveau), demande, FORMAT_PROMPT)
-    return appel_ollama(prompt).strip()
